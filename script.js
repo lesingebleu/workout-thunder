@@ -6,27 +6,28 @@ const images = [
 
 const randomImage = document.getElementById("randomImage");
 
-// Function to cycle images with fade
-function cycleImage() {
-    // 1. Fade out current image
+// Load the next image with fade
+function loadNextImage() {
+    // Fade out current image
     randomImage.classList.remove("fade-in");
-    
+
+    // After fade-out completes, change image and fade in
     setTimeout(() => {
-        // 2. Update image source
+        // Get next image index (cycle 0 → 1 → 2 → 0...)
         let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
         randomImage.src = images[currentIndex];
         currentIndex = (currentIndex + 1) % images.length;
         localStorage.setItem("imageIndex", currentIndex);
-        
-        // 3. Fade in new image
+
+        // Fade in new image
         randomImage.classList.add("fade-in");
-    }, 1000); // Wait for fade-out to finish (1s)
+    }, 1000); // Matches the CSS transition time (1s)
 }
 
-// Initialize first image
-cycleImage();
+// Initialize first image on page load
+window.addEventListener("load", loadNextImage);
 
-// Optional: Re-fade on button click or keyboard press
+// Optional: Press spacebar to manually cycle
 document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") cycleImage();
+    if (e.code === "Space") loadNextImage();
 });
