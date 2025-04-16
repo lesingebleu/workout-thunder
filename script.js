@@ -5,14 +5,15 @@ const images = [
 ];
 
 const randomImage = document.getElementById("randomImage");
-let lastImage = localStorage.getItem("lastImage"); // Get last shown image
 
-// Filter out the last image to avoid repeats
-let availableImages = images.filter(img => img !== lastImage);
+// Get the last index (or default to 0 if first visit)
+let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
 
-// Select a new random image from remaining options
-const newImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+// Update the image
+randomImage.src = images[currentIndex];
 
-// Update the image and store the new choice
-randomImage.src = newImage;
-localStorage.setItem("lastImage", newImage);
+// Increment index (loop back to 0 after last image)
+currentIndex = (currentIndex + 1) % images.length;
+
+// Save the next index for the next refresh
+localStorage.setItem("imageIndex", currentIndex);
