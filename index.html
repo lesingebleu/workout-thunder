@@ -3,24 +3,28 @@
 <head>
     <title>Image Fade Demo</title>
     <style>
-        /* Fade effect styles */
-        .image-container {
-            position: relative;
-            width: 100%;
-            height: 300px; /* Adjust to your image size */
-            overflow: hidden;
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f0f0;
         }
-        
+        .image-container {
+            width: 80vw;  /* Adjust width as needed */
+            height: 80vh; /* Adjust height as needed */
+            position: relative;
+        }
         #randomImage {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0; /* Start invisible */
-            transition: opacity 1s ease-in-out; /* Smooth fade */
+            opacity: 0;          /* Start invisible */
+            transition: opacity 1s ease-in-out; /* Fade animation */
         }
-        
         #randomImage.fade-in {
-            opacity: 1; /* Fully visible */
+            opacity: 1;  /* Fully visible */
         }
     </style>
 </head>
@@ -28,7 +32,6 @@
     <div class="image-container">
         <img id="randomImage" src="" alt="Cycling Image">
     </div>
-    
-    <script src="script.js"></script> <!-- Link to your JS file -->
+    <script src="script.js"></script>
 </body>
 </html>
