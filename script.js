@@ -4,19 +4,16 @@ const images = [
     "./images/img3.jpg"
 ];
 
-// Preload images to avoid delay
-images.forEach(src => {
-    const img = new Image();
-    img.src = src;
-});
-
 const randomImage = document.getElementById("randomImage");
 
-function cycleImage() {
-    let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
-    randomImage.src = images[currentIndex];
-    currentIndex = (currentIndex + 1) % images.length;
-    localStorage.setItem("imageIndex", currentIndex);
-}
+// Get the last index (or default to 0 if first visit)
+let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
 
-window.addEventListener("load", cycleImage);
+// Update the image
+randomImage.src = images[currentIndex];
+
+// Increment index (loop back to 0 after last image)
+currentIndex = (currentIndex + 1) % images.length;
+
+// Save the next index for the next refresh
+localStorage.setItem("imageIndex", currentIndex);
