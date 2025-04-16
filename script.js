@@ -6,14 +6,13 @@ const images = [
 
 const randomImage = document.getElementById("randomImage");
 
-// Get the last index (or default to 0 if first visit)
+// Preload images to avoid loading delay
+images.forEach(src => {
+    new Image().src = src;
+});
+
+// Cycle images
 let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
-
-// Update the image
 randomImage.src = images[currentIndex];
-
-// Increment index (loop back to 0 after last image)
 currentIndex = (currentIndex + 1) % images.length;
-
-// Save the next index for the next refresh
 localStorage.setItem("imageIndex", currentIndex);
