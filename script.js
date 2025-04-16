@@ -6,10 +6,8 @@ const images = [
 
 const randomImage = document.getElementById("randomImage");
 
-// Preload images to avoid loading delay
-images.forEach(src => {
-    new Image().src = src;
-});
+// Preload images
+images.forEach(src => new Image().src = src);
 
 // Cycle images
 let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
