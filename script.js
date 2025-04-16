@@ -6,14 +6,27 @@ const images = [
 
 const randomImage = document.getElementById("randomImage");
 
-// Get the last index (or default to 0 if first visit)
-let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
+// Function to cycle images with fade
+function cycleImage() {
+    // 1. Fade out current image
+    randomImage.classList.remove("fade-in");
+    
+    setTimeout(() => {
+        // 2. Update image source
+        let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
+        randomImage.src = images[currentIndex];
+        currentIndex = (currentIndex + 1) % images.length;
+        localStorage.setItem("imageIndex", currentIndex);
+        
+        // 3. Fade in new image
+        randomImage.classList.add("fade-in");
+    }, 1000); // Wait for fade-out to finish (1s)
+}
 
-// Update the image
-randomImage.src = images[currentIndex];
+// Initialize first image
+cycleImage();
 
-// Increment index (loop back to 0 after last image)
-currentIndex = (currentIndex + 1) % images.length;
-
-// Save the next index for the next refresh
-localStorage.setItem("imageIndex", currentIndex);
+// Optional: Re-fade on button click or keyboard press
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") cycleImage();
+});
