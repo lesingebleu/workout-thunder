@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Vignette Fade</title>
+    <title>White Vignette Fade</title>
     <style>
         body {
             margin: 0;
-            background: #121212; /* Match your site’s background */
+            background: white; /* Your white background */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
         .vignette-container {
-            width: 80vw;
-            height: 80vh;
+            width: 80vw;  /* Adjust as needed */
+            height: 80vh; /* Adjust as needed */
             position: relative;
         }
         #randomImage {
@@ -22,7 +22,7 @@
             object-fit: cover;
             position: relative;
         }
-        /* Circular/Oval Vignette Fade */
+        /* Circular White Vignette Fade */
         #randomImage::after {
             content: "";
             position: absolute;
@@ -32,16 +32,16 @@
             bottom: 0;
             background: radial-gradient(
                 ellipse at center,
-                transparent 40%,
-                rgba(18, 18, 18, 0.7) 70%  /* Adjust opacity/color */
+                transparent 50%,  /* Center stays clear */
+                rgba(255, 255, 255, 0.8) 80%  /* Fades to white */
             );
-            pointer-events: none;
+            pointer-events: none; /* Ignore clicks */
         }
     </style>
 </head>
 <body>
     <div class="vignette-container">
-        <img id="randomImage" src="" alt="Vignette Image">
+        <img id="randomImage" src="" alt="Faded Image">
     </div>
     <script src="script.js"></script>
 </body>
