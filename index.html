@@ -1,48 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>White Vignette Fade</title>
+    <title>Random Image on Refresh</title>
     <style>
         body {
-            margin: 0;
-            background: white; /* Your white background */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
         }
-        .vignette-container {
-            width: 80vw;  /* Adjust as needed */
-            height: 80vh; /* Adjust as needed */
-            position: relative;
-        }
-        #randomImage {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: relative;
-        }
-        /* Circular White Vignette Fade */
-        #randomImage::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(
-                ellipse at center,
-                transparent 50%,  /* Center stays clear */
-                rgba(255, 255, 255, 0.8) 80%  /* Fades to white */
-            );
-            pointer-events: none; /* Ignore clicks */
+        img {
+            max-width: 90%;
+            max-height: 90vh;
+            border: 5px solid #333;
         }
     </style>
 </head>
 <body>
-    <div class="vignette-container">
-        <img id="randomImage" src="" alt="Faded Image">
-    </div>
+    <img id="randomImage" src="" alt="Random Image">
     <script src="script.js"></script>
 </body>
 </html>
