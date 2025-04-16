@@ -1,7 +1,7 @@
 const images = [
-    "./images/FcnjRi5aUAAn0G9.jpg",
-    "./images/FcnjTmqaMAAV8Gv.jpg",
-    "./images/FcnjUj_aUAAsMMz.jpg"
+    “./images/img1.jpg”,
+    “./images/img2.jpg”,
+    “./images/img3.jpg”
 ];
 
 const randomImage = document.getElementById("randomImage"); // Fix quotes (“ ” → " ")
