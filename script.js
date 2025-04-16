@@ -1,7 +1,7 @@
 const images = [
-    "FcnjRi5aUAAn0G9.jpg",  // Replace with your image filenames
-    "FcnjTmqaMAAV8Gv.jpg",
-    "FcnjUj_aUAAsMMz.jpg"
+    "./imgs/FcnjRi5aUAAn0G9.jpg",  // Replace with your image filenames
+    "./imgs/FcnjTmqaMAAV8Gv.jpg",
+    "./imgs/FcnjUj_aUAAsMMz.jpg"
 ];
 
 const randomImage = document.getElementById("randomImage");
