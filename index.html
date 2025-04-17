@@ -1,70 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Random Image with Grain</title>
+    <title>Fullscreen Image Cycle</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background: #121212; /* Dark mode */
-        }
-        .image-wrapper {
-            position: relative;
-            max-width: 90%;
-            max-height: 90vh;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            background: #f0f0f0;
         }
         #randomImage {
-            display: block;
-            max-width: 100%;
-            max-height: 90vh;
-            /* Border removed as requested */
-            pointer-events: none;
-            user-select: none;
-        }
-        /* Visible grain overlay */
-        .grain-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="1"/></svg>');
-            pointer-events: none;
-            mix-blend-mode: multiply;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover; /* Fill screen while maintaining aspect ratio */
+            object-position: center;
+            display: block;
+            border: none; /* Removed border as it wouldn't be visible at edges */
         }
     </style>
 </head>
 <body>
-    <div class="image-wrapper">
-        <img id="randomImage" src="" alt="Random Image">
-        <div class="grain-overlay"></div>
-    </div>
-    
-    <script>
-        const images = [
-            "./images/img1.jpg",
-            "./images/img2.jpg",
-            "./images/img3.jpg"
-        ];
-
-        const randomImage = document.getElementById("randomImage");
-        
-        // Disable right-click
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        
-        // Get the last index
-        let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
-        randomImage.src = images[currentIndex];
-        
-        // Cycle images
-        currentIndex = (currentIndex + 1) % images.length;
-        localStorage.setItem("imageIndex", currentIndex);
-        
-        // Preload images
-        images.forEach(src => new Image().src = src);
-    </script>
+    <img id="randomImage" src="" alt="Fullscreen Image">
+    <script src="script.js"></script>
 </body>
 </html>
