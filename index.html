@@ -355,7 +355,7 @@
             <div class="death-input">
                 <span id="deathText">I died</span>
                 <input type="number" id="deathCount" min="1" value="1">
-                <span id="deathTextEnd">times without kills</span>
+                <span id="deathTextEnd">times without getting any kills</span>
             </div>
             <div class="generate-btn-container">
                 <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
@@ -462,10 +462,10 @@
         function updateDeathText() {
             if (userState.battleType === "air") {
                 deathTextEl.textContent = "I died";
-                deathTextEndEl.textContent = "times without kills";
+                deathTextEndEl.textContent = "times without getting any kills";
             } else {
                 deathTextEl.textContent = "I lost";
-                deathTextEndEl.textContent = "games";
+                deathTextEndEl.textContent = "matches";
             }
         }
 
