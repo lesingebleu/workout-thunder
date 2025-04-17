@@ -13,6 +13,7 @@
             --completed: rgba(255,255,255,0.1);
             --button-color: #a22a29;
             --button-border: #e53834;
+            --complete-green: #4CAF50; /* Lime green */
         }
         
         body {
@@ -133,6 +134,7 @@
             color: white;
             cursor: pointer;
             border: 1px solid var(--button-border);
+            transition: none; /* Remove any transitions */
         }
         
         button:hover {
@@ -157,18 +159,18 @@
             align-items: center;
             margin-bottom: 10px;
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
         }
         
         .group-title {
-            color: var(--primary);
+            color: white; /* Changed from red to white */
             text-transform: capitalize;
             font-size: 1.2em;
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(230, 57, 70, 0.2);
-            padding: 5px 10px;
-            border-radius: 5px;
             font-weight: bold;
         }
         
@@ -219,7 +221,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            order: 2;
         }
         
         .complete-btn {
@@ -232,8 +233,8 @@
         }
         
         .complete-btn.completed {
-            background: #2a9d8f;
-            border-color: #2a9d8f;
+            background: var(--complete-green);
+            border-color: var(--complete-green);
         }
         
         .work-done-btn {
@@ -273,6 +274,11 @@
             font-size: 1.5em;
             color: var(--primary);
             display: none;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+            backdrop-filter: blur(5px);
         }
         
         .weak-toggle {
@@ -281,8 +287,6 @@
             gap: 5px;
             font-size: 0.75em;
             margin-top: 3px;
-            order: 1;
-            margin-right: auto;
         }
         
         input[type="checkbox"] {
@@ -315,9 +319,10 @@
             display: flex;
             justify-content: flex-end;
             margin-bottom: 10px;
+            gap: 10px;
         }
 
-        .toggle-all-btn {
+        .toggle-all-btn, .complete-all-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
             padding: 5px 10px;
@@ -328,28 +333,42 @@
             text-align: center;
             margin-top: 15px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             gap: 10px;
         }
 
         .remove-exercise-btn {
             background: transparent !important;
             border: none !important;
-            color: var(--primary);
+            color: white;
             padding: 0 5px !important;
             font-size: 1.2em;
             cursor: pointer;
+            order: 2;
+            margin-left: auto;
         }
 
         .complete-all-btn {
-            background: #2a9d8f !important;
-            border: 1px solid #2a9d8f !important;
-            margin-left: 10px;
+            background: var(--complete-green) !important;
+            border: 1px solid var(--complete-green) !important;
         }
 
         .clear-workout-btn {
-            background: transparent !important;
-            border: 1px solid var(--primary) !important;
+            background: var(--button-color) !important;
+            border: 1px solid var(--button-border) !important;
+        }
+
+        .success-box {
+            background: rgba(0,0,0,0.7);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px auto;
+            max-width: 500px;
+            display: none;
+            backdrop-filter: blur(5px);
+            font-size: 1.5em;
+            color: white;
         }
     </style>
 </head>
@@ -386,7 +405,7 @@
             </div>
             <div class="generate-btn-container">
                 <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
-                <button id="clearWorkoutBtn" class="clear-workout-btn">✕ Clear All</button>
+                <button id="clearWorkoutBtn" class="clear-workout-btn">❌ Clear All</button>
             </div>
         </div>
         
@@ -400,7 +419,10 @@
             </div>
             <div id="exercisesList"></div>
             <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
-            <div id="congratsMessage" class="congrats-message">GOOD JOB! PENALTY COMPLETED!</div>
+        </div>
+
+        <div id="successBox" class="success-box">
+            Nice job. Now back to the battlefield.
         </div>
     </div>
 
@@ -485,11 +507,11 @@
         const airBattlesCheckbox = document.getElementById("airBattles");
         const groundBattlesCheckbox = document.getElementById("groundBattles");
         const workDoneBtn = document.getElementById("workDoneBtn");
-        const congratsMessage = document.getElementById("congratsMessage");
         const workoutDisplay = document.getElementById("workoutDisplay");
         const toggleAllBtn = document.getElementById("toggleAllBtn");
         const clearWorkoutBtn = document.getElementById("clearWorkoutBtn");
         const completeAllBtn = document.getElementById("completeAllBtn");
+        const successBox = document.getElementById("successBox");
 
         // Update death text based on battle type
         function updateDeathText() {
@@ -628,13 +650,13 @@
             workDoneBtn.disabled = !allCompleted;
         }
 
-        // Show congratulations message
-        function showCongratulations() {
-            congratsMessage.style.display = "block";
+        // Show success message
+        function showSuccessMessage() {
             workoutDisplay.style.display = "none";
+            successBox.style.display = "block";
             
             setTimeout(() => {
-                congratsMessage.style.display = "none";
+                successBox.style.display = "none";
                 resetWorkout();
             }, 2000);
         }
@@ -797,18 +819,18 @@
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
-                                    <button class="remove-exercise-btn">✕</button>
                                     ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
                                     <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
+                                    <button class="remove-exercise-btn">❌</button>
                                 </div>
                                 <div class="exercise-controls">
+                                    <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
+                                        ${ex.completed ? '✓ Done' : 'Complete'}
+                                    </button>
                                     <label class="weak-toggle">
                                         <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
                                         <span>I'm weak</span>
                                     </label>
-                                    <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
-                                        ${ex.completed ? '✓ Done' : 'Complete'}
-                                    </button>
                                 </div>
                             </div>
                         `;
@@ -850,7 +872,7 @@
         generateBtn.addEventListener("click", generateWorkout);
         airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
-        workDoneBtn.addEventListener("click", showCongratulations);
+        workDoneBtn.addEventListener("click", showSuccessMessage);
         toggleAllBtn.addEventListener("click", toggleAllGroups);
         clearWorkoutBtn.addEventListener("click", clearAllWorkouts);
         completeAllBtn.addEventListener("click", completeAllExercises);
