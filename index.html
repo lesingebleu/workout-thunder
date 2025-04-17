@@ -219,11 +219,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            order: 2;
         }
         
         .complete-btn {
-            background: #32CD32; /* Lime green */
-            border: 1px solid #228B22;
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
             padding: 6px 12px;
             min-width: 80px;
             text-align: center;
@@ -266,18 +267,12 @@
             margin-bottom: 5px;
         }
         
-        .completion-message {
-            display: none;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 30px;
-            border-radius: 10px;
+        .congrats-message {
             text-align: center;
-            margin: 20px auto;
-            max-width: 600px;
+            padding: 20px;
             font-size: 1.5em;
-            backdrop-filter: blur(5px);
-            border: 2px solid var(--primary);
+            color: var(--primary);
+            display: none;
         }
         
         .weak-toggle {
@@ -286,8 +281,8 @@
             gap: 5px;
             font-size: 0.75em;
             margin-top: 3px;
-            margin-right: auto;
             order: 1;
+            margin-right: auto;
         }
         
         input[type="checkbox"] {
@@ -344,25 +339,17 @@
             padding: 0 5px !important;
             font-size: 1.2em;
             cursor: pointer;
-            margin-left: auto;
         }
 
         .complete-all-btn {
-            background: var(--button-color) !important;
-            border: 1px solid var(--button-border) !important;
+            background: #2a9d8f !important;
+            border: 1px solid #2a9d8f !important;
             margin-left: 10px;
         }
 
         .clear-workout-btn {
             background: transparent !important;
             border: 1px solid var(--primary) !important;
-        }
-
-        .controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -404,7 +391,7 @@
         </div>
         
         <div class="workout-display" id="workoutDisplay">
-            <div class="controls-row">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Your Penalty Workout</h2>
                 <div>
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
@@ -412,22 +399,17 @@
                 </div>
             </div>
             <div id="exercisesList"></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
-            </div>
-        </div>
-
-        <div id="completionMessage" class="completion-message">
-            Nice job. Now back to the battlefield.
+            <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
+            <div id="congratsMessage" class="congrats-message">GOOD JOB! PENALTY COMPLETED!</div>
         </div>
     </div>
 
     <script>
         // Background Image Cycling
         const bgImages = [
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b",
-            "https://images.unsplash.com/photo-1534258936925-c58bed479fcb",
-            "https://images.unsplash.com/photo-1538805060514-97d9cc17730c"
+            "./images/img1.jpg",
+            "./images/img2.jpg",
+            "./images/img3.jpg"
         ];
         
         const bgImage = document.getElementById("bgImage");
@@ -503,7 +485,7 @@
         const airBattlesCheckbox = document.getElementById("airBattles");
         const groundBattlesCheckbox = document.getElementById("groundBattles");
         const workDoneBtn = document.getElementById("workDoneBtn");
-        const completionMessage = document.getElementById("completionMessage");
+        const congratsMessage = document.getElementById("congratsMessage");
         const workoutDisplay = document.getElementById("workoutDisplay");
         const toggleAllBtn = document.getElementById("toggleAllBtn");
         const clearWorkoutBtn = document.getElementById("clearWorkoutBtn");
@@ -615,7 +597,6 @@
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             workoutDisplay.style.display = "none";
             exercisesListEl.innerHTML = "";
-            completionMessage.style.display = "none";
         }
 
         // Complete all exercises
@@ -647,15 +628,15 @@
             workDoneBtn.disabled = !allCompleted;
         }
 
-        // Show completion message
-        function showCompletion() {
-            completionMessage.style.display = "block";
+        // Show congratulations message
+        function showCongratulations() {
+            congratsMessage.style.display = "block";
             workoutDisplay.style.display = "none";
             
             setTimeout(() => {
-                completionMessage.style.display = "none";
+                congratsMessage.style.display = "none";
                 resetWorkout();
-            }, 3000);
+            }, 2000);
         }
 
         // Reset workout state
@@ -816,6 +797,7 @@
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
+                                    <button class="remove-exercise-btn">✕</button>
                                     ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
                                     <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
                                 </div>
@@ -824,7 +806,6 @@
                                         <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
                                         <span>I'm weak</span>
                                     </label>
-                                    <button class="remove-exercise-btn">❌</button>
                                     <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                         ${ex.completed ? '✓ Done' : 'Complete'}
                                     </button>
@@ -869,7 +850,7 @@
         generateBtn.addEventListener("click", generateWorkout);
         airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
-        workDoneBtn.addEventListener("click", showCompletion);
+        workDoneBtn.addEventListener("click", showCongratulations);
         toggleAllBtn.addEventListener("click", toggleAllGroups);
         clearWorkoutBtn.addEventListener("click", clearAllWorkouts);
         completeAllBtn.addEventListener("click", completeAllExercises);
@@ -892,7 +873,6 @@
         if (userState.currentWorkout && 
             Object.values(userState.currentWorkout.exercises).some(group => group.length > 0)) {
             userState.lastDeathCount = userState.currentWorkout.deaths;
-            deathCountInput.value = userState.lastDeathCount;
             workoutDisplay.style.display = "block";
             renderExercises();
         } else {
