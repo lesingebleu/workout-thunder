@@ -62,16 +62,20 @@
             background: rgba(0,0,0,0.5);
             border-radius: 10px;
             backdrop-filter: blur(5px);
-            position: relative;
         }
         
         .battle-toggle {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             display: flex;
             gap: 10px;
             align-items: center;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 15px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+            z-index: 10;
         }
         
         .toggle-container {
@@ -85,12 +89,19 @@
             gap: 5px;
         }
         
+        .death-input-container {
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
         .death-input {
             display: flex;
             gap: 10px;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         
@@ -129,10 +140,38 @@
             margin-bottom: 20px;
         }
         
-        .exercise-group h3 {
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .group-title {
             color: var(--primary);
             text-transform: capitalize;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .group-toggle {
+            font-size: 1.5em;
+            user-select: none;
+        }
+        
+        .weak-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 0 10px 25px;
+            font-size: 0.9em;
+        }
+        
+        .exercises-container {
+            margin-left: 25px;
         }
         
         .exercise {
@@ -204,31 +243,33 @@
         <div class="bg-overlay"></div>
     </div>
     
+    <div class="battle-toggle">
+        <span>Battle Type:</span>
+        <div class="toggle-container">
+            <label class="toggle-option">
+                <input type="checkbox" id="airBattles" checked>
+                <span class="toggle-label">Air</span>
+            </label>
+            <label class="toggle-option">
+                <input type="checkbox" id="groundBattles">
+                <span class="toggle-label">Ground</span>
+            </label>
+        </div>
+    </div>
+    
     <div class="container">
         <header>
             <h1>War Thunder Workout Penalty</h1>
             <p>Convert your battles into balanced workouts</p>
-            
-            <div class="battle-toggle">
-                <span>Battle Type:</span>
-                <div class="toggle-container">
-                    <label class="toggle-option">
-                        <input type="checkbox" id="airBattles" checked>
-                        <span class="toggle-label">Air</span>
-                    </label>
-                    <label class="toggle-option">
-                        <input type="checkbox" id="groundBattles">
-                        <span class="toggle-label">Ground</span>
-                    </label>
-                </div>
-            </div>
         </header>
         
-        <div class="death-input">
-            <span id="deathText">I died</span>
-            <input type="number" id="deathCount" min="1" value="1">
-            <span id="deathTextEnd">times without kills</span>
-            <button id="generateBtn">Punishment</button>
+        <div class="death-input-container">
+            <div class="death-input">
+                <span id="deathText">I died</span>
+                <input type="number" id="deathCount" min="1" value="1">
+                <span id="deathTextEnd">times without kills</span>
+                <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
+            </div>
         </div>
         
         <div class="workout-display" id="workoutDisplay">
@@ -274,7 +315,7 @@
             abs: [
                 { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2 },
                 { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Plank", equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Plank (1 min)", equipment: ["bodyweight"], difficulty: 1 }
             ],
             legs: [
                 { name: "Squats", equipment: ["bodyweight"], difficulty: 2 },
@@ -297,6 +338,13 @@
                 back: { count: 0, lastDone: null },
                 abs: { count: 0, lastDone: null },
                 legs: { count: 0, lastDone: null }
+            },
+            weakMode: JSON.parse(localStorage.getItem("weakMode")) || {
+                arms: false,
+                chest: false,
+                back: false,
+                abs: false,
+                legs: false
             }
         };
 
@@ -334,6 +382,29 @@
             }
             updateDeathText();
             localStorage.setItem("battleType", userState.battleType);
+        }
+
+        // Toggle weak mode for muscle group
+        function toggleWeakMode(muscle) {
+            userState.weakMode[muscle] = !userState.weakMode[muscle];
+            localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
+            updateExerciseReps(muscle);
+        }
+
+        // Update exercise reps based on weak mode
+        function updateExerciseReps(muscle) {
+            const container = document.querySelector(`.exercises-container[data-muscle="${muscle}"]`);
+            if (container) {
+                const exercises = container.querySelectorAll('.exercise');
+                exercises.forEach(exercise => {
+                    const repsElement = exercise.querySelector('.exercise-reps');
+                    if (repsElement) {
+                        const baseReps = parseInt(repsElement.dataset.baseReps);
+                        const currentReps = userState.weakMode[muscle] ? Math.floor(baseReps / 2) : baseReps;
+                        repsElement.textContent = `${currentReps} reps`;
+                    }
+                });
+            }
         }
 
         // Get least worked muscle groups
@@ -389,15 +460,55 @@
                 if (selectedExercises[muscle].length > 0) {
                     const groupEl = document.createElement("div");
                     groupEl.className = "exercise-group";
-                    groupEl.innerHTML = `<h3>${muscle}</h3>`;
+                    
+                    const headerEl = document.createElement("div");
+                    headerEl.className = "group-header";
+                    
+                    const titleEl = document.createElement("div");
+                    titleEl.className = "group-title";
+                    titleEl.innerHTML = `<span>${muscle}</span>`;
+                    
+                    const toggleEl = document.createElement("div");
+                    toggleEl.className = "group-toggle";
+                    toggleEl.textContent = "−";
+                    toggleEl.addEventListener("click", () => {
+                        const container = groupEl.querySelector(".exercises-container");
+                        if (container.style.display === "none") {
+                            container.style.display = "block";
+                            toggleEl.textContent = "−";
+                        } else {
+                            container.style.display = "none";
+                            toggleEl.textContent = "+";
+                        }
+                    });
+                    
+                    headerEl.appendChild(titleEl);
+                    headerEl.appendChild(toggleEl);
+                    groupEl.appendChild(headerEl);
+                    
+                    // Add weak mode toggle
+                    const weakToggleEl = document.createElement("label");
+                    weakToggleEl.className = "weak-toggle";
+                    weakToggleEl.innerHTML = `
+                        <input type="checkbox" id="weak-${muscle}" ${userState.weakMode[muscle] ? "checked" : ""}>
+                        <span>I'm weak</span>
+                    `;
+                    weakToggleEl.querySelector("input").addEventListener("change", () => toggleWeakMode(muscle));
+                    groupEl.appendChild(weakToggleEl);
+                    
+                    const exercisesContainer = document.createElement("div");
+                    exercisesContainer.className = "exercises-container";
+                    exercisesContainer.setAttribute("data-muscle", muscle);
                     
                     selectedExercises[muscle].forEach(ex => {
                         const exerciseEl = document.createElement("div");
                         exerciseEl.className = "exercise";
                         
+                        const reps = userState.weakMode[muscle] ? Math.floor(ex.reps / 2) : ex.reps;
+                        
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
-                                <h4>${ex.name} (${ex.reps} reps)</h4>
+                                <h4>${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">${reps} reps</span></h4>
                                 <div class="exercise-meta">
                                     <span>${"★".repeat(ex.difficulty)}</span>
                                 </div>
@@ -411,9 +522,10 @@
                             setTimeout(() => exerciseEl.remove(), 1000);
                         });
                         
-                        groupEl.appendChild(exerciseEl);
+                        exercisesContainer.appendChild(exerciseEl);
                     });
                     
+                    groupEl.appendChild(exercisesContainer);
                     exercisesListEl.appendChild(groupEl);
                 }
             });
