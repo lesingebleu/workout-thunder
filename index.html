@@ -70,6 +70,24 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .battle-type {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .battle-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 0;
         }
         
         input, button {
@@ -78,7 +96,7 @@
             border: none;
         }
         
-        input {
+        input[type="number"] {
             width: 60px;
             text-align: center;
             background: rgba(255,255,255,0.1);
@@ -133,25 +151,19 @@
             text-align: center;
         }
         
-        .stats {
-            background: rgba(0,0,0,0.5);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            backdrop-filter: blur(5px);
-            font-size: 0.9em;
+        /* Radio button styling */
+        input[type="radio"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            outline: none;
+            transition: all 0.2s;
         }
         
-        .progress-bar {
-            height: 5px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .progress {
-            height: 100%;
+        input[type="radio"]:checked {
+            border-color: var(--primary);
             background: var(--primary);
         }
     </style>
@@ -165,20 +177,30 @@
     <div class="container">
         <header>
             <h1>War Thunder Workout Penalty</h1>
-            <p>Convert your deaths into balanced workouts</p>
+            <p>Convert your battles into balanced workouts</p>
         </header>
         
+        <div class="battle-type">
+            <div class="battle-option">
+                <input type="radio" id="airBattles" name="battleType" value="air" checked>
+                <label for="airBattles">Air Battles</label>
+            </div>
+            <div class="battle-option">
+                <input type="radio" id="groundBattles" name="battleType" value="ground">
+                <label for="groundBattles">Ground Battles</label>
+            </div>
+        </div>
+        
         <div class="death-input">
-            <span>I died</span>
+            <span id="deathText">I died</span>
             <input type="number" id="deathCount" min="1" value="1">
-            <span>times without kills</span>
+            <span id="deathTextEnd">times without kills</span>
             <button id="generateBtn">Generate Workout</button>
         </div>
         
         <div class="workout-display" id="workoutDisplay">
             <h2>Your Penalty Workout</h2>
             <div id="exercisesList"></div>
-            <div class="stats" id="workoutStats"></div>
         </div>
     </div>
 
@@ -235,6 +257,7 @@
         const userState = {
             deaths: 0,
             equipment: ["bodyweight"],
+            battleType: "air", // Default to air battles
             workoutHistory: JSON.parse(localStorage.getItem("workoutHistory")) || {
                 arms: { count: 0, lastDone: null },
                 chest: { count: 0, lastDone: null },
@@ -248,12 +271,25 @@
         const deathCountInput = document.getElementById("deathCount");
         const generateBtn = document.getElementById("generateBtn");
         const exercisesListEl = document.getElementById("exercisesList");
-        const workoutStatsEl = document.getElementById("workoutStats");
+        const deathTextEl = document.getElementById("deathText");
+        const deathTextEndEl = document.getElementById("deathTextEnd");
+        const airBattlesRadio = document.getElementById("airBattles");
+        const groundBattlesRadio = document.getElementById("groundBattles");
+
+        // Update death text based on battle type
+        function updateDeathText() {
+            if (userState.battleType === "air") {
+                deathTextEl.textContent = "I died";
+                deathTextEndEl.textContent = "times without kills";
+            } else {
+                deathTextEl.textContent = "I lost";
+                deathTextEndEl.textContent = "games";
+            }
+        }
 
         // Get least worked muscle groups
         function getPriorityMuscles() {
             return [...muscleRotation].sort((a, b) => {
-                // Sort by least done, then by oldest
                 return userState.workoutHistory[a].count - userState.workoutHistory[b].count || 
                        new Date(userState.workoutHistory[a].lastDone || 0) - new Date(userState.workoutHistory[b].lastDone || 0);
             });
@@ -294,6 +330,7 @@
             
             // Save data
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
+            localStorage.setItem("battleType", userState.battleType);
             
             // Display workout
             selectedExercises.forEach((ex, index) => {
@@ -320,40 +357,39 @@
                 exercisesListEl.appendChild(exerciseEl);
             });
             
-            // Show workout stats
-            updateWorkoutStats();
             cycleBackground();
-        }
-        
-        // Show muscle group balance
-        function updateWorkoutStats() {
-            const totalWorkouts = Object.values(userState.workoutHistory).reduce((sum, group) => sum + group.count, 0);
-            
-            let statsHTML = '<h3>Workout Balance</h3>';
-            
-            muscleRotation.forEach(muscle => {
-                const count = userState.workoutHistory[muscle].count;
-                const percentage = totalWorkouts > 0 ? Math.round((count / totalWorkouts) * 100) : 0;
-                
-                statsHTML += `
-                    <div>
-                        <span>${muscle}: ${count} workouts</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            workoutStatsEl.innerHTML = statsHTML;
         }
 
         // Event Listeners
         generateBtn.addEventListener("click", generateWorkout);
         
+        airBattlesRadio.addEventListener("change", () => {
+            if (airBattlesRadio.checked) {
+                userState.battleType = "air";
+                updateDeathText();
+            }
+        });
+        
+        groundBattlesRadio.addEventListener("change", () => {
+            if (groundBattlesRadio.checked) {
+                userState.battleType = "ground";
+                updateDeathText();
+            }
+        });
+
         // Initialize
+        const savedBattleType = localStorage.getItem("battleType");
+        if (savedBattleType) {
+            userState.battleType = savedBattleType;
+            if (savedBattleType === "air") {
+                airBattlesRadio.checked = true;
+            } else {
+                groundBattlesRadio.checked = true;
+            }
+        }
+        
+        updateDeathText();
         cycleBackground();
-        updateWorkoutStats();
     </script>
 </body>
 </html>
