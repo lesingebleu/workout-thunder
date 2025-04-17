@@ -165,7 +165,7 @@
         }
         
         .group-title {
-            color: white; /* Changed from red to white */
+            color: white;
             text-transform: capitalize;
             font-size: 1.2em;
             display: flex;
@@ -219,8 +219,9 @@
         
         .exercise-controls {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
         }
         
         .complete-btn {
@@ -248,6 +249,11 @@
             position: relative;
         }
         
+        .work-done-btn.completed {
+            background: var(--complete-green);
+            border-color: var(--complete-green);
+        }
+        
         .work-done-btn:disabled {
             background: #555;
             border-color: #777;
@@ -266,19 +272,6 @@
             white-space: nowrap;
             font-size: 0.9em;
             margin-bottom: 5px;
-        }
-        
-        .congrats-message {
-            text-align: center;
-            padding: 20px;
-            font-size: 1.5em;
-            color: var(--primary);
-            display: none;
-            background: rgba(0,0,0,0.7);
-            border-radius: 10px;
-            margin: 20px auto;
-            max-width: 500px;
-            backdrop-filter: blur(5px);
         }
         
         .weak-toggle {
@@ -322,19 +315,18 @@
             gap: 10px;
         }
 
-        .toggle-all-btn, .complete-all-btn {
+        .toggle-all-btn, .complete-all-btn, .clear-workout-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
             padding: 5px 10px;
             font-size: 0.9em;
+            min-width: 100px;
         }
 
         .generate-btn-container {
-            text-align: center;
-            margin-top: 15px;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            margin-top: 15px;
         }
 
         .remove-exercise-btn {
@@ -344,8 +336,19 @@
             padding: 0 5px !important;
             font-size: 1.2em;
             cursor: pointer;
-            order: 2;
-            margin-left: auto;
+            position: relative;
+        }
+
+        .remove-exercise-btn:hover::after {
+            content: "This will remove this exercise";
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 0.8em;
         }
 
         .complete-all-btn {
@@ -369,6 +372,11 @@
             backdrop-filter: blur(5px);
             font-size: 1.5em;
             color: white;
+        }
+
+        .generate-main-btn {
+            flex-grow: 1;
+            text-align: center;
         }
     </style>
 </head>
@@ -404,8 +412,10 @@
                 <span id="deathTextEnd">times without getting any kills</span>
             </div>
             <div class="generate-btn-container">
-                <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
-                <button id="clearWorkoutBtn" class="clear-workout-btn">❌ Clear All</button>
+                <div class="generate-main-btn">
+                    <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
+                </div>
+                <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
             </div>
         </div>
         
@@ -574,6 +584,12 @@
                     completeBtn.disabled = true;
                 }
                 
+                // Disable remove button for completed exercises
+                const removeBtn = exerciseEl.querySelector(".remove-exercise-btn");
+                if (removeBtn) {
+                    removeBtn.style.display = "none";
+                }
+                
                 if (userState.currentWorkout) {
                     for (const group in userState.currentWorkout.exercises) {
                         const exercise = userState.currentWorkout.exercises[group].find(ex => ex.id === exerciseId);
@@ -591,6 +607,14 @@
 
         // Remove an exercise
         function removeExercise(exerciseId) {
+            // Don't allow removing completed exercises
+            for (const muscle of displayOrder) {
+                const exercise = userState.currentWorkout.exercises[muscle].find(ex => ex.id === exerciseId);
+                if (exercise && exercise.completed) {
+                    return;
+                }
+            }
+            
             for (const muscle of displayOrder) {
                 const index = userState.currentWorkout.exercises[muscle].findIndex(ex => ex.id === exerciseId);
                 if (index !== -1) {
@@ -619,6 +643,7 @@
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             workoutDisplay.style.display = "none";
             exercisesListEl.innerHTML = "";
+            successBox.style.display = "none";
         }
 
         // Complete all exercises
@@ -648,17 +673,17 @@
             }
             
             workDoneBtn.disabled = !allCompleted;
+            if (allCompleted) {
+                workDoneBtn.classList.add("completed");
+            } else {
+                workDoneBtn.classList.remove("completed");
+            }
         }
 
         // Show success message
         function showSuccessMessage() {
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
-            
-            setTimeout(() => {
-                successBox.style.display = "none";
-                resetWorkout();
-            }, 2000);
         }
 
         // Reset workout state
@@ -712,13 +737,32 @@
             toggleAllBtn.textContent = isCollapsed ? "Collapse All" : "Expand All";
         }
 
+        // Toggle single exercise group
+        function toggleExerciseGroup(groupEl) {
+            const container = groupEl.querySelector(".exercises-container");
+            const toggle = groupEl.querySelector(".group-toggle");
+            
+            if (container.style.display === "none") {
+                container.style.display = "block";
+                toggle.textContent = "🔺";
+            } else {
+                container.style.display = "none";
+                toggle.textContent = "🔻";
+            }
+        }
+
         // Remove excess exercises when decreasing count
         function removeExcessExercises(countToRemove) {
             let removed = 0;
+            // Only remove non-completed exercises
             for (const muscle of displayOrder) {
-                while (userState.currentWorkout.exercises[muscle].length > 0 && removed < countToRemove) {
-                    userState.currentWorkout.exercises[muscle].pop();
-                    removed++;
+                const exercises = userState.currentWorkout.exercises[muscle];
+                for (let i = exercises.length - 1; i >= 0; i--) {
+                    if (!exercises[i].completed && removed < countToRemove) {
+                        exercises.splice(i, 1);
+                        removed++;
+                    }
+                    if (removed >= countToRemove) break;
                 }
                 if (removed >= countToRemove) break;
             }
@@ -782,6 +826,7 @@
                     
                     const headerEl = document.createElement("div");
                     headerEl.className = "group-header";
+                    headerEl.addEventListener("click", () => toggleExerciseGroup(groupEl));
                     
                     const titleEl = document.createElement("div");
                     titleEl.className = "group-title";
@@ -790,16 +835,6 @@
                     const toggleEl = document.createElement("div");
                     toggleEl.className = "group-toggle";
                     toggleEl.textContent = "🔺";
-                    toggleEl.addEventListener("click", () => {
-                        const container = groupEl.querySelector(".exercises-container");
-                        if (container.style.display === "none") {
-                            container.style.display = "block";
-                            toggleEl.textContent = "🔺";
-                        } else {
-                            container.style.display = "none";
-                            toggleEl.textContent = "🔻";
-                        }
-                    });
                     
                     headerEl.appendChild(titleEl);
                     headerEl.appendChild(toggleEl);
@@ -821,14 +856,14 @@
                                 <div class="exercise-name">
                                     ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
                                     <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
-                                    <button class="remove-exercise-btn">❌</button>
+                                    ${!ex.completed ? '<button class="remove-exercise-btn">❌</button>' : ''}
                                 </div>
                                 <div class="exercise-controls">
                                     <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                         ${ex.completed ? '✓ Done' : 'Complete'}
                                     </button>
                                     <label class="weak-toggle">
-                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
+                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
                                         <span>I'm weak</span>
                                     </label>
                                 </div>
@@ -837,12 +872,12 @@
                         
                         if (!ex.completed) {
                             exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
+                            exerciseEl.querySelector(".remove-exercise-btn").addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                removeExercise(ex.id);
+                            });
                         }
                         exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
-                        exerciseEl.querySelector(".remove-exercise-btn").addEventListener("click", (e) => {
-                            e.stopPropagation();
-                            removeExercise(ex.id);
-                        });
                         
                         exercisesContainer.appendChild(exerciseEl);
                     });
@@ -895,6 +930,7 @@
         if (userState.currentWorkout && 
             Object.values(userState.currentWorkout.exercises).some(group => group.length > 0)) {
             userState.lastDeathCount = userState.currentWorkout.deaths;
+            deathCountInput.value = userState.lastDeathCount;
             workoutDisplay.style.display = "block";
             renderExercises();
         } else {
