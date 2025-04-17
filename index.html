@@ -96,6 +96,7 @@
             border-radius: 10px;
             margin-bottom: 20px;
             backdrop-filter: blur(5px);
+            text-align: center;
         }
         
         .death-input {
@@ -143,6 +144,7 @@
             padding: 20px;
             border-radius: 10px;
             backdrop-filter: blur(5px);
+            display: none;
         }
         
         .exercise-group {
@@ -304,6 +306,19 @@
         .toggle-label {
             cursor: pointer;
         }
+
+        .toggle-all-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .toggle-all-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -337,12 +352,15 @@
                 <span id="deathText">I died</span>
                 <input type="number" id="deathCount" min="1" value="1">
                 <span id="deathTextEnd">times without kills</span>
-                <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
             </div>
+            <button id="generateBtn" style="margin-top: 15px;">GIVE ME MY PUNISHMENT!</button>
         </div>
         
         <div class="workout-display" id="workoutDisplay">
-            <h2>Your Penalty Workout</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Your Penalty Workout</h2>
+                <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
+            </div>
             <div id="exercisesList"></div>
             <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
             <div id="congratsMessage" class="congrats-message">GOOD JOB! PENALTY COMPLETED!</div>
@@ -422,6 +440,8 @@
         const groundBattlesCheckbox = document.getElementById("groundBattles");
         const workDoneBtn = document.getElementById("workDoneBtn");
         const congratsMessage = document.getElementById("congratsMessage");
+        const workoutDisplay = document.getElementById("workoutDisplay");
+        const toggleAllBtn = document.getElementById("toggleAllBtn");
 
         // Update death text based on battle type
         function updateDeathText() {
@@ -524,7 +544,23 @@
             congratsMessage.style.display = "block";
             setTimeout(() => {
                 congratsMessage.style.display = "none";
+                resetWorkout();
             }, 3000);
+        }
+
+        // Reset workout state
+        function resetWorkout() {
+            userState.currentWorkout = null;
+            localStorage.removeItem("currentWorkout");
+            userState.hasGeneratedFirstWorkout = false;
+            localStorage.setItem("hasGeneratedFirstWorkout", "false");
+            
+            // Hide workout display and clear exercises
+            workoutDisplay.style.display = "none";
+            exercisesListEl.innerHTML = "";
+            
+            // Reset death count input
+            deathCountInput.value = "1";
         }
 
         // Get least worked muscle groups
@@ -535,10 +571,32 @@
             });
         }
 
+        // Toggle all exercise groups
+        function toggleAllGroups() {
+            const groups = document.querySelectorAll(".exercise-group");
+            const firstContainer = groups[0]?.querySelector(".exercises-container");
+            if (!firstContainer) return;
+            
+            const isCollapsed = firstContainer.style.display === "none";
+            
+            groups.forEach(group => {
+                const container = group.querySelector(".exercises-container");
+                const toggle = group.querySelector(".group-toggle");
+                
+                if (isCollapsed) {
+                    container.style.display = "block";
+                    toggle.textContent = "🔺";
+                } else {
+                    container.style.display = "none";
+                    toggle.textContent = "🔻";
+                }
+            });
+            
+            toggleAllBtn.textContent = isCollapsed ? "Collapse All" : "Expand All";
+        }
+
         // Generate balanced workout (only if first time)
         function generateWorkout() {
-            if (userState.hasGeneratedFirstWorkout) return;
-            
             const deaths = parseInt(deathCountInput.value) || 1;
             userState.deaths = deaths;
             
@@ -589,6 +647,9 @@
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
             localStorage.setItem("hasGeneratedFirstWorkout", "true");
+            
+            // Show workout display
+            workoutDisplay.style.display = "block";
             
             // Display workout grouped by muscle
             displayOrder.forEach(muscle => {
@@ -656,6 +717,9 @@
                     exercisesListEl.appendChild(groupEl);
                 }
             });
+            
+            // Set toggle all button to default state
+            toggleAllBtn.textContent = "Collapse All";
         }
 
         // Load current workout if exists
@@ -663,6 +727,9 @@
             if (userState.currentWorkout) {
                 deathCountInput.value = userState.currentWorkout.deaths;
                 userState.hasGeneratedFirstWorkout = true;
+                
+                // Show workout display
+                workoutDisplay.style.display = "block";
                 
                 // Display workout grouped by muscle
                 displayOrder.forEach(muscle => {
@@ -745,6 +812,7 @@
         airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         workDoneBtn.addEventListener("click", showCongratulations);
+        toggleAllBtn.addEventListener("click", toggleAllGroups);
 
         // Initialize
         const savedBattleType = localStorage.getItem("battleType");
