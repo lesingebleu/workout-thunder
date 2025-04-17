@@ -273,20 +273,11 @@
             margin-top: 3px;
         }
         
-        /* In the <style> section, modify these classes: */
-        .weak-toggle {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.75em; /* Reduced from 0.85em */
-            margin-top: 3px;
-        }
-
         /* Custom checkbox styling - Made smaller */
         input[type="checkbox"] {
             appearance: none;
-            width: 12px; /* Reduced from 14px */
-            height: 12px; /* Reduced from 14px */
+            width: 12px;
+            height: 12px;
             border: 1px solid #ccc;
             border-radius: 2px;
             outline: none;
@@ -294,16 +285,21 @@
             position: relative;
             cursor: pointer;
         }
-
-input[type="checkbox"]:checked::after {
-    content: "✓";
-    position: absolute;
-    color: white;
-    font-size: 9px; /* Reduced from 10px */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+        
+        input[type="checkbox"]:checked {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        
+        input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 9px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
         
         .toggle-label {
             cursor: pointer;
@@ -357,7 +353,7 @@ input[type="checkbox"]:checked::after {
             <div class="death-input">
                 <span id="deathText">I died</span>
                 <input type="number" id="deathCount" min="1" value="1">
-                <span id="deathTextEnd">times without getting any kills</span>
+                <span id="deathTextEnd">times without kills</span>
             </div>
             <div class="generate-btn-container">
                 <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
@@ -464,10 +460,10 @@ input[type="checkbox"]:checked::after {
         function updateDeathText() {
             if (userState.battleType === "air") {
                 deathTextEl.textContent = "I died";
-                deathTextEndEl.textContent = "times without getting any kills";
+                deathTextEndEl.textContent = "times without kills";
             } else {
                 deathTextEl.textContent = "I lost";
-                deathTextEndEl.textContent = "matches";
+                deathTextEndEl.textContent = "games";
             }
         }
 
