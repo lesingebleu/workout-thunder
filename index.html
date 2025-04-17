@@ -62,6 +62,27 @@
             background: rgba(0,0,0,0.5);
             border-radius: 10px;
             backdrop-filter: blur(5px);
+            position: relative;
+        }
+        
+        .battle-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .toggle-container {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .death-input {
@@ -71,23 +92,6 @@
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
-        }
-        
-        .battle-type {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .battle-option {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin: 5px 0;
         }
         
         input, button {
@@ -121,6 +125,16 @@
             backdrop-filter: blur(5px);
         }
         
+        .exercise-group {
+            margin-bottom: 20px;
+        }
+        
+        .exercise-group h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-transform: capitalize;
+        }
+        
         .exercise {
             background: rgba(255,255,255,0.05);
             padding: 15px;
@@ -151,20 +165,36 @@
             text-align: center;
         }
         
-        /* Radio button styling */
-        input[type="radio"] {
+        /* Custom checkbox styling */
+        input[type="checkbox"] {
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border: 2px solid #ccc;
-            border-radius: 50%;
+            border-radius: 3px;
             outline: none;
             transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
         }
         
-        input[type="radio"]:checked {
+        input[type="checkbox"]:checked {
             border-color: var(--primary);
             background: var(--primary);
+        }
+        
+        input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .toggle-label {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -178,18 +208,21 @@
         <header>
             <h1>War Thunder Workout Penalty</h1>
             <p>Convert your battles into balanced workouts</p>
+            
+            <div class="battle-toggle">
+                <span>Battle Type:</span>
+                <div class="toggle-container">
+                    <label class="toggle-option">
+                        <input type="checkbox" id="airBattles" checked>
+                        <span class="toggle-label">Air</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="groundBattles">
+                        <span class="toggle-label">Ground</span>
+                    </label>
+                </div>
+            </div>
         </header>
-        
-        <div class="battle-type">
-            <div class="battle-option">
-                <input type="radio" id="airBattles" name="battleType" value="air" checked>
-                <label for="airBattles">Air Battles</label>
-            </div>
-            <div class="battle-option">
-                <input type="radio" id="groundBattles" name="battleType" value="ground">
-                <label for="groundBattles">Ground Battles</label>
-            </div>
-        </div>
         
         <div class="death-input">
             <span id="deathText">I died</span>
@@ -250,8 +283,8 @@
             ]
         };
 
-        // Muscle group rotation order
-        const muscleRotation = ["arms", "chest", "back", "abs", "legs"];
+        // Muscle group order for display
+        const displayOrder = ["arms", "chest", "back", "abs", "legs"];
         
         // User State
         const userState = {
@@ -273,8 +306,8 @@
         const exercisesListEl = document.getElementById("exercisesList");
         const deathTextEl = document.getElementById("deathText");
         const deathTextEndEl = document.getElementById("deathTextEnd");
-        const airBattlesRadio = document.getElementById("airBattles");
-        const groundBattlesRadio = document.getElementById("groundBattles");
+        const airBattlesCheckbox = document.getElementById("airBattles");
+        const groundBattlesCheckbox = document.getElementById("groundBattles");
 
         // Update death text based on battle type
         function updateDeathText() {
@@ -287,9 +320,25 @@
             }
         }
 
+        // Handle battle type toggle
+        function handleBattleTypeToggle() {
+            if (this.id === "airBattles" && this.checked) {
+                groundBattlesCheckbox.checked = false;
+                userState.battleType = "air";
+            } else if (this.id === "groundBattles" && this.checked) {
+                airBattlesCheckbox.checked = false;
+                userState.battleType = "ground";
+            } else {
+                // Prevent both from being unchecked
+                this.checked = true;
+            }
+            updateDeathText();
+            localStorage.setItem("battleType", userState.battleType);
+        }
+
         // Get least worked muscle groups
         function getPriorityMuscles() {
-            return [...muscleRotation].sort((a, b) => {
+            return [...displayOrder].sort((a, b) => {
                 return userState.workoutHistory[a].count - userState.workoutHistory[b].count || 
                        new Date(userState.workoutHistory[a].lastDone || 0) - new Date(userState.workoutHistory[b].lastDone || 0);
             });
@@ -303,7 +352,12 @@
             exercisesListEl.innerHTML = "";
             
             const priorityMuscles = getPriorityMuscles();
-            const selectedExercises = [];
+            const selectedExercises = {};
+            
+            // Initialize empty arrays for each muscle group
+            displayOrder.forEach(muscle => {
+                selectedExercises[muscle] = [];
+            });
             
             // Distribute exercises based on death count
             for (let i = 0; i < deaths; i++) {
@@ -316,9 +370,8 @@
                 
                 if (availableExercises.length > 0) {
                     const exercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
-                    selectedExercises.push({
+                    selectedExercises[muscle].push({
                         ...exercise,
-                        muscleGroup: muscle,
                         reps: 12 // Default reps
                     });
                     
@@ -330,31 +383,39 @@
             
             // Save data
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
-            localStorage.setItem("battleType", userState.battleType);
             
-            // Display workout
-            selectedExercises.forEach((ex, index) => {
-                const exerciseEl = document.createElement("div");
-                exerciseEl.className = "exercise";
-                
-                exerciseEl.innerHTML = `
-                    <div class="exercise-info">
-                        <h3>${ex.name} (${ex.reps} reps)</h3>
-                        <div class="exercise-meta">
-                            <span>${ex.muscleGroup}</span>
-                            <span>${"★".repeat(ex.difficulty)}</span>
-                        </div>
-                    </div>
-                    <button class="complete-btn">Complete</button>
-                `;
-                
-                exerciseEl.querySelector(".complete-btn").addEventListener("click", () => {
-                    exerciseEl.style.opacity = "0.5";
-                    exerciseEl.querySelector(".complete-btn").textContent = "✓ Done";
-                    setTimeout(() => exerciseEl.remove(), 1000);
-                });
-                
-                exercisesListEl.appendChild(exerciseEl);
+            // Display workout grouped by muscle
+            displayOrder.forEach(muscle => {
+                if (selectedExercises[muscle].length > 0) {
+                    const groupEl = document.createElement("div");
+                    groupEl.className = "exercise-group";
+                    groupEl.innerHTML = `<h3>${muscle}</h3>`;
+                    
+                    selectedExercises[muscle].forEach(ex => {
+                        const exerciseEl = document.createElement("div");
+                        exerciseEl.className = "exercise";
+                        
+                        exerciseEl.innerHTML = `
+                            <div class="exercise-info">
+                                <h4>${ex.name} (${ex.reps} reps)</h4>
+                                <div class="exercise-meta">
+                                    <span>${"★".repeat(ex.difficulty)}</span>
+                                </div>
+                            </div>
+                            <button class="complete-btn">Complete</button>
+                        `;
+                        
+                        exerciseEl.querySelector(".complete-btn").addEventListener("click", () => {
+                            exerciseEl.style.opacity = "0.5";
+                            exerciseEl.querySelector(".complete-btn").textContent = "✓ Done";
+                            setTimeout(() => exerciseEl.remove(), 1000);
+                        });
+                        
+                        groupEl.appendChild(exerciseEl);
+                    });
+                    
+                    exercisesListEl.appendChild(groupEl);
+                }
             });
             
             cycleBackground();
@@ -362,29 +423,19 @@
 
         // Event Listeners
         generateBtn.addEventListener("click", generateWorkout);
-        
-        airBattlesRadio.addEventListener("change", () => {
-            if (airBattlesRadio.checked) {
-                userState.battleType = "air";
-                updateDeathText();
-            }
-        });
-        
-        groundBattlesRadio.addEventListener("change", () => {
-            if (groundBattlesRadio.checked) {
-                userState.battleType = "ground";
-                updateDeathText();
-            }
-        });
+        airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
+        groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
 
         // Initialize
         const savedBattleType = localStorage.getItem("battleType");
         if (savedBattleType) {
             userState.battleType = savedBattleType;
             if (savedBattleType === "air") {
-                airBattlesRadio.checked = true;
+                airBattlesCheckbox.checked = true;
+                groundBattlesCheckbox.checked = false;
             } else {
-                groundBattlesRadio.checked = true;
+                airBattlesCheckbox.checked = false;
+                groundBattlesCheckbox.checked = true;
             }
         }
         
