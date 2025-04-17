@@ -247,13 +247,15 @@
             background: var(--button-color) !important;
             border: 1px solid var(--button-border) !important;
             color: white;
-            padding: 6px 12px !important;
+            padding: 5px 8px !important;
             font-size: 0.9em;
             cursor: pointer;
             border-radius: 5px;
-            min-width: 80px;
-            text-align: center;
-            white-space: nowrap;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
         }
         
@@ -282,10 +284,16 @@
             pointer-events: none;
         }
         
+        .work-done-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
         .work-done-btn {
             display: block;
-            width: 100%;
-            margin-top: 20px;
+            width: calc(100% - 110px);
             padding: 12px;
             font-size: 1.1em;
             background: var(--button-color);
@@ -322,8 +330,10 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.9em;
+            font-size: 0.8em;
             position: relative;
+            margin-top: 5px;
+            color: #ccc;
         }
         
         .help-icon {
@@ -460,7 +470,6 @@
                     <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
                     <span class="spam-warning">If you want to add more exercises, change the number above</span>
                 </div>
-                <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
             </div>
         </div>
         
@@ -473,7 +482,10 @@
                 </div>
             </div>
             <div id="exercisesList"></div>
-            <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
+            <div class="work-done-container">
+                <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
+                <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
+            </div>
         </div>
 
         <div id="successBox" class="success-box">
@@ -900,17 +912,17 @@
                                         <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
                                     </div>
                                     <div class="exercise-controls">
-                                        <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">X</button>
                                         <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                             ${ex.completed ? '✓ Done' : 'Complete'}
                                         </button>
-                                        <label class="checkbox-option weak-toggle">
-                                            <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
-                                            <span>I'm weak</span>
-                                            <span class="help-icon">?</span>
-                                        </label>
+                                        <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">X</button>
                                     </div>
                                 </div>
+                                <label class="checkbox-option weak-toggle">
+                                    <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
+                                    <span>I'm weak</span>
+                                    <span class="help-icon">?</span>
+                                </label>
                             </div>
                         `;
                         
