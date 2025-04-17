@@ -96,7 +96,6 @@
             border-radius: 10px;
             margin-bottom: 20px;
             backdrop-filter: blur(5px);
-            text-align: center;
         }
         
         .death-input {
@@ -118,10 +117,9 @@
             text-align: center;
             background: rgba(255,255,255,0.1);
             color: white;
-            -moz-appearance: textfield; /* Firefox */
+            -moz-appearance: textfield;
         }
         
-        /* Hide arrows in Chrome/Safari */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -271,17 +269,17 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.75em;
+            font-size: 0.85em;
             margin-top: 3px;
         }
         
-        /* Custom checkbox styling */
+        /* Custom checkbox styling - Made smaller */
         input[type="checkbox"] {
             appearance: none;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #ccc;
-            border-radius: 3px;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
             outline: none;
             transition: all 0.2s;
             position: relative;
@@ -297,7 +295,7 @@
             content: "✓";
             position: absolute;
             color: white;
-            font-size: 10px;
+            font-size: 9px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -320,11 +318,9 @@
             font-size: 0.9em;
         }
 
-        .death-count-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+        .generate-btn-container {
+            text-align: center;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -354,12 +350,14 @@
         </header>
         
         <div class="death-input-container">
-            <div class="death-count-container">
+            <div class="death-input">
                 <span id="deathText">I died</span>
                 <input type="number" id="deathCount" min="1" value="1">
                 <span id="deathTextEnd">times without kills</span>
             </div>
-            <button id="generateBtn" style="margin-top: 15px;">GIVE ME MY PUNISHMENT!</button>
+            <div class="generate-btn-container">
+                <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
+            </div>
         </div>
         
         <div class="workout-display" id="workoutDisplay">
@@ -374,7 +372,7 @@
     </div>
 
     <script>
-        // Background Image Cycling (only on load)
+        // Background Image Cycling
         const bgImages = [
             "./images/img1.jpg",
             "./images/img2.jpg",
@@ -387,7 +385,7 @@
         bgIndex = (bgIndex + 1) % bgImages.length;
         localStorage.setItem("bgIndex", bgIndex);
         
-        // Exercise Database (12 reps default)
+        // Exercise Database
         const exerciseDB = {
             arms: [
                 { name: "Pushups", equipment: ["bodyweight"], difficulty: 2 },
@@ -416,7 +414,6 @@
             ]
         };
 
-        // Muscle group order for display
         const displayOrder = ["arms", "chest", "back", "abs", "legs"];
         
         // User State
@@ -443,7 +440,7 @@
                 legs: { count: 0, lastDone: null }
             },
             weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
-            hasGeneratedFirstWorkout: localStorage.getItem("hasGeneratedFirstWorkout") === "true" || false
+            lastDeathCount: 0
         };
 
         // DOM Elements
@@ -479,7 +476,6 @@
                 airBattlesCheckbox.checked = false;
                 userState.battleType = "ground";
             } else {
-                // Prevent both from being unchecked
                 this.checked = true;
             }
             updateDeathText();
@@ -521,7 +517,6 @@
                     completeBtn.disabled = true;
                 }
                 
-                // Update completion status in state
                 if (userState.currentWorkout) {
                     for (const group in userState.currentWorkout.exercises) {
                         const exercise = userState.currentWorkout.exercises[group].find(ex => ex.id === exerciseId);
@@ -558,10 +553,12 @@
         // Show congratulations message
         function showCongratulations() {
             congratsMessage.style.display = "block";
+            workoutDisplay.style.display = "none";
+            
             setTimeout(() => {
                 congratsMessage.style.display = "none";
                 resetWorkout();
-            }, 3000);
+            }, 2000);
         }
 
         // Reset workout state
@@ -577,15 +574,9 @@
                     legs: []
                 }
             };
-            localStorage.removeItem("currentWorkout");
-            userState.hasGeneratedFirstWorkout = false;
-            localStorage.setItem("hasGeneratedFirstWorkout", "false");
-            
-            // Hide workout display and clear exercises
-            workoutDisplay.style.display = "none";
+            userState.lastDeathCount = 0;
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             exercisesListEl.innerHTML = "";
-            
-            // Reset death count input
             deathCountInput.value = "1";
         }
 
@@ -621,12 +612,21 @@
             toggleAllBtn.textContent = isCollapsed ? "Collapse All" : "Expand All";
         }
 
-        // Generate additional exercises without resetting existing ones
+        // Generate additional exercises
         function generateAdditionalExercises(deaths) {
+            const currentDeathCount = parseInt(deathCountInput.value) || 1;
+            
+            // Only generate if the death count has changed
+            if (currentDeathCount <= userState.lastDeathCount) {
+                return;
+            }
+            
+            const additionalDeaths = currentDeathCount - userState.lastDeathCount;
+            userState.lastDeathCount = currentDeathCount;
+            
             const priorityMuscles = getPriorityMuscles();
             
-            // Distribute exercises based on death count
-            for (let i = 0; i < deaths; i++) {
+            for (let i = 0; i < additionalDeaths; i++) {
                 const muscleIndex = i % priorityMuscles.length;
                 const muscle = priorityMuscles[muscleIndex];
                 
@@ -640,33 +640,26 @@
                     userState.currentWorkout.exercises[muscle].push({
                         ...exercise,
                         id: exerciseId,
-                        reps: 12, // Default reps
+                        reps: 12,
                         completed: false
                     });
                     
-                    // Update history
                     userState.workoutHistory[muscle].count++;
                     userState.workoutHistory[muscle].lastDone = new Date().toISOString();
                 }
             }
             
-            // Update death count in workout
-            userState.currentWorkout.deaths += deaths;
+            userState.currentWorkout.deaths = currentDeathCount;
             userState.currentWorkout.timestamp = new Date().toISOString();
             
-            // Save to localStorage
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
-            localStorage.setItem("hasGeneratedFirstWorkout", "true");
             
-            // Show workout display
             workoutDisplay.style.display = "block";
-            
-            // Re-render all exercises
             renderExercises();
         }
 
-        // Render all exercises from current workout
+        // Render all exercises
         function renderExercises() {
             exercisesListEl.innerHTML = "";
             
@@ -727,7 +720,6 @@
                             </button>
                         `;
                         
-                        // Add event listeners
                         if (!ex.completed) {
                             exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
                         }
@@ -741,7 +733,6 @@
                 }
             });
             
-            // Set toggle all button to default state
             toggleAllBtn.textContent = "Collapse All";
             checkAllCompleted();
         }
@@ -774,11 +765,13 @@
         
         updateDeathText();
         
-        // Load existing workout if available
-        if (userState.currentWorkout && userState.currentWorkout.exercises && 
+        if (userState.currentWorkout && 
             Object.values(userState.currentWorkout.exercises).some(group => group.length > 0)) {
+            userState.lastDeathCount = userState.currentWorkout.deaths;
             workoutDisplay.style.display = "block";
             renderExercises();
+        } else {
+            workoutDisplay.style.display = "none";
         }
     </script>
 </body>
