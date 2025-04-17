@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Random Image on Refresh</title>
+    <title>Random Image with Grain</title>
     <style>
         body {
             display: flex;
@@ -9,39 +9,62 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: #121212; /* Dark mode background */
+            background: #121212; /* Dark mode */
         }
-        .image-container {
+        .image-wrapper {
             position: relative;
             max-width: 90%;
             max-height: 90vh;
         }
         #randomImage {
+            display: block;
             max-width: 100%;
             max-height: 90vh;
-            border: 5px solid #333;
-            position: relative;
-            pointer-events: none; /* Prevents drag/save */
-            user-select: none; /* Prevents selection */
+            /* Border removed as requested */
+            pointer-events: none;
+            user-select: none;
         }
-        /* Grain overlay */
-        #randomImage::after {
-            content: "";
+        /* Visible grain overlay */
+        .grain-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.25"/></svg>');
             pointer-events: none;
-            mix-blend-mode: overlay;
+            mix-blend-mode: multiply;
         }
     </style>
 </head>
 <body>
-    <div class="image-container">
+    <div class="image-wrapper">
         <img id="randomImage" src="" alt="Random Image">
+        <div class="grain-overlay"></div>
     </div>
-    <script src="script.js"></script>
+    
+    <script>
+        const images = [
+            "./images/img1.jpg",
+            "./images/img2.jpg",
+            "./images/img3.jpg"
+        ];
+
+        const randomImage = document.getElementById("randomImage");
+        
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Get the last index
+        let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
+        randomImage.src = images[currentIndex];
+        
+        // Cycle images
+        currentIndex = (currentIndex + 1) % images.length;
+        localStorage.setItem("imageIndex", currentIndex);
+        
+        // Preload images
+        images.forEach(src => new Image().src = src);
+    </script>
 </body>
 </html>
