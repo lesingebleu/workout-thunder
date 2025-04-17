@@ -6,19 +6,19 @@
     <title>Workout Thunder</title>
     <style>
         :root {
-            –primary: #e63946;
-            –dark: #121212;
-            –light: #f8f9fa;
-            –overlay: rgba(0,0,0,0.7);
-            –completed: rgba(255,255,255,0.1);
-            –button-color: #a22a29;
-            –button-border: #e53834;
+            --primary: #e63946;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --overlay: rgba(0,0,0,0.7);
+            --completed: rgba(255,255,255,0.1);
+            --button-color: #a22a29;
+            --button-border: #e53834;
         }
         
         body {
             margin: 0;
             padding: 0;
-            font-family: ‘Segoe UI’, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             color: var(--light);
             min-height: 100vh;
             overflow-x: hidden;
@@ -254,7 +254,7 @@
         }
         
         .work-done-btn:disabled:hover::after {
-            content: “You have work to do still”;
+            content: "You have work to do still";
             position: absolute;
             bottom: 100%;
             left: 50%;
@@ -302,7 +302,7 @@
         }
         
         input[type="checkbox"]:checked::after {
-            content: “✓”;
+            content: "✓";
             position: absolute;
             color: white;
             font-size: 9px;
@@ -412,38 +412,38 @@
             "./images/img3.jpg"
         ];
         
-        const bgImage = document.getElementById(“bgImage”);
-        let bgIndex = parseInt(localStorage.getItem(“bgIndex”)) || 0;
+        const bgImage = document.getElementById("bgImage");
+        let bgIndex = parseInt(localStorage.getItem("bgIndex")) || 0;
         bgImage.src = bgImages[bgIndex];
         bgIndex = (bgIndex + 1) % bgImages.length;
-        localStorage.setItem(“bgIndex”, bgIndex);
+        localStorage.setItem("bgIndex", bgIndex);
         
         // Exercise Database
         const exerciseDB = {
             arms: [
-                { name: “Pushups”, equipment: ["bodyweight"], difficulty: 2 },
-                { name: “Bicep Curls”, equipment: ["dumbbells"], difficulty: 1 },
-                { name: “Tricep Dips”, equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Pushups", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1 },
+                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2 }
             ],
             chest: [
-                { name: “Bench Press”, equipment: ["barbell"], difficulty: 3 },
-                { name: “Dumbbell Press”, equipment: ["dumbbells"], difficulty: 2 },
-                { name: “Pushup Variations”, equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Bench Press", equipment: ["barbell"], difficulty: 3 },
+                { name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2 }
             ],
             back: [
-                { name: “Pull-ups”, equipment: ["bodyweight"], difficulty: 3 },
-                { name: “Bent Over Rows”, equipment: ["dumbbells"], difficulty: 2 },
-                { name: “Reverse Flyes”, equipment: ["dumbbells"], difficulty: 2 }
+                { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3 },
+                { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2 }
             ],
             abs: [
-                { name: “Russian Twists”, equipment: ["bodyweight"], difficulty: 2 },
-                { name: “Leg Raises”, equipment: ["bodyweight"], difficulty: 2 },
-                { name: “Plank (1 min)”, equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Plank (1 min)", equipment: ["bodyweight"], difficulty: 1 }
             ],
             legs: [
-                { name: “Squats”, equipment: ["bodyweight"], difficulty: 2 },
-                { name: “Lunges”, equipment: ["bodyweight"], difficulty: 2 },
-                { name: “Calf Raises”, equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Squats", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Lunges", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1 }
             ]
         };
 
@@ -453,8 +453,8 @@
         const userState = {
             deaths: 0,
             equipment: ["bodyweight"],
-            battleType: “air”,
-            currentWorkout: JSON.parse(localStorage.getItem(“currentWorkout”)) || {
+            battleType: "air",
+            currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || {
                 timestamp: new Date().toISOString(),
                 deaths: 0,
                 exercises: {
@@ -465,63 +465,63 @@
                     legs: []
                 }
             },
-            workoutHistory: JSON.parse(localStorage.getItem(“workoutHistory”)) || {
+            workoutHistory: JSON.parse(localStorage.getItem("workoutHistory")) || {
                 arms: { count: 0, lastDone: null },
                 chest: { count: 0, lastDone: null },
                 back: { count: 0, lastDone: null },
                 abs: { count: 0, lastDone: null },
                 legs: { count: 0, lastDone: null }
             },
-            weakMode: JSON.parse(localStorage.getItem(“weakMode”)) || {},
+            weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
             lastDeathCount: 0
         };
 
         // DOM Elements
-        const deathCountInput = document.getElementById(“deathCount”);
-        const generateBtn = document.getElementById(“generateBtn”);
-        const exercisesListEl = document.getElementById(“exercisesList”);
-        const deathTextEl = document.getElementById(“deathText”);
-        const deathTextEndEl = document.getElementById(“deathTextEnd”);
-        const airBattlesCheckbox = document.getElementById(“airBattles”);
-        const groundBattlesCheckbox = document.getElementById(“groundBattles”);
-        const workDoneBtn = document.getElementById(“workDoneBtn”);
-        const congratsMessage = document.getElementById(“congratsMessage”);
-        const workoutDisplay = document.getElementById(“workoutDisplay”);
-        const toggleAllBtn = document.getElementById(“toggleAllBtn”);
-        const clearWorkoutBtn = document.getElementById(“clearWorkoutBtn”);
-        const completeAllBtn = document.getElementById(“completeAllBtn”);
+        const deathCountInput = document.getElementById("deathCount");
+        const generateBtn = document.getElementById("generateBtn");
+        const exercisesListEl = document.getElementById("exercisesList");
+        const deathTextEl = document.getElementById("deathText");
+        const deathTextEndEl = document.getElementById("deathTextEnd");
+        const airBattlesCheckbox = document.getElementById("airBattles");
+        const groundBattlesCheckbox = document.getElementById("groundBattles");
+        const workDoneBtn = document.getElementById("workDoneBtn");
+        const congratsMessage = document.getElementById("congratsMessage");
+        const workoutDisplay = document.getElementById("workoutDisplay");
+        const toggleAllBtn = document.getElementById("toggleAllBtn");
+        const clearWorkoutBtn = document.getElementById("clearWorkoutBtn");
+        const completeAllBtn = document.getElementById("completeAllBtn");
 
         // Update death text based on battle type
         function updateDeathText() {
-            if (userState.battleType === “air”) {
-                deathTextEl.textContent = “I died”;
-                deathTextEndEl.textContent = “times without getting any kills”;
+            if (userState.battleType === "air") {
+                deathTextEl.textContent = "I died";
+                deathTextEndEl.textContent = "times without getting any kills";
             } else {
-                deathTextEl.textContent = “I lost”;
-                deathTextEndEl.textContent = “matches”;
+                deathTextEl.textContent = "I lost";
+                deathTextEndEl.textContent = "matches";
             }
         }
 
         // Handle battle type toggle
         function handleBattleTypeToggle() {
-            if (this.id === “airBattles” && this.checked) {
+            if (this.id === "airBattles" && this.checked) {
                 groundBattlesCheckbox.checked = false;
-                userState.battleType = “air”;
-            } else if (this.id === “groundBattles” && this.checked) {
+                userState.battleType = "air";
+            } else if (this.id === "groundBattles" && this.checked) {
                 airBattlesCheckbox.checked = false;
-                userState.battleType = “ground”;
+                userState.battleType = "ground";
             } else {
                 this.checked = true;
             }
             updateDeathText();
-            localStorage.setItem(“battleType”, userState.battleType);
+            localStorage.setItem("battleType", userState.battleType);
         }
 
         // Toggle weak mode for exercise
         function toggleWeakMode(exerciseId) {
             if (!userState.weakMode) userState.weakMode = {};
             userState.weakMode[exerciseId] = !userState.weakMode[exerciseId];
-            localStorage.setItem(“weakMode”, JSON.stringify(userState.weakMode));
+            localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
             updateExerciseDisplay(exerciseId);
         }
 
@@ -529,8 +529,8 @@
         function updateExerciseDisplay(exerciseId) {
             const exerciseEl = document.getElementById(exerciseId);
             if (exerciseEl) {
-                const repsElement = exerciseEl.querySelector(“.exercise-reps”);
-                const weakToggle = exerciseEl.querySelector(“.weak-toggle input”);
+                const repsElement = exerciseEl.querySelector(".exercise-reps");
+                const weakToggle = exerciseEl.querySelector(".weak-toggle input");
                 if (repsElement && weakToggle) {
                     const baseReps = parseInt(repsElement.dataset.baseReps);
                     const currentReps = userState.weakMode[exerciseId] ? Math.floor(baseReps / 2) : baseReps;
@@ -544,11 +544,11 @@
         function completeExercise(exerciseId) {
             const exerciseEl = document.getElementById(exerciseId);
             if (exerciseEl) {
-                exerciseEl.classList.add(“completed”);
-                const completeBtn = exerciseEl.querySelector(“.complete-btn”);
+                exerciseEl.classList.add("completed");
+                const completeBtn = exerciseEl.querySelector(".complete-btn");
                 if (completeBtn) {
-                    completeBtn.textContent = “✓ Done”;
-                    completeBtn.classList.add(“completed”);
+                    completeBtn.textContent = "✓ Done";
+                    completeBtn.classList.add("completed");
                     completeBtn.disabled = true;
                 }
                 
@@ -557,7 +557,7 @@
                         const exercise = userState.currentWorkout.exercises[group].find(ex => ex.id === exerciseId);
                         if (exercise) {
                             exercise.completed = true;
-                            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
+                            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
                             break;
                         }
                     }
@@ -579,7 +579,7 @@
                     break;
                 }
             }
-            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             renderExercises();
         }
 
@@ -593,10 +593,10 @@
                 }
             };
             userState.lastDeathCount = 0;
-            deathCountInput.value = “1”;
-            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
-            workoutDisplay.style.display = “none”;
-            exercisesListEl.innerHTML = “”;
+            deathCountInput.value = "1";
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
+            workoutDisplay.style.display = "none";
+            exercisesListEl.innerHTML = "";
         }
 
         // Complete all exercises
@@ -606,7 +606,7 @@
                     ex.completed = true;
                 });
             }
-            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             renderExercises();
         }
 
@@ -634,7 +634,7 @@
             workoutDisplay.style.display = "none";
             
             setTimeout(() => {
-                congratsMessage.style.display = “none”;
+                congratsMessage.style.display = "none";
                 resetWorkout();
             }, 2000);
         }
@@ -653,14 +653,14 @@
                 }
             };
             userState.lastDeathCount = 0;
-            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
-            exercisesListEl.innerHTML = “”;
-            deathCountInput.value = “1”;
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
+            exercisesListEl.innerHTML = "";
+            deathCountInput.value = "1";
         }
 
         // Get least worked muscle groups
         function getPriorityMuscles() {
-            return […displayOrder].sort((a, b) => {
+            return [...displayOrder].sort((a, b) => {
                 return userState.workoutHistory[a].count - userState.workoutHistory[b].count || 
                        new Date(userState.workoutHistory[a].lastDone || 0) - new Date(userState.workoutHistory[b].lastDone || 0);
             });
@@ -668,26 +668,26 @@
 
         // Toggle all exercise groups
         function toggleAllGroups() {
-            const groups = document.querySelectorAll(“.exercise-group”);
+            const groups = document.querySelectorAll(".exercise-group");
             const firstContainer = groups[0]?.querySelector(".exercises-container");
             if (!firstContainer) return;
             
             const isCollapsed = firstContainer.style.display === "none";
             
             groups.forEach(group => {
-                const container = group.querySelector(“.exercises-container”);
-                const toggle = group.querySelector(“.group-toggle”);
+                const container = group.querySelector(".exercises-container");
+                const toggle = group.querySelector(".group-toggle");
                 
                 if (isCollapsed) {
-                    container.style.display = “block”;
-                    toggle.textContent = “🔺”;
+                    container.style.display = "block";
+                    toggle.textContent = "🔺";
                 } else {
-                    container.style.display = “none”;
-                    toggle.textContent = “🔻”;
+                    container.style.display = "none";
+                    toggle.textContent = "🔻";
                 }
             });
             
-            toggleAllBtn.textContent = isCollapsed ? “Collapse All” : “Expand All”;
+            toggleAllBtn.textContent = isCollapsed ? "Collapse All" : "Expand All";
         }
 
         // Remove excess exercises when decreasing count
@@ -703,7 +703,7 @@
             
             userState.lastDeathCount = parseInt(deathCountInput.value);
             userState.currentWorkout.deaths = userState.lastDeathCount;
-            localStorage.setItem(“currentWorkout”, JSON.stringify(userState.currentWorkout));
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             renderExercises();
         }
 
@@ -728,7 +728,7 @@
                     const exercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
                     const exerciseId = `ex-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
                     userState.currentWorkout.exercises[muscle].push({
-                        …exercise,
+                        ...exercise,
                         id: exerciseId,
                         reps: 12,
                         completed: false
@@ -755,27 +755,27 @@
             
             displayOrder.forEach(muscle => {
                 if (userState.currentWorkout.exercises[muscle].length > 0) {
-                    const groupEl = document.createElement(“div”);
-                    groupEl.className = “exercise-group”;
+                    const groupEl = document.createElement("div");
+                    groupEl.className = "exercise-group";
                     
-                    const headerEl = document.createElement(“div”);
-                    headerEl.className = “group-header”;
+                    const headerEl = document.createElement("div");
+                    headerEl.className = "group-header";
                     
-                    const titleEl = document.createElement(“div”);
-                    titleEl.className = “group-title”;
+                    const titleEl = document.createElement("div");
+                    titleEl.className = "group-title";
                     titleEl.innerHTML = `<span>${muscle}</span>`;
                     
                     const toggleEl = document.createElement("div");
                     toggleEl.className = "group-toggle";
                     toggleEl.textContent = "🔺";
                     toggleEl.addEventListener("click", () => {
-                        const container = groupEl.querySelector(“.exercises-container”);
-                        if (container.style.display === “none”) {
-                            container.style.display = “block”;
-                            toggleEl.textContent = “🔺”;
+                        const container = groupEl.querySelector(".exercises-container");
+                        if (container.style.display === "none") {
+                            container.style.display = "block";
+                            toggleEl.textContent = "🔺";
                         } else {
-                            container.style.display = “none”;
-                            toggleEl.textContent = “🔻”;
+                            container.style.display = "none";
+                            toggleEl.textContent = "🔻";
                         }
                     });
                     
@@ -783,13 +783,13 @@
                     headerEl.appendChild(toggleEl);
                     groupEl.appendChild(headerEl);
                     
-                    const exercisesContainer = document.createElement(“div”);
-                    exercisesContainer.className = “exercises-container”;
+                    const exercisesContainer = document.createElement("div");
+                    exercisesContainer.className = "exercises-container";
                     
                     userState.currentWorkout.exercises[muscle].forEach(ex => {
-                        const exerciseEl = document.createElement(“div”);
-                        exerciseEl.className = “exercise”;
-                        if (ex.completed) exerciseEl.classList.add(“completed”);
+                        const exerciseEl = document.createElement("div");
+                        exerciseEl.className = "exercise";
+                        if (ex.completed) exerciseEl.classList.add("completed");
                         exerciseEl.id = ex.id;
                         
                         const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
@@ -830,7 +830,7 @@
                 }
             });
             
-            toggleAllBtn.textContent = “Collapse All”;
+            toggleAllBtn.textContent = "Collapse All";
             checkAllCompleted();
         }
 
@@ -873,10 +873,10 @@
         if (userState.currentWorkout && 
             Object.values(userState.currentWorkout.exercises).some(group => group.length > 0)) {
             userState.lastDeathCount = userState.currentWorkout.deaths;
-            workoutDisplay.style.display = “block”;
+            workoutDisplay.style.display = "block";
             renderExercises();
         } else {
-            workoutDisplay.style.display = “none”;
+            workoutDisplay.style.display = "none";
         }
     </script>
 </body>
