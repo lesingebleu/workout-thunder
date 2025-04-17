@@ -1,137 +1,345 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>War Thunder Death Counter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War Thunder Workout Penalty</title>
     <style>
+        :root {
+            --primary: #e63946;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --overlay: rgba(0,0,0,0.7);
+        }
+        
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background: #000;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
         }
         
-        .background-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
-        #randomImage {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--overlay);
+            border-radius: 10px;
         }
         
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        .death-counter {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 25px;
-            border-radius: 8px;
+        .death-input {
             display: flex;
+            gap: 10px;
+            justify-content: center;
             align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        input, button, select {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+        }
+        
+        input {
+            width: 60px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            filter: brightness(1.2);
+        }
+        
+        .controls {
+            background: var(--overlay);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .muscle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .muscle-option {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .muscle-option.selected {
+            background: var(--primary);
+        }
+        
+        .equipment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 10px;
         }
         
-        .death-text {
-            color: white;
-            font-size: 18px;
-            white-space: nowrap;
+        .equipment-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        #deathInput {
-            width: 60px;
-            padding: 8px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: center;
+        .workout-display {
+            background: var(--overlay);
+            padding: 20px;
+            border-radius: 10px;
         }
         
-        #sendButton {
-            padding: 8px 15px;
-            background: #e63946;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
+        .exercise {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
         }
         
-        #sendButton:hover {
-            background: #c1121f;
+        .exercise-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .exercise-difficulty {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        .complete-btn {
+            background: #2a9d8f;
+            padding: 5px 10px;
+            font-size: 0.8em;
         }
     </style>
 </head>
 <body>
-    <div class="background-container">
-        <img id="randomImage" src="" alt="Background Image">
-    </div>
-    <div class="overlay"></div>
-    
-    <div class="death-counter">
-        <span class="death-text">I have died</span>
-        <input type="number" id="deathInput" min="0">
-        <span class="death-text">times on War Thunder</span>
-        <button id="sendButton">Send</button>
+    <div class="container">
+        <header>
+            <h1>War Thunder Workout Penalty</h1>
+            <p>Convert your in-game deaths into fitness gains</p>
+        </header>
+        
+        <div class="death-input">
+            <span>I died</span>
+            <input type="number" id="deathCount" min="1" value="1">
+            <span>times without kills</span>
+            <button id="generateBtn">Generate Workout</button>
+        </div>
+        
+        <div class="controls">
+            <h3>Target Muscle Groups</h3>
+            <div class="muscle-group" id="muscleGroups">
+                <!-- Generated by JS -->
+            </div>
+            
+            <h3>Available Equipment</h3>
+            <div class="equipment-options" id="equipmentOptions">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+        
+        <div class="workout-display" id="workoutDisplay">
+            <h2>Your Penalty Workout</h2>
+            <div id="exercisesList"></div>
+        </div>
     </div>
 
     <script>
-        // Image cycling code
-        const images = [
-            "./images/img1.jpg",
-            "./images/img2.jpg",
-            "./images/img3.jpg"
-        ];
-        
-        const randomImage = document.getElementById("randomImage");
-        let currentIndex = parseInt(localStorage.getItem("imageIndex")) || 0;
-        randomImage.src = images[currentIndex];
-        currentIndex = (currentIndex + 1) % images.length;
-        localStorage.setItem("imageIndex", currentIndex);
-        
-        // Death counter functionality
-        const deathInput = document.getElementById("deathInput");
-        const sendButton = document.getElementById("sendButton");
-        
-        // Load saved value if exists
-        deathInput.value = localStorage.getItem("deathCount") || "";
-        
-        sendButton.addEventListener("click", () => {
-            if (deathInput.value) {
-                localStorage.setItem("deathCount", deathInput.value);
-                alert(`Saved! You've died ${deathInput.value} times on War Thunder.`);
+        // Exercise Database
+        const exerciseDB = {
+            arms: [
+                { name: "Pushups", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1 },
+                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2 }
+            ],
+            chest: [
+                { name: "Bench Press", equipment: ["barbell"], difficulty: 3 },
+                { name: "Dumbbell Flyes", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2 }
+            ],
+            back: [
+                { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3 },
+                { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Superman Holds", equipment: ["bodyweight"], difficulty: 1 }
+            ],
+            abs: [
+                { name: "Plank (1 min)", equipment: ["bodyweight"], difficulty: 1 },
+                { name: "Russian Twists", equipment: ["bodyweight", "plate"], difficulty: 2 },
+                { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2 }
+            ],
+            legs: [
+                { name: "Squats", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Lunges", equipment: ["bodyweight", "dumbbells"], difficulty: 2 },
+                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1 }
+            ]
+        };
+
+        // User State
+        const userState = {
+            deaths: 0,
+            selectedMuscles: ["arms", "chest", "back", "abs", "legs"],
+            equipment: ["bodyweight"],
+            workoutHistory: JSON.parse(localStorage.getItem("workoutHistory")) || {
+                arms: { count: 0, lastDone: null },
+                chest: { count: 0, lastDone: null },
+                back: { count: 0, lastDone: null },
+                abs: { count: 0, lastDone: null },
+                legs: { count: 0, lastDone: null }
+            }
+        };
+
+        // DOM Elements
+        const deathCountInput = document.getElementById("deathCount");
+        const generateBtn = document.getElementById("generateBtn");
+        const muscleGroupsEl = document.getElementById("muscleGroups");
+        const equipmentOptionsEl = document.getElementById("equipmentOptions");
+        const exercisesListEl = document.getElementById("exercisesList");
+
+        // Initialize UI
+        function initUI() {
+            // Create muscle group options
+            Object.keys(exerciseDB).forEach(muscle => {
+                const option = document.createElement("div");
+                option.className = `muscle-option ${userState.selectedMuscles.includes(muscle) ? "selected" : ""}`;
+                option.textContent = muscle;
+                option.addEventListener("click", () => toggleMuscleGroup(muscle, option));
+                muscleGroupsEl.appendChild(option);
+            });
+
+            // Create equipment options
+            const allEquipment = ["bodyweight", "dumbbells", "kettlebells", "plate", "machine"];
+            allEquipment.forEach(equip => {
+                const container = document.createElement("label");
+                container.className = "equipment-option";
+                
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = userState.equipment.includes(equip);
+                checkbox.addEventListener("change", () => toggleEquipment(equip, checkbox.checked));
+                
+                const text = document.createElement("span");
+                text.textContent = equip;
+                
+                container.appendChild(checkbox);
+                container.appendChild(text);
+                equipmentOptionsEl.appendChild(container);
+            });
+        }
+
+        // Toggle muscle group selection
+        function toggleMuscleGroup(muscle, element) {
+            const index = userState.selectedMuscles.indexOf(muscle);
+            if (index === -1) {
+                userState.selectedMuscles.push(muscle);
+                element.classList.add("selected");
             } else {
-                alert("Please enter a number first!");
+                userState.selectedMuscles.splice(index, 1);
+                element.classList.remove("selected");
             }
-        });
+        }
+
+        // Toggle equipment selection
+        function toggleEquipment(equipment, isSelected) {
+            if (isSelected) {
+                if (!userState.equipment.includes(equipment)) {
+                    userState.equipment.push(equipment);
+                }
+            } else {
+                const index = userState.equipment.indexOf(equipment);
+                if (index !== -1) {
+                    userState.equipment.splice(index, 1);
+                }
+            }
+        }
+
+        // Generate workout based on deaths
+        function generateWorkout() {
+            const deaths = parseInt(deathCountInput.value) || 1;
+            userState.deaths = deaths;
+            
+            // Clear previous workout
+            exercisesListEl.innerHTML = "";
+            
+            // Get available muscle groups (sorted by least worked)
+            const availableMuscles = [...userState.selectedMuscles]
+                .sort((a, b) => {
+                    return userState.workoutHistory[a].count - userState.workoutHistory[b].count || 
+                           new Date(userState.workoutHistory[a].lastDone || 0) - new Date(userState.workoutHistory[b].lastDone || 0);
+                });
+            
+            // Select exercises
+            const selectedExercises = [];
+            const musclesToUse = availableMuscles.slice(0, Math.min(deaths, availableMuscles.length));
+            
+            musclesToUse.forEach(muscle => {
+                const suitableExercises = exerciseDB[muscle].filter(ex => 
+                    ex.equipment.some(e => userState.equipment.includes(e))
+                );
+                
+                if (suitableExercises.length > 0) {
+                    const randomExercise = suitableExercises[Math.floor(Math.random() * suitableExercises.length)];
+                    selectedExercises.push({
+                        ...randomExercise,
+                        muscleGroup: muscle
+                    });
+                    
+                    // Update workout history
+                    userState.workoutHistory[muscle].count++;
+                    userState.workoutHistory[muscle].lastDone = new Date().toISOString();
+                }
+            });
+            
+            // Save updated history
+            localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
+            
+            // Display exercises
+            selectedExercises.forEach(ex => {
+                const exerciseEl = document.createElement("div");
+                exerciseEl.className = "exercise";
+                
+                exerciseEl.innerHTML = `
+                    <div class="exercise-info">
+                        <h3>${ex.name}</h3>
+                        <span class="exercise-difficulty">${ex.muscleGroup} • ${"★".repeat(ex.difficulty)}</span>
+                    </div>
+                    <button class="complete-btn">Complete</button>
+                `;
+                
+                exercisesListEl.appendChild(exerciseEl);
+            });
+        }
+
+        // Event Listeners
+        generateBtn.addEventListener("click", generateWorkout);
         
-        // Submit on Enter key
-        deathInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                sendButton.click();
-            }
-        });
+        // Initialize
+        initUI();
     </script>
 </body>
 </html>
