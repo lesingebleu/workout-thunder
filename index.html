@@ -190,7 +190,6 @@
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
         
         .exercise.completed {
@@ -208,6 +207,7 @@
         .exercise-name {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 5px;
             flex-wrap: wrap;
         }
@@ -219,8 +219,10 @@
         
         .exercise-controls {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            min-width: 100px;
         }
         
         .complete-btn {
@@ -278,7 +280,7 @@
             align-items: center;
             gap: 5px;
             font-size: 0.75em;
-            margin-top: 3px;
+            justify-content: flex-end;
         }
         
         input[type="checkbox"] {
@@ -324,15 +326,13 @@
 
         .generate-btn-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
             margin-top: 15px;
             gap: 10px;
+            align-items: center;
         }
 
         .generate-main-btn {
-            flex-grow: 1;
-            text-align: center;
             position: relative;
         }
 
@@ -343,7 +343,6 @@
             padding: 0 5px !important;
             font-size: 1.2em;
             cursor: pointer;
-            position: relative;
         }
 
         .remove-exercise-btn.disabled {
@@ -355,13 +354,14 @@
         .remove-exercise-btn:hover::after {
             content: "This will remove this exercise";
             position: absolute;
-            top: -30px;
+            top: -25px;
             right: 0;
             background: rgba(0,0,0,0.8);
-            padding: 5px 10px;
+            color: white;
+            padding: 3px 10px;
             border-radius: 5px;
-            white-space: nowrap;
             font-size: 0.8em;
+            white-space: nowrap;
         }
 
         .complete-all-btn {
@@ -372,7 +372,6 @@
         .clear-workout-btn {
             background: var(--button-color) !important;
             border: 1px solid var(--button-border) !important;
-            min-width: 100px;
         }
 
         .success-box {
@@ -456,7 +455,7 @@
         </div>
 
         <div id="successBox" class="success-box">
-            Nice job. Now back to the battlefield.
+            Nice job. Now get back to the battlefield and git gud.
         </div>
     </div>
 
@@ -616,7 +615,7 @@
                 }
                 
                 if (weakToggle) {
-                    weakToggle.disabled = false;
+                    weakToggle.disabled = true;
                 }
                 
                 if (userState.currentWorkout) {
@@ -876,14 +875,14 @@
                                 <div class="exercise-name">
                                     ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
                                     <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
+                                    <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">❌</button>
                                 </div>
                                 <div class="exercise-controls">
                                     <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                         ${ex.completed ? '✓ Done' : 'Complete'}
                                     </button>
-                                    <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">❌</button>
                                     <label class="weak-toggle">
-                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? '' : ''}>
+                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
                                         <span>I'm weak</span>
                                     </label>
                                 </div>
