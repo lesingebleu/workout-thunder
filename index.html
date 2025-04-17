@@ -251,17 +251,13 @@
         }
 
         .remove-exercise-btn {
-            background: var(--button-color); /* Removed !important */
-            border: 1px solid var(--button-border); /* Removed !important */
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
             color: white;
-            padding: 5px 8px !important; /* Keep original requested padding? Let's match complete */
             padding: 6px 12px; /* Match complete-btn size */
             font-size: 1em; /* Match complete-btn size */
             cursor: pointer;
             border-radius: 5px; /* Match complete-btn size */
-            /* Size matching text 'X' better */
-            /* width: 30px;
-            height: 30px; */
             min-width: 30px; /* Ensure minimum width for 'X' */
             display: flex;
             align-items: center;
@@ -297,17 +293,16 @@
         }
 
         .work-done-container {
-            display: flex;
-            justify-content: space-between;
+            display: flex; /* Keep flex in case you add something else later */
+            justify-content: center; /* Center the single button */
             align-items: center;
             margin-top: 20px;
         }
 
         .work-done-btn {
             display: block;
-            /* width: calc(100% - 110px); Adjust based on clear button width */
-            flex-grow: 1; /* Let it take remaining space */
-            margin-left: 10px; /* Add gap from clear button */
+            width: 100%; /* Take full width now */
+            /* Removed flex-grow and margin-left */
             padding: 12px;
             font-size: 1.1em;
             background: var(--button-color);
@@ -367,8 +362,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             background-color: #ccc;
             color: #333;
             border-radius: 50%;
@@ -403,16 +398,16 @@
         }
 
         .checkbox-option input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             margin: 0; /* Reset default margins */
         }
 
 
         .toggle-all-container {
             display: flex;
-            justify-content: flex-end;
-            margin-bottom: 10px;
+            justify-content: flex-end; /* Aligns buttons to the right */
+            margin-bottom: 10px; /* Original margin restored */
             gap: 10px;
         }
 
@@ -421,7 +416,7 @@
             border: 1px solid var(--button-border);
             padding: 5px 10px;
             font-size: 0.9em;
-            min-width: 100px;
+            min-width: 100px; /* Keep minimum width */
         }
 
         .generate-btn-container {
@@ -500,23 +495,25 @@
                     <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
                     <span class="spam-warning">If you want to add more exercises, change the number above</span>
                 </div>
-                 <!-- Clear button moved below -->
             </div>
         </div>
 
         <div class="workout-display" id="workoutDisplay">
-             <!-- This container now has margin-bottom: 10px -->
+             <!-- Top row: Title and control buttons -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2>Your Penalty Workout</h2>
-                 <!-- This specific button container now has margin-bottom: 0 -->
-                <div class="toggle-all-container" style="margin-bottom: 0;">
+                 <!-- Container for top-right buttons -->
+                <div class="toggle-all-container"> {/* Removed inline style margin-bottom: 0 */}
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
                     <button id="completeAllBtn" class="complete-all-btn">Complete All</button>
+                    <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button> {/* Moved here */}
                 </div>
             </div>
+             <!-- Exercise list area -->
             <div id="exercisesList"></div>
+             <!-- Bottom button container (only Work Done now) -->
             <div class="work-done-container">
-                <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
+                {/* Clear All button removed from here */}
                 <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
             </div>
         </div>
@@ -610,7 +607,7 @@
         const workDoneBtn = document.getElementById("workDoneBtn");
         const workoutDisplay = document.getElementById("workoutDisplay");
         const toggleAllBtn = document.getElementById("toggleAllBtn");
-        const clearWorkoutBtn = document.getElementById("clearWorkoutBtn");
+        const clearWorkoutBtn = document.getElementById("clearWorkoutBtn"); // Still need the reference
         const completeAllBtn = document.getElementById("completeAllBtn");
         const successBox = document.getElementById("successBox");
 
@@ -971,6 +968,12 @@
                     // Simple random selection for now
                     const exercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
                     const exerciseId = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`; // Unique ID
+
+                    // Ensure the muscle group array exists before pushing
+                    if (!userState.currentWorkout.exercises[muscle]) {
+                         userState.currentWorkout.exercises[muscle] = [];
+                    }
+
                     userState.currentWorkout.exercises[muscle].push({
                         ...exercise,
                         id: exerciseId,
@@ -1250,7 +1253,7 @@
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         workDoneBtn.addEventListener("click", showSuccessMessage);
         toggleAllBtn.addEventListener("click", toggleAllGroups);
-        clearWorkoutBtn.addEventListener("click", clearAllWorkouts);
+        clearWorkoutBtn.addEventListener("click", clearAllWorkouts); // Listener still works
         completeAllBtn.addEventListener("click", completeAllExercises);
 
         // Optional: Add listener to death count input to auto-generate on change (debounced?)
