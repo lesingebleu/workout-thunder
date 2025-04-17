@@ -12,29 +12,61 @@
             --overlay: rgba(0,0,0,0.7);
         }
         
+        /* Background image system */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: var(--dark);
             color: var(--light);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+        
+        #bgImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--overlay);
+            z-index: -1;
+        }
+        
+        /* Content styling */
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         header {
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: var(--overlay);
+            background: rgba(0,0,0,0.5);
             border-radius: 10px;
+            backdrop-filter: blur(5px);
         }
         
+        /* Rest of your existing styles... */
         .death-input {
             display: flex;
             gap: 10px;
@@ -68,10 +100,11 @@
         }
         
         .controls {
-            background: var(--overlay);
+            background: rgba(0,0,0,0.5);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
+            backdrop-filter: blur(5px);
         }
         
         .muscle-group {
@@ -106,9 +139,10 @@
         }
         
         .workout-display {
-            background: var(--overlay);
+            background: rgba(0,0,0,0.5);
             padding: 20px;
             border-radius: 10px;
+            backdrop-filter: blur(5px);
         }
         
         .exercise {
@@ -119,26 +153,16 @@
             display: flex;
             justify-content: space-between;
         }
-        
-        .exercise-info {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .exercise-difficulty {
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
-        
-        .complete-btn {
-            background: #2a9d8f;
-            padding: 5px 10px;
-            font-size: 0.8em;
-        }
     </style>
 </head>
 <body>
+    <!-- Background system -->
+    <div class="bg-container">
+        <img id="bgImage" src="" alt="Background Image">
+        <div class="bg-overlay"></div>
+    </div>
+    
+    <!-- Content container -->
     <div class="container">
         <header>
             <h1>War Thunder Workout Penalty</h1>
@@ -171,32 +195,51 @@
     </div>
 
     <script>
+        // Background Image Cycling
+        const bgImages = [
+            "./images/img1.jpg",
+            "./images/img2.jpg",
+            "./images/img3.jpg"
+        ];
+        
+        const bgImage = document.getElementById("bgImage");
+        let bgIndex = parseInt(localStorage.getItem("bgIndex")) || 0;
+        
+        function cycleBackground() {
+            bgImage.src = bgImages[bgIndex];
+            bgIndex = (bgIndex + 1) % bgImages.length;
+            localStorage.setItem("bgIndex", bgIndex);
+        }
+        
+        // Initialize background
+        cycleBackground();
+        
         // Exercise Database
         const exerciseDB = {
             arms: [
-                { name: "Pushups", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1 },
-                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Pushups (10 reps)", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Bicep Curls (12 reps)", equipment: ["dumbbells"], difficulty: 1 },
+                { name: "Tricep Dips (8 reps)", equipment: ["bodyweight"], difficulty: 2 }
             ],
             chest: [
-                { name: "Bench Press", equipment: ["barbell"], difficulty: 3 },
-                { name: "Dumbbell Flyes", equipment: ["dumbbells"], difficulty: 2 },
-                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Bench Press (8 reps)", equipment: ["barbell"], difficulty: 3 },
+                { name: "Dumbbell Flyes (10 reps)", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Pushup Variations (12 reps)", equipment: ["bodyweight"], difficulty: 2 }
             ],
             back: [
-                { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3 },
-                { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2 },
-                { name: "Superman Holds", equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Pull-ups (5 reps)", equipment: ["bodyweight"], difficulty: 3 },
+                { name: "Bent Over Rows (10 reps)", equipment: ["dumbbells"], difficulty: 2 },
+                { name: "Superman Holds (30 sec)", equipment: ["bodyweight"], difficulty: 1 }
             ],
             abs: [
                 { name: "Plank (1 min)", equipment: ["bodyweight"], difficulty: 1 },
-                { name: "Russian Twists", equipment: ["bodyweight", "plate"], difficulty: 2 },
-                { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Russian Twists (20 reps)", equipment: ["bodyweight", "plate"], difficulty: 2 },
+                { name: "Leg Raises (12 reps)", equipment: ["bodyweight"], difficulty: 2 }
             ],
             legs: [
-                { name: "Squats", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Lunges", equipment: ["bodyweight", "dumbbells"], difficulty: 2 },
-                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Squats (15 reps)", equipment: ["bodyweight"], difficulty: 2 },
+                { name: "Lunges (10/side)", equipment: ["bodyweight", "dumbbells"], difficulty: 2 },
+                { name: "Calf Raises (20 reps)", equipment: ["bodyweight"], difficulty: 1 }
             ]
         };
 
@@ -331,8 +374,20 @@
                     <button class="complete-btn">Complete</button>
                 `;
                 
+                // Add completion handler
+                exerciseEl.querySelector(".complete-btn").addEventListener("click", () => {
+                    exerciseEl.style.opacity = "0.5";
+                    exerciseEl.querySelector(".complete-btn").textContent = "✓ Done";
+                    setTimeout(() => {
+                        exerciseEl.remove();
+                    }, 1000);
+                });
+                
                 exercisesListEl.appendChild(exerciseEl);
             });
+            
+            // Cycle background after each workout generation
+            cycleBackground();
         }
 
         // Event Listeners
