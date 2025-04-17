@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>War Thunder Workout Penalty</title>
+    <title>Workout Thunder</title>
     <style>
         :root {
             --primary: #e63946;
@@ -271,15 +271,15 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.85em;
+            font-size: 0.75em;
             margin-top: 3px;
         }
         
         /* Custom checkbox styling */
         input[type="checkbox"] {
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border: 2px solid #ccc;
             border-radius: 3px;
             outline: none;
@@ -297,7 +297,7 @@
             content: "✓";
             position: absolute;
             color: white;
-            font-size: 12px;
+            font-size: 10px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -318,6 +318,13 @@
             border: 1px solid var(--primary);
             padding: 5px 10px;
             font-size: 0.9em;
+        }
+
+        .death-count-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
     </style>
 </head>
@@ -343,12 +350,11 @@
     
     <div class="container">
         <header>
-            <h1>War Thunder Workout Penalty</h1>
-            <p>Convert your battles into balanced workouts</p>
+            <h1>Workout Thunder</h1>
         </header>
         
         <div class="death-input-container">
-            <div class="death-input">
+            <div class="death-count-container">
                 <span id="deathText">I died</span>
                 <input type="number" id="deathCount" min="1" value="1">
                 <span id="deathTextEnd">times without kills</span>
@@ -418,7 +424,17 @@
             deaths: 0,
             equipment: ["bodyweight"],
             battleType: "air",
-            currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || null,
+            currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || {
+                timestamp: new Date().toISOString(),
+                deaths: 0,
+                exercises: {
+                    arms: [],
+                    chest: [],
+                    back: [],
+                    abs: [],
+                    legs: []
+                }
+            },
             workoutHistory: JSON.parse(localStorage.getItem("workoutHistory")) || {
                 arms: { count: 0, lastDone: null },
                 chest: { count: 0, lastDone: null },
@@ -550,7 +566,17 @@
 
         // Reset workout state
         function resetWorkout() {
-            userState.currentWorkout = null;
+            userState.currentWorkout = {
+                timestamp: new Date().toISOString(),
+                deaths: 0,
+                exercises: {
+                    arms: [],
+                    chest: [],
+                    back: [],
+                    abs: [],
+                    legs: []
+                }
+            };
             localStorage.removeItem("currentWorkout");
             userState.hasGeneratedFirstWorkout = false;
             localStorage.setItem("hasGeneratedFirstWorkout", "false");
@@ -595,22 +621,9 @@
             toggleAllBtn.textContent = isCollapsed ? "Collapse All" : "Expand All";
         }
 
-        // Generate balanced workout (only if first time)
-        function generateWorkout() {
-            const deaths = parseInt(deathCountInput.value) || 1;
-            userState.deaths = deaths;
-            
-            exercisesListEl.innerHTML = "";
-            workDoneBtn.disabled = true;
-            congratsMessage.style.display = "none";
-            
+        // Generate additional exercises without resetting existing ones
+        function generateAdditionalExercises(deaths) {
             const priorityMuscles = getPriorityMuscles();
-            const selectedExercises = {};
-            
-            // Initialize empty arrays for each muscle group
-            displayOrder.forEach(muscle => {
-                selectedExercises[muscle] = [];
-            });
             
             // Distribute exercises based on death count
             for (let i = 0; i < deaths; i++) {
@@ -624,7 +637,7 @@
                 if (availableExercises.length > 0) {
                     const exercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
                     const exerciseId = `ex-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                    selectedExercises[muscle].push({
+                    userState.currentWorkout.exercises[muscle].push({
                         ...exercise,
                         id: exerciseId,
                         reps: 12, // Default reps
@@ -637,13 +650,11 @@
                 }
             }
             
-            // Save current workout
-            userState.currentWorkout = {
-                timestamp: new Date().toISOString(),
-                deaths: deaths,
-                exercises: selectedExercises
-            };
-            userState.hasGeneratedFirstWorkout = true;
+            // Update death count in workout
+            userState.currentWorkout.deaths += deaths;
+            userState.currentWorkout.timestamp = new Date().toISOString();
+            
+            // Save to localStorage
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
             localStorage.setItem("hasGeneratedFirstWorkout", "true");
@@ -651,9 +662,16 @@
             // Show workout display
             workoutDisplay.style.display = "block";
             
-            // Display workout grouped by muscle
+            // Re-render all exercises
+            renderExercises();
+        }
+
+        // Render all exercises from current workout
+        function renderExercises() {
+            exercisesListEl.innerHTML = "";
+            
             displayOrder.forEach(muscle => {
-                if (selectedExercises[muscle].length > 0) {
+                if (userState.currentWorkout.exercises[muscle].length > 0) {
                     const groupEl = document.createElement("div");
                     groupEl.className = "exercise-group";
                     
@@ -685,9 +703,10 @@
                     const exercisesContainer = document.createElement("div");
                     exercisesContainer.className = "exercises-container";
                     
-                    selectedExercises[muscle].forEach(ex => {
+                    userState.currentWorkout.exercises[muscle].forEach(ex => {
                         const exerciseEl = document.createElement("div");
                         exerciseEl.className = "exercise";
+                        if (ex.completed) exerciseEl.classList.add("completed");
                         exerciseEl.id = ex.id;
                         
                         const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
@@ -703,11 +722,15 @@
                                     <span>I'm weak</span>
                                 </label>
                             </div>
-                            <button class="complete-btn">Complete</button>
+                            <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
+                                ${ex.completed ? '✓ Done' : 'Complete'}
+                            </button>
                         `;
                         
                         // Add event listeners
-                        exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
+                        if (!ex.completed) {
+                            exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
+                        }
                         exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
                         
                         exercisesContainer.appendChild(exerciseEl);
@@ -720,91 +743,13 @@
             
             // Set toggle all button to default state
             toggleAllBtn.textContent = "Collapse All";
+            checkAllCompleted();
         }
 
-        // Load current workout if exists
-        function loadCurrentWorkout() {
-            if (userState.currentWorkout) {
-                deathCountInput.value = userState.currentWorkout.deaths;
-                userState.hasGeneratedFirstWorkout = true;
-                
-                // Show workout display
-                workoutDisplay.style.display = "block";
-                
-                // Display workout grouped by muscle
-                displayOrder.forEach(muscle => {
-                    if (userState.currentWorkout.exercises[muscle] && userState.currentWorkout.exercises[muscle].length > 0) {
-                        const groupEl = document.createElement("div");
-                        groupEl.className = "exercise-group";
-                        
-                        const headerEl = document.createElement("div");
-                        headerEl.className = "group-header";
-                        
-                        const titleEl = document.createElement("div");
-                        titleEl.className = "group-title";
-                        titleEl.innerHTML = `<span>${muscle}</span>`;
-                        
-                        const toggleEl = document.createElement("div");
-                        toggleEl.className = "group-toggle";
-                        toggleEl.textContent = "🔺";
-                        toggleEl.addEventListener("click", () => {
-                            const container = groupEl.querySelector(".exercises-container");
-                            if (container.style.display === "none") {
-                                container.style.display = "block";
-                                toggleEl.textContent = "🔺";
-                            } else {
-                                container.style.display = "none";
-                                toggleEl.textContent = "🔻";
-                            }
-                        });
-                        
-                        headerEl.appendChild(titleEl);
-                        headerEl.appendChild(toggleEl);
-                        groupEl.appendChild(headerEl);
-                        
-                        const exercisesContainer = document.createElement("div");
-                        exercisesContainer.className = "exercises-container";
-                        
-                        userState.currentWorkout.exercises[muscle].forEach(ex => {
-                            const exerciseEl = document.createElement("div");
-                            exerciseEl.className = "exercise";
-                            if (ex.completed) exerciseEl.classList.add("completed");
-                            exerciseEl.id = ex.id;
-                            
-                            const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
-                            
-                            exerciseEl.innerHTML = `
-                                <div class="exercise-info">
-                                    <div class="exercise-name">
-                                        ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
-                                        <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
-                                    </div>
-                                    <label class="weak-toggle">
-                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
-                                        <span>I'm weak</span>
-                                    </label>
-                                </div>
-                                <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
-                                    ${ex.completed ? '✓ Done' : 'Complete'}
-                                </button>
-                            `;
-                            
-                            // Add event listeners
-                            if (!ex.completed) {
-                                exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
-                            }
-                            exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
-                            
-                            exercisesContainer.appendChild(exerciseEl);
-                        });
-                        
-                        groupEl.appendChild(exercisesContainer);
-                        exercisesListEl.appendChild(groupEl);
-                    }
-                });
-                
-                checkAllCompleted();
-            }
+        // Generate workout
+        function generateWorkout() {
+            const deaths = parseInt(deathCountInput.value) || 1;
+            generateAdditionalExercises(deaths);
         }
 
         // Event Listeners
@@ -828,7 +773,13 @@
         }
         
         updateDeathText();
-        loadCurrentWorkout();
+        
+        // Load existing workout if available
+        if (userState.currentWorkout && userState.currentWorkout.exercises && 
+            Object.values(userState.currentWorkout.exercises).some(group => group.length > 0)) {
+            workoutDisplay.style.display = "block";
+            renderExercises();
+        }
     </script>
 </body>
 </html>
