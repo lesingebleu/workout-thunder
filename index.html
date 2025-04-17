@@ -117,6 +117,14 @@
             text-align: center;
             background: rgba(255,255,255,0.1);
             color: white;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        
+        /* Hide arrows in Chrome/Safari */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         
         button {
@@ -169,8 +177,8 @@
         
         .exercise {
             background: rgba(255,255,255,0.05);
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
@@ -186,27 +194,34 @@
         .exercise-info {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
             flex-grow: 1;
         }
         
-        .exercise-meta {
+        .exercise-name {
             display: flex;
-            gap: 15px;
-            font-size: 0.9em;
-            opacity: 0.8;
             align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
         }
         
         .exercise-difficulty {
             color: gold;
+            margin-left: 5px;
+        }
+        
+        .exercise-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .complete-btn {
             background: #2a9d8f;
-            padding: 8px 15px;
+            padding: 6px 12px;
             min-width: 80px;
             text-align: center;
+            white-space: nowrap;
         }
         
         .complete-btn.completed {
@@ -220,11 +235,26 @@
             padding: 12px;
             font-size: 1.1em;
             background: #2a9d8f;
+            position: relative;
         }
         
         .work-done-btn:disabled {
             background: #555;
             cursor: not-allowed;
+        }
+        
+        .work-done-btn:disabled:hover::after {
+            content: "You have work to do still";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 0.9em;
+            margin-bottom: 5px;
         }
         
         .congrats-message {
@@ -239,14 +269,15 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            margin-top: 3px;
         }
         
         /* Custom checkbox styling */
         input[type="checkbox"] {
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border: 2px solid #ccc;
             border-radius: 3px;
             outline: none;
@@ -264,7 +295,7 @@
             content: "✓";
             position: absolute;
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -377,7 +408,8 @@
                 abs: { count: 0, lastDone: null },
                 legs: { count: 0, lastDone: null }
             },
-            weakMode: JSON.parse(localStorage.getItem("weakMode")) || {}
+            weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
+            hasGeneratedFirstWorkout: localStorage.getItem("hasGeneratedFirstWorkout") === "true" || false
         };
 
         // DOM Elements
@@ -503,8 +535,10 @@
             });
         }
 
-        // Generate balanced workout
+        // Generate balanced workout (only if first time)
         function generateWorkout() {
+            if (userState.hasGeneratedFirstWorkout) return;
+            
             const deaths = parseInt(deathCountInput.value) || 1;
             userState.deaths = deaths;
             
@@ -551,8 +585,10 @@
                 deaths: deaths,
                 exercises: selectedExercises
             };
+            userState.hasGeneratedFirstWorkout = true;
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("workoutHistory", JSON.stringify(userState.workoutHistory));
+            localStorage.setItem("hasGeneratedFirstWorkout", "true");
             
             // Display workout grouped by muscle
             displayOrder.forEach(muscle => {
@@ -597,14 +633,14 @@
                         
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
-                                <h4>${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">${reps} reps</span></h4>
-                                <div class="exercise-meta">
+                                <div class="exercise-name">
+                                    ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
                                     <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
-                                    <label class="weak-toggle">
-                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
-                                        <span>I'm weak</span>
-                                    </label>
                                 </div>
+                                <label class="weak-toggle">
+                                    <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
+                                    <span>I'm weak</span>
+                                </label>
                             </div>
                             <button class="complete-btn">Complete</button>
                         `;
@@ -626,20 +662,81 @@
         function loadCurrentWorkout() {
             if (userState.currentWorkout) {
                 deathCountInput.value = userState.currentWorkout.deaths;
-                generateBtn.click();
+                userState.hasGeneratedFirstWorkout = true;
                 
-                // Restore completed states
-                if (userState.currentWorkout.exercises) {
-                    for (const group in userState.currentWorkout.exercises) {
-                        for (const exercise of userState.currentWorkout.exercises[group]) {
-                            if (exercise.completed) {
-                                setTimeout(() => {
-                                    completeExercise(exercise.id);
-                                }, 100);
+                // Display workout grouped by muscle
+                displayOrder.forEach(muscle => {
+                    if (userState.currentWorkout.exercises[muscle] && userState.currentWorkout.exercises[muscle].length > 0) {
+                        const groupEl = document.createElement("div");
+                        groupEl.className = "exercise-group";
+                        
+                        const headerEl = document.createElement("div");
+                        headerEl.className = "group-header";
+                        
+                        const titleEl = document.createElement("div");
+                        titleEl.className = "group-title";
+                        titleEl.innerHTML = `<span>${muscle}</span>`;
+                        
+                        const toggleEl = document.createElement("div");
+                        toggleEl.className = "group-toggle";
+                        toggleEl.textContent = "🔺";
+                        toggleEl.addEventListener("click", () => {
+                            const container = groupEl.querySelector(".exercises-container");
+                            if (container.style.display === "none") {
+                                container.style.display = "block";
+                                toggleEl.textContent = "🔺";
+                            } else {
+                                container.style.display = "none";
+                                toggleEl.textContent = "🔻";
                             }
-                        }
+                        });
+                        
+                        headerEl.appendChild(titleEl);
+                        headerEl.appendChild(toggleEl);
+                        groupEl.appendChild(headerEl);
+                        
+                        const exercisesContainer = document.createElement("div");
+                        exercisesContainer.className = "exercises-container";
+                        
+                        userState.currentWorkout.exercises[muscle].forEach(ex => {
+                            const exerciseEl = document.createElement("div");
+                            exerciseEl.className = "exercise";
+                            if (ex.completed) exerciseEl.classList.add("completed");
+                            exerciseEl.id = ex.id;
+                            
+                            const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
+                            
+                            exerciseEl.innerHTML = `
+                                <div class="exercise-info">
+                                    <div class="exercise-name">
+                                        ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
+                                        <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
+                                    </div>
+                                    <label class="weak-toggle">
+                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""}>
+                                        <span>I'm weak</span>
+                                    </label>
+                                </div>
+                                <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
+                                    ${ex.completed ? '✓ Done' : 'Complete'}
+                                </button>
+                            `;
+                            
+                            // Add event listeners
+                            if (!ex.completed) {
+                                exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
+                            }
+                            exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
+                            
+                            exercisesContainer.appendChild(exerciseEl);
+                        });
+                        
+                        groupEl.appendChild(exercisesContainer);
+                        exercisesListEl.appendChild(groupEl);
                     }
-                }
+                });
+                
+                checkAllCompleted();
             }
         }
 
