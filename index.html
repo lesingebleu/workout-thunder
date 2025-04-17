@@ -11,6 +11,8 @@
             --light: #f8f9fa;
             --overlay: rgba(0,0,0,0.7);
             --completed: rgba(255,255,255,0.1);
+            --button-color: #a22a29;
+            --button-border: #e53834;
         }
         
         body {
@@ -127,10 +129,11 @@
         }
         
         button {
-            background: var(--primary);
+            background: var(--button-color);
             color: white;
             cursor: pointer;
             transition: all 0.3s;
+            border: 1px solid var(--button-border);
         }
         
         button:hover {
@@ -217,7 +220,8 @@
         }
         
         .complete-btn {
-            background: #2a9d8f;
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
             padding: 6px 12px;
             min-width: 80px;
             text-align: center;
@@ -226,6 +230,7 @@
         
         .complete-btn.completed {
             background: #555;
+            border-color: #777;
         }
         
         .work-done-btn {
@@ -234,12 +239,14 @@
             margin-top: 20px;
             padding: 12px;
             font-size: 1.1em;
-            background: #2a9d8f;
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
             position: relative;
         }
         
         .work-done-btn:disabled {
             background: #555;
+            border-color: #777;
             cursor: not-allowed;
         }
         
@@ -269,11 +276,10 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.85em;
+            font-size: 0.75em;
             margin-top: 3px;
         }
         
-        /* Custom checkbox styling - Made smaller */
         input[type="checkbox"] {
             appearance: none;
             width: 12px;
@@ -301,10 +307,6 @@
             transform: translate(-50%, -50%);
         }
         
-        .toggle-label {
-            cursor: pointer;
-        }
-
         .toggle-all-container {
             display: flex;
             justify-content: flex-end;
@@ -312,8 +314,8 @@
         }
 
         .toggle-all-btn {
-            background: transparent;
-            border: 1px solid var(--primary);
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
             padding: 5px 10px;
             font-size: 0.9em;
         }
