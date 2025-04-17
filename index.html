@@ -503,17 +503,16 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2>Your Penalty Workout</h2>
                  <!-- Container for top-right buttons -->
-                <div class="toggle-all-container"> {/* Removed inline style margin-bottom: 0 */}
+                <div class="toggle-all-container">
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
                     <button id="completeAllBtn" class="complete-all-btn">Complete All</button>
-                    <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button> {/* Moved here */}
+                    <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
                 </div>
             </div>
              <!-- Exercise list area -->
             <div id="exercisesList"></div>
              <!-- Bottom button container (only Work Done now) -->
             <div class="work-done-container">
-                {/* Clear All button removed from here */}
                 <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
             </div>
         </div>
@@ -706,6 +705,9 @@
         function removeExercise(exerciseId) {
             let removed = false;
             for (const muscle of displayOrder) {
+                // Ensure the muscle group array exists before trying to find an index
+                if (!userState.currentWorkout.exercises[muscle]) continue;
+
                 const exercises = userState.currentWorkout.exercises[muscle];
                 const index = exercises.findIndex(ex => ex.id === exerciseId);
                 // Make sure exercise exists and is not completed before removing
@@ -759,7 +761,13 @@
         // Complete all exercises
         function completeAllExercises() {
             let changed = false;
+             // Ensure exercises object exists
+            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
+
             for (const muscle of displayOrder) {
+                 // Ensure muscle group array exists
+                 if (!userState.currentWorkout.exercises[muscle]) continue;
+
                  userState.currentWorkout.exercises[muscle].forEach(ex => {
                     if (!ex.completed) {
                         ex.completed = true;
@@ -774,7 +782,7 @@
             }
             if (changed) {
                 localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-                // checkAllCompleted() is called within completeExercise, so no need to call again here
+                // checkAllCompleted() is called within completeExercise, so no need to call again here unless completeExercise fails
             }
         }
 
@@ -793,6 +801,8 @@
             let totalExercises = 0;
 
             for (const group in userState.currentWorkout.exercises) {
+                // Ensure group array exists
+                if (!userState.currentWorkout.exercises[group]) continue;
                 totalExercises += userState.currentWorkout.exercises[group].length;
                 for (const exercise of userState.currentWorkout.exercises[group]) {
                     if (!exercise.completed) {
@@ -863,19 +873,23 @@
 
             // Determine target state based on the first group's current state
             const firstContainer = groups[0].querySelector(".exercises-container");
-            const isCurrentlyCollapsed = firstContainer.style.display === "none";
+            // Check if the container exists and its display style property
+            const isCurrentlyCollapsed = firstContainer && firstContainer.style.display === "none";
             const expand = isCurrentlyCollapsed; // If first is collapsed, we want to expand all
 
             groups.forEach(group => {
                 const container = group.querySelector(".exercises-container");
                 const toggle = group.querySelector(".group-toggle");
-                if (expand) {
-                    container.style.display = "block"; // Or "" maybe better for default CSS
-                    toggle.textContent = "🔺";
-                } else {
-                    container.style.display = "none";
-                    toggle.textContent = "🔻";
-                }
+                 // Ensure elements exist before manipulating
+                if (container && toggle) {
+                     if (expand) {
+                         container.style.display = "block"; // Or "" maybe better for default CSS
+                         toggle.textContent = "🔺";
+                     } else {
+                         container.style.display = "none";
+                         toggle.textContent = "🔻";
+                     }
+                 }
             });
 
             // Update the toggle-all button text
@@ -903,6 +917,9 @@
         // Remove excess exercises when decreasing count
         function removeExcessExercises(countToRemove) {
             if (countToRemove <= 0) return;
+             // Ensure exercises object exists
+            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
+
 
             let removedCount = 0;
             // Iterate backwards through display order to remove *last added* first, generally
@@ -937,7 +954,7 @@
 
             // Save updated state
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-             if (Object.keys(userState.weakMode).length > 0) { // Only save weakMode if not empty after cleanup
+             if (Object.keys(userState.weakMode || {}).length > 0) { // Check weakMode exists before checking length
                  localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
              } else {
                  localStorage.removeItem("weakMode"); // Clear from storage if empty
@@ -950,6 +967,10 @@
         // Generate additional exercises
         function generateAdditionalExercises(additionalDeaths) {
             if (additionalDeaths <= 0) return; // No exercises to add
+             // Ensure exercises object exists
+             if (!userState.currentWorkout || !userState.currentWorkout.exercises) {
+                 userState.currentWorkout = { ...userState.currentWorkout, exercises: {}}; // Initialize if missing
+             };
 
             const priorityMuscles = getPriorityMuscles();
             const initialDeathCount = userState.lastDeathCount; // Deaths *before* adding new ones
@@ -1010,6 +1031,9 @@
         // Render all exercises
         function renderExercises() {
             exercisesListEl.innerHTML = ""; // Clear previous list
+
+             // Ensure exercises object exists before iterating
+            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
 
             let hasExercises = false;
             let isAnyExerciseIncomplete = false;
@@ -1226,20 +1250,19 @@
 
 
          // Load existing workout and render if present
-         const currentWorkoutExists = userState.currentWorkout && userState.currentWorkout.deaths > 0;
+          // Ensure exercises object exists before checking length
+         const currentWorkoutExercises = userState.currentWorkout?.exercises;
+         const workoutExists = currentWorkoutExercises && Object.values(currentWorkoutExercises).some(group => group && group.length > 0);
 
-         if (currentWorkoutExists) {
-            userState.lastDeathCount = userState.currentWorkout.deaths;
-            deathCountInput.value = userState.lastDeathCount; // Sync input with loaded count
-            renderExercises(); // Render existing exercises
+         if (workoutExists) {
+             userState.lastDeathCount = userState.currentWorkout.deaths || 0; // Use 0 if deaths is missing
+             deathCountInput.value = userState.lastDeathCount > 0 ? userState.lastDeathCount : "1"; // Sync input, default to 1 if 0
+             renderExercises(); // Render existing exercises
          } else {
-             // No workout loaded or deaths is 0
-             userState.lastDeathCount = 0; // Ensure last count is 0
-             deathCountInput.value = "1"; // Set default input for new session
-             workoutDisplay.style.display = "none";
-             successBox.style.display = "none";
+             // No workout loaded or deaths is 0 or exercises missing
+             clearAllWorkouts(); // Ensure clean state if loaded data is invalid
              // Ensure history is initialized even if no workout loaded
-              displayOrder.forEach(muscle => {
+             displayOrder.forEach(muscle => {
                  if (!userState.workoutHistory[muscle]) {
                      userState.workoutHistory[muscle] = { count: 0, lastDone: null };
                  }
