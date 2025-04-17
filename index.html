@@ -208,6 +208,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+        
+        .exercise-name-text {
+            display: flex;
+            align-items: center;
             gap: 5px;
             flex-wrap: wrap;
         }
@@ -275,6 +280,7 @@
             margin-bottom: 5px;
         }
         
+        /* Switch styling */
         .weak-toggle {
             display: flex;
             align-items: center;
@@ -283,30 +289,71 @@
             justify-content: flex-end;
         }
         
-        input[type="checkbox"] {
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-            outline: none;
+        .switch {
             position: relative;
-            cursor: pointer;
+            display: inline-block;
+            width: 30px;
+            height: 17px;
         }
         
-        input[type="checkbox"]:checked {
-            border-color: var(--primary);
-            background: var(--primary);
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
         
-        input[type="checkbox"]:checked::after {
-            content: "✓";
+        .slider {
             position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 17px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 13px;
+            width: 13px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(13px);
+        }
+        
+        /* X button styling */
+        .remove-exercise-btn {
+            background: var(--button-color) !important;
+            border: 1px solid var(--button-border) !important;
             color: white;
-            font-size: 9px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            padding: 3px 8px !important;
+            font-size: 0.9em;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .remove-exercise-btn:hover {
+            filter: brightness(1.2);
+        }
+        
+        .remove-exercise-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
         
         .toggle-all-container {
@@ -334,44 +381,6 @@
 
         .generate-main-btn {
             position: relative;
-        }
-
-        .remove-exercise-btn {
-            background: transparent !important;
-            border: none !important;
-            color: white;
-            padding: 0 5px !important;
-            font-size: 1.2em;
-            cursor: pointer;
-        }
-
-        .remove-exercise-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .remove-exercise-btn:hover::after {
-            content: "This will remove this exercise";
-            position: absolute;
-            top: -25px;
-            right: 0;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            white-space: nowrap;
-        }
-
-        .complete-all-btn {
-            background: var(--complete-green) !important;
-            border: 1px solid var(--complete-green) !important;
-        }
-
-        .clear-workout-btn {
-            background: var(--button-color) !important;
-            border: 1px solid var(--button-border) !important;
         }
 
         .success-box {
@@ -589,7 +598,7 @@
                 if (repsElement && weakToggle) {
                     const baseReps = parseInt(repsElement.dataset.baseReps);
                     const currentReps = userState.weakMode[exerciseId] ? Math.floor(baseReps / 2) : baseReps;
-                    repsElement.textContent = `${currentReps} reps`;
+                    repsElement.textContent = userState.weakMode[exerciseId] ? `${currentReps}` : `(${currentReps} reps)`;
                     weakToggle.checked = userState.weakMode[exerciseId] || false;
                 }
             }
@@ -869,21 +878,27 @@
                         exerciseEl.id = ex.id;
                         
                         const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
+                        const repsText = userState.weakMode[ex.id] ? `${reps}` : `(${reps} reps)`;
                         
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
-                                    ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">(${reps} reps)</span>
-                                    <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
-                                    <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">❌</button>
+                                    <div class="exercise-name-text">
+                                        ${ex.name} <span class="exercise-reps" data-base-reps="${ex.reps}">${repsText}</span>
+                                        <span class="exercise-difficulty">${"★".repeat(ex.difficulty)}</span>
+                                    </div>
+                                    <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}">X</button>
                                 </div>
                                 <div class="exercise-controls">
                                     <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                         ${ex.completed ? '✓ Done' : 'Complete'}
                                     </button>
                                     <label class="weak-toggle">
-                                        <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
                                         <span>I'm weak</span>
+                                        <label class="switch">
+                                            <input type="checkbox" id="weak-${ex.id}" ${userState.weakMode[ex.id] ? "checked" : ""} ${ex.completed ? 'disabled' : ''}>
+                                            <span class="slider"></span>
+                                        </label>
                                     </label>
                                 </div>
                             </div>
