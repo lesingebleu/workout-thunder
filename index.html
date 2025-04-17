@@ -340,8 +340,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             background-color: #ccc;
             color: #333;
             border-radius: 50%;
@@ -374,8 +374,8 @@
         }
         
         .checkbox-option input[type="checkbox"] {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             margin: 0;
         }
         
@@ -871,39 +871,39 @@
         // Render all exercises
         function renderExercises() {
             exercisesListEl.innerHTML = "";
-            
+
             displayOrder.forEach(muscle => {
                 if (userState.currentWorkout.exercises[muscle].length > 0) {
                     const groupEl = document.createElement("div");
                     groupEl.className = "exercise-group";
-                    
+
                     const headerEl = document.createElement("div");
                     headerEl.className = "group-header";
                     headerEl.addEventListener("click", () => toggleExerciseGroup(groupEl));
-                    
+
                     const titleEl = document.createElement("div");
                     titleEl.className = "group-title";
                     titleEl.innerHTML = `<span>${muscle}</span>`;
-                    
+
                     const toggleEl = document.createElement("div");
                     toggleEl.className = "group-toggle";
                     toggleEl.textContent = "🔺";
-                    
+
                     headerEl.appendChild(titleEl);
                     headerEl.appendChild(toggleEl);
                     groupEl.appendChild(headerEl);
-                    
+
                     const exercisesContainer = document.createElement("div");
                     exercisesContainer.className = "exercises-container";
-                    
+
                     userState.currentWorkout.exercises[muscle].forEach(ex => {
                         const exerciseEl = document.createElement("div");
                         exerciseEl.className = "exercise";
                         if (ex.completed) exerciseEl.classList.add("completed");
                         exerciseEl.id = ex.id;
-                        
+
                         const reps = userState.weakMode[ex.id] ? Math.floor(ex.reps / 2) : ex.reps;
-                        
+
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
@@ -925,24 +925,42 @@
                                 </label>
                             </div>
                         `;
-                        
+
+                        // --- Add Event Listeners ---
                         if (!ex.completed) {
                             exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
                             exerciseEl.querySelector(".remove-exercise-btn").addEventListener("click", (e) => {
                                 e.stopPropagation();
                                 removeExercise(ex.id);
                             });
+                             // Listener for the checkbox itself (via the label text/checkbox)
+                             exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
+                        } else {
+                             // Ensure checkbox is disabled visually if completed
+                             const weakCheckbox = exerciseEl.querySelector(".weak-toggle input");
+                             if (weakCheckbox) weakCheckbox.disabled = true;
                         }
-                        exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
-                        
+
+                        // --- FIX: Add listener to the help icon ---
+                        const helpIcon = exerciseEl.querySelector(".help-icon");
+                        if (helpIcon) {
+                            helpIcon.addEventListener('click', function(event) {
+                                // Prevent the click from reaching the label and toggling the checkbox
+                                event.stopPropagation();
+                                // Prevent any potential default behavior of the span click (though unlikely needed here)
+                                event.preventDefault();
+                            });
+                        }
+                        // --- End of FIX ---
+
                         exercisesContainer.appendChild(exerciseEl);
                     });
-                    
+
                     groupEl.appendChild(exercisesContainer);
                     exercisesListEl.appendChild(groupEl);
                 }
             });
-            
+
             toggleAllBtn.textContent = "Collapse All";
             checkAllCompleted();
         }
