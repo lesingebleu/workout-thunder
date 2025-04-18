@@ -610,6 +610,9 @@
         const completeAllBtn = document.getElementById("completeAllBtn");
         const successBox = document.getElementById("successBox");
 
+        // Spam prevention timer variable
+        let lastGenerateClick = 0;
+
         // Update death text based on battle type
         function updateDeathText() {
             if (userState.battleType === "air") {
@@ -688,6 +691,8 @@
                 // Update state
                 if (userState.currentWorkout) {
                     for (const group in userState.currentWorkout.exercises) {
+                         // Ensure group array exists
+                         if (!userState.currentWorkout.exercises[group]) continue;
                         const exercise = userState.currentWorkout.exercises[group].find(ex => ex.id === exerciseId);
                         if (exercise) {
                             exercise.completed = true;
@@ -825,12 +830,16 @@
         }
 
 
-        // Show success message and potentially reset
+        // Show success message and reset spam timer
         function showSuccessMessage() {
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
-            // Optional: Automatically clear the workout after showing success
-            // resetWorkout(); // You might want this uncommented
+            lastGenerateClick = 0; // <<--- FIX: Reset the spam prevention timer HERE
+
+            // Optional: Automatically clear the workout state as well?
+            // If you want the workout to clear automatically after success, uncomment the next line
+            // resetWorkout();
+            // If you want the user to *manually* clear/generate new, leave resetWorkout() commented.
         }
 
 
@@ -1156,9 +1165,11 @@
 
             // Show or hide workout display based on whether there are exercises
             workoutDisplay.style.display = hasExercises ? "block" : "none";
-            // Hide success box whenever rendering exercises
-            if (successBox.style.display === 'block') {
-                successBox.style.display = 'none';
+            // Hide success box whenever rendering exercises (unless it was just shown)
+            if (successBox.style.display === 'block' && !workDoneBtn.disabled) {
+                 // Don't hide success box if WORK DONE was just clicked
+            } else if (successBox.style.display === 'block') {
+                 successBox.style.display = 'none';
             }
 
 
@@ -1208,26 +1219,45 @@
                 const additionalDeaths = targetDeaths - currentCount;
                 generateAdditionalExercises(additionalDeaths);
             } else {
-                // Count hasn't changed, show spam warning only if clicked again
-                const warning = document.querySelector(".spam-warning");
-                if (warning.style.display !== 'block') { // Only show if not already visible
+                 // Count hasn't changed, show spam warning only if clicked again rapidly
+                 // This case is handled by handleGenerateClick's timer check
+                 console.log("Generate called but count hasn't changed.");
+                 // Optionally show spam warning here too if timer allows click but count is same
+                  const warning = document.querySelector(".spam-warning");
+                  if (warning.style.display !== 'block') {
                      warning.style.display = "block";
                      setTimeout(() => warning.style.display = "none", 2000);
-                 }
+                  }
             }
         }
 
 
         // Spam prevention for generate button
-        let lastGenerateClick = 0;
         function handleGenerateClick() {
             const now = Date.now();
             // Add a small delay (e.g., 300ms) to prevent accidental double clicks triggering complex logic multiple times
-            if (now - lastGenerateClick < 300) {
+            if (now - lastGenerateClick < 300) { // Reduced threshold slightly
                  console.log("Generate button clicked too quickly.");
+                 // Optionally show spam warning here if clicks are super fast
+                 const warning = document.querySelector(".spam-warning");
+                 if (warning.style.display !== 'block') {
+                     warning.style.display = "block";
+                     setTimeout(() => warning.style.display = "none", 1500);
+                 }
                 return;
             }
-            lastGenerateClick = now;
+            lastGenerateClick = now; // Update timestamp *after* check passes
+
+             // If success box is visible, hide it before generating new workout
+             if (successBox.style.display === 'block') {
+                 successBox.style.display = 'none';
+             }
+             // If workout is cleared (lastDeathCount is 0), ensure input is reset before generating
+             if (userState.lastDeathCount === 0 && parseInt(deathCountInput.value) === 0) {
+                 deathCountInput.value = "1";
+             }
+
+
             generateWorkout();
         }
 
