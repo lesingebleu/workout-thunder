@@ -14,6 +14,12 @@
             --button-color: #a22a29;
             --button-border: #e53834;
             --complete-green: #4CAF50;
+            /* --- Tooltip Style Variables (for consistency) --- */
+            --tooltip-bg: rgba(0,0,0,0.8);
+            --tooltip-color: white;
+            --tooltip-padding: 5px 10px;
+            --tooltip-radius: 5px;
+            --tooltip-fontsize: 14px;
         }
 
         body {
@@ -61,14 +67,13 @@
 
         header {
             text-align: center;
-            margin-bottom: 15px; /* Reduced margin */
+            margin-bottom: 15px;
             padding: 20px;
             background: rgba(0,0,0,0.5);
             border-radius: 10px;
             backdrop-filter: blur(5px);
         }
 
-        /* --- Explanation Text Style --- */
         .explanation-text {
             text-align: center;
             font-size: 0.9em;
@@ -79,7 +84,6 @@
             border-radius: 5px;
             backdrop-filter: blur(2px);
         }
-        /* --- End Explanation Text Style --- */
 
         .battle-toggle {
             position: fixed;
@@ -147,17 +151,15 @@
             color: white;
             cursor: pointer;
             border: 1px solid var(--button-border);
-            transition: none; /* Remove default transitions that might interfere */
+            transition: none;
         }
 
-        /* Standard hover for non-disabled, non-completed buttons */
         button:not(:disabled):not(.completed):hover {
             filter: brightness(1.2);
         }
-        /* Prevent hover effect on completed 'Done' button */
         .complete-btn.completed:hover {
-            filter: none; /* Explicitly remove filter */
-            cursor: default; /* Indicate non-interactive */
+            filter: none;
+            cursor: default;
         }
 
 
@@ -209,7 +211,7 @@
             margin-bottom: 8px;
             border-radius: 5px;
             display: flex;
-            justify-content: space-between; /* Keep space-between for main flex layout */
+            justify-content: space-between;
         }
 
         .exercise.completed {
@@ -219,9 +221,9 @@
 
         .exercise-info {
             display: flex;
-            flex-direction: column; /* Stack name/controls block and weak toggle */
+            flex-direction: column;
             gap: 5px;
-            flex-grow: 1; /* Take available space */
+            flex-grow: 1;
         }
 
         .exercise-name {
@@ -229,7 +231,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            flex-wrap: wrap; /* Allow wrapping if needed */
+            flex-wrap: wrap;
         }
 
         .exercise-name-text {
@@ -237,7 +239,7 @@
             align-items: center;
             gap: 5px;
             flex-wrap: wrap;
-            margin-right: 10px; /* Space between text and controls */
+            margin-right: 10px;
         }
 
         .exercise-difficulty {
@@ -249,7 +251,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-shrink: 0; /* Prevent controls shrinking */
+            flex-shrink: 0;
         }
 
         .complete-btn {
@@ -259,9 +261,9 @@
             min-width: 80px;
             text-align: center;
             white-space: nowrap;
-            color: white; /* Explicitly set color */
-            font-size: 1em; /* Standardize font size */
-            border-radius: 5px; /* Standardize radius */
+            color: white;
+            font-size: 1em;
+            border-radius: 5px;
             cursor: pointer;
         }
 
@@ -270,67 +272,65 @@
             border-color: var(--complete-green);
         }
 
-        /* Swap Button Styling */
         .swap-exercise-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
             color: white;
-            padding: 6px 12px; /* Match complete-btn size */
-            font-size: 1em; /* Match complete-btn size */
+            padding: 6px 12px;
+            font-size: 1em;
             cursor: pointer;
-            border-radius: 5px; /* Match complete-btn size */
-            min-width: 80px; /* Adjust width for text "↻ Swap" */
+            border-radius: 5px;
+            min-width: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            white-space: nowrap; /* Prevent wrapping */
-            gap: 5px; /* Space between icon and text */
+            white-space: nowrap;
+            gap: 5px;
         }
 
         .swap-exercise-btn:hover::after {
-            content: "Swap for another exercise"; /* Updated tooltip */
+            content: "Swap for another exercise";
             position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
+            /* Apply consistent tooltip style */
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: var(--tooltip-fontsize);
             white-space: nowrap;
             margin-bottom: 5px;
-            z-index: 1; /* Ensure tooltip is on top */
+            z-index: 1;
         }
 
-        /* Hover effect only for non-disabled swap button */
-        .swap-exercise-btn:not(.disabled):not(:disabled):hover { /* Added second :disabled check */
+        .swap-exercise-btn:not(.disabled):not(:disabled):hover {
             filter: brightness(1.2);
         }
 
         .swap-exercise-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            pointer-events: none; /* Prevent clicks */
+            pointer-events: none;
         }
-        /* End Swap Button Styling */
 
         .work-done-container {
-            display: flex; /* Keep flex */
-            justify-content: center; /* Center the single button */
+            display: flex;
+            justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
 
         .work-done-btn {
             display: block;
-            width: 100%; /* Take full width now */
+            width: 100%;
             padding: 12px;
             font-size: 1.1em;
             background: var(--button-color);
             border: 1px solid var(--button-border);
-            position: relative;
+            position: relative; /* Needed for ::after */
         }
 
         .work-done-btn.completed {
@@ -344,78 +344,80 @@
             cursor: not-allowed;
         }
 
+        /* --- WORK DONE Tooltip Style Update --- */
         .work-done-btn:disabled:hover::after {
             content: "You have work to do still";
             position: absolute;
-            bottom: 100%;
+            bottom: 100%; /* Position above */
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
+             /* Apply consistent tooltip style */
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: var(--tooltip-fontsize);
             white-space: nowrap;
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            margin-bottom: 5px; /* Space from button */
+            z-index: 1;
         }
+        /* --- End WORK DONE Tooltip Style Update --- */
 
-        /* Label specific styling */
         .weak-toggle {
-            display: flex; /* Use flex for label layout */
+            display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.8em; /* Slightly smaller font */
-            position: relative; /* For help icon tooltip positioning */
-            margin-top: 5px; /* Space above weak toggle */
+            font-size: 0.8em;
+            position: relative;
+            margin-top: 5px;
             color: #ccc;
-            cursor: default; /* Default cursor for label */
-            width: fit-content; /* Prevent label taking full width */
+            cursor: default;
+            width: fit-content;
         }
 
         .weak-toggle input[type="checkbox"] {
-             cursor: pointer; /* Pointer cursor only for checkbox */
+             cursor: pointer;
         }
 
          .weak-toggle-text {
-             cursor: default; /* Default cursor for text span */
-             user-select: none; /* Prevent text selection on click */
+             cursor: default;
+             user-select: none;
          }
 
-        /* Help Icon Style Adjustments */
         .help-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 14px;  /* Smaller */
-            height: 14px; /* Smaller */
+            width: 13px;
+            height: 13px;
             background-color: #ccc;
             color: #333;
             border-radius: 50%;
-            font-size: 0.7em; /* Smaller question mark */
+            font-size: 14px;
             font-weight: bold;
-            cursor: help; /* Help cursor for the icon */
-            position: relative; /* Needed for ::after */
-            user-select: none; /* Prevent text selection */
-            line-height: 1; /* Adjust vertical alignment if needed */
+            cursor: help;
+            position: relative;
+            user-select: none;
+            line-height: 1;
         }
 
         .help-icon:hover::after {
             content: "This option reduces the reps by half";
             position: absolute;
-            top: -35px; /* Adjust position if needed */
+            top: -35px; /* Position above */
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9em; /* Larger tooltip text */
+            /* Use consistent tooltip style */
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: var(--tooltip-fontsize);
             white-space: nowrap;
             width: max-content;
-            z-index: 1; /* Ensure tooltip is on top */
+            z-index: 1;
         }
-        /* End Help Icon Style Adjustments */
 
-        /* Original checkbox style (shared with Air/Ground) */
         .checkbox-option {
             display: flex;
             align-items: center;
@@ -425,14 +427,14 @@
         .checkbox-option input[type="checkbox"] {
             width: 16px;
             height: 16px;
-            margin: 0; /* Reset default margins */
+            margin: 0;
         }
 
 
         .toggle-all-container {
             display: flex;
-            justify-content: flex-end; /* Aligns buttons to the right */
-            margin-bottom: 10px; /* Original margin restored */
+            justify-content: flex-end;
+            margin-bottom: 10px;
             gap: 10px;
         }
 
@@ -441,7 +443,7 @@
             border: 1px solid var(--button-border);
             padding: 5px 10px;
             font-size: 0.9em;
-            min-width: 100px; /* Keep minimum width */
+            min-width: 100px;
         }
 
         .generate-btn-container {
@@ -453,7 +455,7 @@
         }
 
         .generate-main-btn {
-            position: relative;
+            position: relative; /* Needed for spam warning positioning */
         }
 
         .success-box {
@@ -469,19 +471,24 @@
             color: white;
         }
 
+        /* --- SPAM WARNING Tooltip Style Update --- */
         .spam-warning {
             position: absolute;
-            top: -25px;
+            top: -35px; /* Position consistently above */
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
+            /* Apply consistent tooltip style */
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: var(--tooltip-fontsize);
             white-space: nowrap;
-            display: none;
+            display: none; /* Controlled by JS */
+            z-index: 1;
         }
+        /* --- End SPAM WARNING Tooltip Style Update --- */
+
     </style>
 </head>
 <body>
@@ -509,7 +516,6 @@
             <h1>Workout Thunder</h1>
         </header>
 
-        <!-- Explanation Text Added -->
         <div class="explanation-text">
             Each death assigns the next exercise in a fixed rotation: Arms → Chest → Back → Abs → Legs → Repeat.
         </div>
@@ -523,27 +529,23 @@
             <div class="generate-btn-container">
                 <div class="generate-main-btn">
                     <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
+                    <!-- Spam warning text remains the same -->
                     <span class="spam-warning">If you want to add more exercises, change the number above</span>
                 </div>
             </div>
         </div>
 
         <div class="workout-display" id="workoutDisplay">
-             <!-- Top row: Title and control buttons -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2>Your Penalty Workout</h2>
-                 <!-- Container for top-right buttons -->
                 <div class="toggle-all-container">
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
                     <button id="completeAllBtn" class="complete-all-btn">Complete All</button>
                     <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
                 </div>
             </div>
-             <!-- Exercise list area -->
             <div id="exercisesList"></div>
-             <!-- Bottom button container -->
             <div class="work-done-container">
-                <!-- Clear All button moved here in previous step - removed as per your request to put it top right -->
                 <button id="workDoneBtn" class="work-done-btn" disabled>WORK DONE</button>
             </div>
         </div>
@@ -559,20 +561,19 @@
             "./images/img1.jpg",
             "./images/img2.jpg",
             "./images/img3.jpg"
-            // Add more image paths here if needed
         ];
 
         const bgImage = document.getElementById("bgImage");
         let bgIndex = parseInt(localStorage.getItem("bgIndex")) || 0;
-        if (bgImages.length > 0 && bgImages[bgIndex]) { // Basic check
+        if (bgImages.length > 0 && bgImages[bgIndex]) {
             bgImage.src = bgImages[bgIndex];
             bgIndex = (bgIndex + 1) % bgImages.length;
             localStorage.setItem("bgIndex", bgIndex);
         } else {
-            console.warn("Background images array is empty, index out of bounds, or paths incorrect.");
+            console.warn("Background images array empty or paths incorrect.");
         }
 
-        // Exercise Database (Added Back exercises)
+        // Exercise Database
         const exerciseDB = {
             arms: [
                 { name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
@@ -584,51 +585,45 @@
             chest: [
                 { name: "Bench Press", equipment: ["barbell"], difficulty: 3, reps: 10 },
                 { name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },
-                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 }, // e.g., wide
+                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
                 { name: "Incline Dumbbell Press", equipment: ["dumbbells"], difficulty: 3, reps: 10 },
                 { name: "Wide Pushups", equipment: ["bodyweight"], difficulty: 1, reps: 20 }
             ],
-            back: [ // Added Back
+            back: [
                 { name: "Pull-ups", equipment: ["bodyweight", "pullup_bar"], difficulty: 3, reps: 8 },
                 { name: "Bent Over Rows", equipment: ["dumbbells", "barbell"], difficulty: 2, reps: 12 },
                 { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 },
                 { name: "Superman", equipment: ["bodyweight"], difficulty: 1, reps: 15 },
-                { name: "Renegade Rows", equipment: ["dumbbells"], difficulty: 3, reps: 10 } // Per side
+                { name: "Renegade Rows", equipment: ["dumbbells"], difficulty: 3, reps: 10 }
             ],
             abs: [
-                { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2, reps: 20 }, // Higher reps for abs
+                { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2, reps: 20 },
                 { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
-                { name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 }, // Reps here means seconds
+                { name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 },
                 { name: "Crunches", equipment: ["bodyweight"], difficulty: 1, reps: 25 },
                 { name: "Bicycle Crunches", equipment: ["bodyweight"], difficulty: 2, reps: 20 }
             ],
             legs: [
                 { name: "Squats", equipment: ["bodyweight"], difficulty: 2, reps: 20 },
-                { name: "Lunges", equipment: ["bodyweight"], difficulty: 2, reps: 12 }, // 12 per leg
+                { name: "Lunges", equipment: ["bodyweight"], difficulty: 2, reps: 12 },
                 { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1, reps: 25 },
                 { name: "Glute Bridges", equipment: ["bodyweight"], difficulty: 1, reps: 20 },
                 { name: "Jump Squats", equipment: ["bodyweight"], difficulty: 3, reps: 15 }
             ]
         };
 
-        // Updated Display Order for Strict Cycle
         const displayOrder = ["arms", "chest", "back", "abs", "legs"];
 
         // User State
         const userState = {
-            deaths: 0, // Not directly used for tracking count anymore, input is source
             equipment: ["bodyweight", "dumbbells"], // Example equipment
             battleType: "air",
             currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || {
-                exercises: { // Structure simplified, just exercises by group
-                    arms: [], chest: [], back: [], abs: [], legs: []
-                }
+                exercises: { arms: [], chest: [], back: [], abs: [], legs: [] }
             },
-            // Workout history is no longer used for generation logic
-            // workoutHistory: JSON.parse(localStorage.getItem("workoutHistory")) || { ... },
             weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
-            lastTotalAssignedCount: 0, // Renamed from lastDeathCount for clarity
-            currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0 // Tracks position in displayOrder cycle
+            lastTotalAssignedCount: 0,
+            currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0
         };
 
         // DOM Elements
@@ -645,8 +640,8 @@
         const clearWorkoutBtn = document.getElementById("clearWorkoutBtn");
         const completeAllBtn = document.getElementById("completeAllBtn");
         const successBox = document.getElementById("successBox");
+        const spamWarningEl = document.querySelector(".spam-warning"); // Get reference to spam warning span
 
-        // Spam prevention timer variable
         let lastGenerateClick = 0;
 
         // --- Utility Functions ---
@@ -684,9 +679,8 @@
                 airBattlesCheckbox.checked = false;
                 userState.battleType = "ground";
             } else {
-                // Prevent unchecking the only checked box
                 this.checked = true;
-                return; // Exit if no change needed
+                return;
             }
             updateDeathText();
             localStorage.setItem("battleType", userState.battleType);
@@ -694,10 +688,9 @@
 
         // Toggle weak mode for exercise
         function toggleWeakMode(exerciseId) {
-            if (!userState.weakMode) userState.weakMode = {};
             userState.weakMode[exerciseId] = !userState.weakMode[exerciseId];
             localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
-            updateExerciseDisplay(exerciseId); // Update only the specific exercise display
+            updateExerciseDisplay(exerciseId);
         }
 
         // Update exercise display based on weak mode
@@ -711,7 +704,7 @@
                 if (repsElement) {
                     const baseReps = parseInt(repsElement.dataset.baseReps);
                     const isWeak = userState.weakMode[exerciseId] || false;
-                    const currentReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps; // Ensure min 1 rep/sec
+                    const currentReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
                     const repsLabel = exerciseText.includes('plank') ? 'sec' : 'reps';
                     repsElement.textContent = `(${currentReps} ${repsLabel})`;
                 }
@@ -733,17 +726,9 @@
                     completeBtn.classList.add("completed");
                     completeBtn.disabled = true;
                 }
+                if (swapBtn) { swapBtn.classList.add("disabled"); swapBtn.disabled = true; }
+                if (weakToggleCheckbox) { weakToggleCheckbox.disabled = true; }
 
-                if (swapBtn) {
-                    swapBtn.classList.add("disabled");
-                    swapBtn.disabled = true;
-                }
-
-                if (weakToggleCheckbox) {
-                    weakToggleCheckbox.disabled = true;
-                }
-
-                // Update state in currentWorkout
                 if (userState.currentWorkout && userState.currentWorkout.exercises) {
                     for (const muscle of displayOrder) {
                          if (!userState.currentWorkout.exercises[muscle]) continue;
@@ -759,15 +744,12 @@
             }
         }
 
-        // --- Swap Exercise Functionality (Keep as is) ---
+        // Swap Exercise Functionality
         function swapExercise(exerciseIdToSwap) {
             if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
 
-            let oldExercise = null;
-            let muscleGroup = null;
-            let exerciseIndex = -1;
+            let oldExercise = null, muscleGroup = null, exerciseIndex = -1;
 
-            // Find the exercise and its details
             for (const muscle of displayOrder) {
                 if (!userState.currentWorkout.exercises[muscle]) continue;
                 const index = userState.currentWorkout.exercises[muscle].findIndex(ex => ex.id === exerciseIdToSwap);
@@ -779,81 +761,54 @@
                 }
             }
 
-            if (!oldExercise || oldExercise.completed) {
-                console.log("Cannot swap: Exercise not found or already completed.");
-                return;
-            }
+            if (!oldExercise || oldExercise.completed) return;
 
-            // Find potential replacements from the same muscle group
             const potentialReplacements = (exerciseDB[muscleGroup] || [])
-                .filter(ex => ex.name !== oldExercise.name) // Don't swap for the same exercise type
-                .filter(ex => ex.equipment.some(e => userState.equipment.includes(e))); // Check equipment compatibility
+                .filter(ex => ex.name !== oldExercise.name)
+                .filter(ex => ex.equipment.some(e => userState.equipment.includes(e)));
 
-            // Filter out exercises already present in this muscle group's current list
-            const currentExerciseNamesInGroup = userState.currentWorkout.exercises[muscleGroup].map(ex => ex.name);
-            let availableReplacements = potentialReplacements.filter(ex => !currentExerciseNamesInGroup.includes(ex.name));
-
-            // If filtering removed all options, fall back to any valid replacement
-            if (availableReplacements.length === 0) {
-                availableReplacements = potentialReplacements;
-            }
+            const currentNames = userState.currentWorkout.exercises[muscleGroup].map(ex => ex.name);
+            let availableReplacements = potentialReplacements.filter(ex => !currentNames.includes(ex.name));
+            if (availableReplacements.length === 0) availableReplacements = potentialReplacements;
 
             if (availableReplacements.length === 0) {
-                console.warn(`No suitable alternative exercises found for ${oldExercise.name} in ${muscleGroup}`);
                 const swapBtn = document.getElementById(exerciseIdToSwap)?.querySelector('.swap-exercise-btn');
                 if (swapBtn) {
-                    swapBtn.disabled = true;
-                    swapBtn.textContent = 'No Swaps';
+                    swapBtn.disabled = true; swapBtn.textContent = 'No Swaps';
                     setTimeout(() => {
-                         if (!oldExercise.completed) { // Check again if completed during timeout
-                            swapBtn.disabled = false;
-                            swapBtn.innerHTML = '↻ Swap';
-                         }
+                         if (!oldExercise.completed) { swapBtn.disabled = false; swapBtn.innerHTML = '↻ Swap'; }
                     }, 1500);
                 }
                 return;
             }
 
-            // Select a random replacement
             const newExerciseData = availableReplacements[Math.floor(Math.random() * availableReplacements.length)];
-            const newExerciseId = generateUniqueId();
-            const baseReps = newExerciseData.reps || 12;
-
             const newExercise = {
                 ...newExerciseData,
-                id: newExerciseId,
-                reps: baseReps,
+                id: generateUniqueId(),
+                reps: newExerciseData.reps || 12,
                 completed: false
             };
 
-            // Replace the old exercise in the state
             userState.currentWorkout.exercises[muscleGroup].splice(exerciseIndex, 1, newExercise);
+            if (userState.weakMode[exerciseIdToSwap]) delete userState.weakMode[exerciseIdToSwap];
 
-            // Clean up weak mode state for the *old* exercise ID
-            if (userState.weakMode && userState.weakMode[exerciseIdToSwap]) {
-                delete userState.weakMode[exerciseIdToSwap];
-            }
-
-            // Save state and re-render
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-            localStorage.setItem("weakMode", JSON.stringify(userState.weakMode)); // Save potentially modified weakMode
+            localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
             renderExercises();
-            console.log(`Swapped ${oldExercise.name} for ${newExercise.name}`);
         }
 
 
         // Clear all workouts
         function clearAllWorkouts() {
-            userState.currentWorkout = {
-                exercises: { arms: [], chest: [], back: [], abs: [], legs: [] }
-            };
-            userState.lastTotalAssignedCount = 0; // Reset count
-            userState.currentMuscleIndex = 0; // Reset cycle index
+            userState.currentWorkout = { exercises: { arms: [], chest: [], back: [], abs: [], legs: [] } };
+            userState.lastTotalAssignedCount = 0;
+            userState.currentMuscleIndex = 0;
             userState.weakMode = {};
-            deathCountInput.value = "1"; // Reset input
+            deathCountInput.value = "1";
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-            localStorage.setItem("currentMuscleIndex", userState.currentMuscleIndex.toString()); // Save reset index
-            localStorage.removeItem("weakMode"); // Clear weak mode from storage
+            localStorage.setItem("currentMuscleIndex", userState.currentMuscleIndex.toString());
+            localStorage.removeItem("weakMode");
             workoutDisplay.style.display = "none";
             exercisesListEl.innerHTML = "";
             successBox.style.display = "none";
@@ -865,60 +820,40 @@
         // Complete all exercises
         function completeAllExercises() {
             let changed = false;
-            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
-
+            if (!userState.currentWorkout?.exercises) return;
             for (const muscle of displayOrder) {
                  if (!userState.currentWorkout.exercises[muscle]) continue;
                  userState.currentWorkout.exercises[muscle].forEach(ex => {
                     if (!ex.completed) {
-                        ex.completed = true;
-                        changed = true;
-                         const exerciseEl = document.getElementById(ex.id);
-                         if(exerciseEl) {
-                            completeExercise(ex.id); // Use the existing function for UI updates
-                         }
+                        ex.completed = true; changed = true;
+                        const el = document.getElementById(ex.id);
+                        if(el) completeExercise(ex.id);
                     }
                 });
             }
-            if (changed) {
-                localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-            }
+            if (changed) localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
         }
 
 
         // Check if all exercises are completed
         function checkAllCompleted() {
-            if (!userState.currentWorkout || !userState.currentWorkout.exercises) {
-                 workDoneBtn.disabled = true;
-                 workDoneBtn.classList.remove("completed");
-                 return;
+            if (!userState.currentWorkout?.exercises) {
+                 workDoneBtn.disabled = true; workDoneBtn.classList.remove("completed"); return;
              }
-
-            let allCompleted = true;
-            let totalExercises = getTotalAssignedExercises(); // Use helper
-
-            if (totalExercises === 0) {
-                allCompleted = false; // Cannot be completed if there are no exercises
-            } else {
+            let allCompleted = true, totalExercises = getTotalAssignedExercises();
+            if (totalExercises === 0) allCompleted = false;
+            else {
                 for (const muscle of displayOrder) {
                     if (!userState.currentWorkout.exercises[muscle]) continue;
-                    for (const exercise of userState.currentWorkout.exercises[muscle]) {
-                        if (!exercise.completed) {
-                            allCompleted = false;
-                            break;
-                        }
+                    for (const ex of userState.currentWorkout.exercises[muscle]) {
+                        if (!ex.completed) { allCompleted = false; break; }
                     }
                     if (!allCompleted) break;
                 }
             }
-
             const enableButton = totalExercises > 0 && allCompleted;
             workDoneBtn.disabled = !enableButton;
-            if (enableButton) {
-                workDoneBtn.classList.add("completed");
-            } else {
-                workDoneBtn.classList.remove("completed");
-            }
+            workDoneBtn.classList.toggle("completed", enableButton);
         }
 
 
@@ -926,7 +861,7 @@
         function showSuccessMessage() {
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
-            lastGenerateClick = 0; // Reset spam timer
+            lastGenerateClick = 0;
         }
 
         // --- Strict Cycle Logic ---
@@ -934,135 +869,82 @@
         // Generate additional exercises based on Strict Cycle
         function generateAdditionalExercises(countToAdd) {
             if (countToAdd <= 0) return;
-            if (!userState.currentWorkout.exercises) { // Initialize if needed
-                userState.currentWorkout.exercises = { arms: [], chest: [], back: [], abs: [], legs: [] };
-            }
+            if (!userState.currentWorkout.exercises) userState.currentWorkout.exercises = { arms: [], chest: [], back: [], abs: [], legs: [] };
 
-            let cycleIndex = userState.currentMuscleIndex; // Start from the saved index
+            let cycleIndex = userState.currentMuscleIndex;
 
             for (let i = 0; i < countToAdd; i++) {
                 const muscle = displayOrder[cycleIndex % displayOrder.length];
-
-                const availableExercises = (exerciseDB[muscle] || [])
-                    .filter(ex => ex.equipment.some(e => userState.equipment.includes(e)));
-
-                // Optional: Filter out exercises already present in this group for variety
+                const available = (exerciseDB[muscle] || []).filter(ex => ex.equipment.some(e => userState.equipment.includes(e)));
                 const currentNames = userState.currentWorkout.exercises[muscle]?.map(ex => ex.name) || [];
-                let suitableExercises = availableExercises.filter(ex => !currentNames.includes(ex.name));
-                if (suitableExercises.length === 0) {
-                    suitableExercises = availableExercises; // Fallback if all are duplicates
-                }
+                let suitable = available.filter(ex => !currentNames.includes(ex.name));
+                if (suitable.length === 0) suitable = available;
 
-                if (suitableExercises.length > 0) {
-                    const exerciseData = suitableExercises[Math.floor(Math.random() * suitableExercises.length)];
-                    const exerciseId = generateUniqueId();
-                    const baseReps = exerciseData.reps || 12;
-
-                    // Ensure muscle group array exists
-                    if (!userState.currentWorkout.exercises[muscle]) {
-                         userState.currentWorkout.exercises[muscle] = [];
-                    }
-
+                if (suitable.length > 0) {
+                    const data = suitable[Math.floor(Math.random() * suitable.length)];
+                    if (!userState.currentWorkout.exercises[muscle]) userState.currentWorkout.exercises[muscle] = [];
                     userState.currentWorkout.exercises[muscle].push({
-                        ...exerciseData,
-                        id: exerciseId,
-                        reps: baseReps,
-                        completed: false
+                        ...data, id: generateUniqueId(), reps: data.reps || 12, completed: false
                     });
-
-                } else {
-                    console.warn(`No available exercises for muscle group: ${muscle} with equipment: ${userState.equipment}. Skipping assignment.`);
-                    // NOTE: This means the total count might not reach the target if a group has no exercises.
-                    // The cycle index still advances, effectively skipping this slot.
-                }
-
-                cycleIndex++; // Advance the cycle index for the next assignment
+                } else console.warn(`No available exercises for ${muscle}. Skipping.`);
+                cycleIndex++;
             }
 
-            // Update state
-            userState.currentMuscleIndex = cycleIndex; // Save the *next* index to start from
-            userState.lastTotalAssignedCount = getTotalAssignedExercises(); // Update total count
-
+            userState.currentMuscleIndex = cycleIndex;
+            userState.lastTotalAssignedCount = getTotalAssignedExercises();
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("currentMuscleIndex", userState.currentMuscleIndex.toString());
-
-            renderExercises(); // Re-render after adding
+            renderExercises();
         }
 
 
-        // Remove excess exercises based on Strict Cycle (removes last assigned)
+        // Remove excess exercises based on Strict Cycle
         function removeExcessExercises(countToRemove) {
             if (countToRemove <= 0 || !userState.currentWorkout.exercises) return;
+            let removedCount = 0, currentTotal = getTotalAssignedExercises();
+            let cycleIndex = userState.currentMuscleIndex - 1;
 
-            let removedCount = 0;
-            let cycleIndex = userState.currentMuscleIndex - 1; // Start from the index *before* the current one
+            while (removedCount < countToRemove && currentTotal > 0) {
+                 const muscleIndex = (cycleIndex % displayOrder.length + displayOrder.length) % displayOrder.length;
+                 const muscle = displayOrder[muscleIndex];
+                 const exercises = userState.currentWorkout.exercises[muscle];
 
-            while (removedCount < countToRemove && getTotalAssignedExercises() > 0) {
-                 // Ensure index is positive before modulo
-                const muscleIndex = (cycleIndex % displayOrder.length + displayOrder.length) % displayOrder.length;
-                const muscle = displayOrder[muscleIndex];
-                const exercises = userState.currentWorkout.exercises[muscle];
-
-                // Remove from the end of this muscle group's list if possible
-                if (exercises && exercises.length > 0) {
-                    // Find the last *uncompleted* exercise to remove preferentially
-                    let removed = false;
-                    for (let i = exercises.length - 1; i >= 0; i--) {
-                        if (!exercises[i].completed) {
-                            const removedEx = exercises.splice(i, 1)[0];
-                            // Clean up weak mode if necessary
-                            if (userState.weakMode && userState.weakMode[removedEx.id]) {
-                                delete userState.weakMode[removedEx.id];
-                            }
-                            removed = true;
-                            break; // Only remove one per iteration
-                        }
-                    }
-                     // If all were completed, remove the last one anyway
-                    if (!removed && exercises.length > 0) {
-                         const removedEx = exercises.pop();
-                         if (userState.weakMode && userState.weakMode[removedEx.id]) {
-                            delete userState.weakMode[removedEx.id];
+                 if (exercises && exercises.length > 0) {
+                     let removed = false;
+                     for (let i = exercises.length - 1; i >= 0; i--) { // Prefer removing uncompleted
+                         if (!exercises[i].completed) {
+                             const removedEx = exercises.splice(i, 1)[0];
+                             if (userState.weakMode[removedEx.id]) delete userState.weakMode[removedEx.id];
+                             removed = true; break;
                          }
-                    }
-                    removedCount++;
-                }
-
-                cycleIndex--; // Move to the previous muscle group in the cycle
-                 // Break if we somehow loop infinitely (shouldn't happen)
-                 if (cycleIndex < userState.currentMuscleIndex - getTotalAssignedExercises() - 5) {
-                      console.error("Infinite loop detected in removeExcessExercises");
-                      break;
+                     }
+                     if (!removed) { // Remove last completed if all were completed
+                         const removedEx = exercises.pop();
+                          if (userState.weakMode[removedEx.id]) delete userState.weakMode[removedEx.id];
+                     }
+                     removedCount++;
+                     currentTotal--; // Decrement total count
                  }
+                 cycleIndex--;
+                 if (cycleIndex < userState.currentMuscleIndex - currentTotal - displayOrder.length - 5) break; // Safety break
             }
 
-            // Update state
-            userState.currentMuscleIndex -= removedCount; // Adjust cycle index back
-            // Ensure index is non-negative
-             userState.currentMuscleIndex = Math.max(0, userState.currentMuscleIndex);
-
-            userState.lastTotalAssignedCount = getTotalAssignedExercises(); // Update total count
-
+            userState.currentMuscleIndex = Math.max(0, userState.currentMuscleIndex - removedCount);
+            userState.lastTotalAssignedCount = currentTotal; // Use the decremented total
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("currentMuscleIndex", userState.currentMuscleIndex.toString());
-             if (userState.weakMode && Object.keys(userState.weakMode).length > 0) {
-                localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
-             } else {
-                localStorage.removeItem("weakMode");
-             }
-
-            renderExercises(); // Re-render after removing
+             if (Object.keys(userState.weakMode).length > 0) localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
+             else localStorage.removeItem("weakMode");
+            renderExercises();
         }
 
 
-        // Toggle all exercise groups open/closed
+        // Toggle all exercise groups
         function toggleAllGroups() {
             const groups = exercisesListEl.querySelectorAll(".exercise-group");
             if (groups.length === 0) return;
-            const firstContainer = groups[0].querySelector(".exercises-container");
-            const isCurrentlyCollapsed = firstContainer && firstContainer.style.display === "none";
-            const expand = isCurrentlyCollapsed;
-
+            const first = groups[0].querySelector(".exercises-container");
+            const expand = first && first.style.display === "none";
             groups.forEach(group => {
                 const container = group.querySelector(".exercises-container");
                 const toggle = group.querySelector(".group-toggle");
@@ -1080,77 +962,47 @@
             const container = groupEl.querySelector(".exercises-container");
             const toggle = groupEl.querySelector(".group-toggle");
             if (!container || !toggle) return;
-            const isCollapsed = container.style.display === "none";
-            container.style.display = isCollapsed ? "block" : "none";
-            toggle.textContent = isCollapsed ? "🔺" : "🔻";
+            const expand = container.style.display === "none";
+            container.style.display = expand ? "block" : "none";
+            toggle.textContent = expand ? "🔺" : "🔻";
         }
 
 
         // Render all exercises
         function renderExercises() {
             exercisesListEl.innerHTML = "";
-            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
-
+            if (!userState.currentWorkout?.exercises) return;
             let hasExercises = false;
-            let isAnyExerciseIncomplete = false;
 
-             // Render in the fixed display order, not the assignment order
              displayOrder.forEach(muscle => {
                  const exercises = userState.currentWorkout.exercises[muscle];
-                 if (exercises && exercises.length > 0) { // Check if array exists and has items
+                 if (exercises && exercises.length > 0) {
                      hasExercises = true;
-                    const groupEl = document.createElement("div");
-                    groupEl.className = "exercise-group";
-
-                    const headerEl = document.createElement("div");
-                    headerEl.className = "group-header";
+                    const groupEl = document.createElement("div"); groupEl.className = "exercise-group";
+                    const headerEl = document.createElement("div"); headerEl.className = "group-header";
                     headerEl.addEventListener("click", () => toggleExerciseGroup(groupEl));
+                    const titleEl = document.createElement("div"); titleEl.className = "group-title"; titleEl.innerHTML = `<span>${muscle}</span>`;
+                    const toggleEl = document.createElement("div"); toggleEl.className = "group-toggle"; toggleEl.textContent = "🔺";
+                    headerEl.append(titleEl, toggleEl); groupEl.appendChild(headerEl);
+                    const cont = document.createElement("div"); cont.className = "exercises-container";
 
-                    const titleEl = document.createElement("div");
-                    titleEl.className = "group-title";
-                    titleEl.innerHTML = `<span>${muscle}</span>`;
-
-                    const toggleEl = document.createElement("div");
-                    toggleEl.className = "group-toggle";
-                    toggleEl.textContent = "🔺"; // Default to expanded
-
-                    headerEl.appendChild(titleEl);
-                    headerEl.appendChild(toggleEl);
-                    groupEl.appendChild(headerEl);
-
-                    const exercisesContainer = document.createElement("div");
-                    exercisesContainer.className = "exercises-container";
-
-                    exercises.forEach(ex => { // Iterate through exercises for this muscle
-                        if (!ex.completed) {
-                            isAnyExerciseIncomplete = true;
-                        }
-
-                        const exerciseEl = document.createElement("div");
-                        exerciseEl.className = `exercise ${ex.completed ? 'completed' : ''}`;
-                        exerciseEl.id = ex.id; // Use the exercise's unique ID
-
-                        const baseReps = ex.reps || 12;
-                        const isWeak = userState.weakMode[ex.id] || false;
+                    exercises.forEach(ex => {
+                        const el = document.createElement("div"); el.className = `exercise ${ex.completed ? 'completed' : ''}`; el.id = ex.id;
+                        const baseReps = ex.reps || 12, isWeak = userState.weakMode[ex.id] || false;
                         const reps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
-                        const difficultyStars = "★".repeat(ex.difficulty || 1);
-                        const repsText = ex.name.toLowerCase().includes('plank') ? `${reps} sec` : `${reps} reps`;
+                        const diffStars = "★".repeat(ex.difficulty || 1);
+                        const repsTxt = ex.name.toLowerCase().includes('plank') ? `${reps} sec` : `${reps} reps`;
 
-                        // ** Moved weak toggle structure here **
-                        exerciseEl.innerHTML = `
+                        el.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
                                     <div class="exercise-name-text">
-                                        ${ex.name} <span class="exercise-reps" data-base-reps="${baseReps}">(${repsText})</span>
-                                        <span class="exercise-difficulty">${difficultyStars}</span>
+                                        ${ex.name} <span class="exercise-reps" data-base-reps="${baseReps}">(${repsTxt})</span>
+                                        <span class="exercise-difficulty">${diffStars}</span>
                                     </div>
                                     <div class="exercise-controls">
-                                        <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
-                                            ${ex.completed ? '✓ Done' : 'Complete'}
-                                        </button>
-                                        <button class="swap-exercise-btn ${ex.completed ? 'disabled' : ''}" title="Swap for another exercise" ${ex.completed ? 'disabled' : ''}>
-                                            ↻ Swap
-                                        </button>
+                                        <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>${ex.completed ? '✓ Done' : 'Complete'}</button>
+                                        <button class="swap-exercise-btn ${ex.completed ? 'disabled' : ''}" title="Swap" ${ex.completed ? 'disabled' : ''}>↻ Swap</button>
                                     </div>
                                 </div>
                                 <label class="checkbox-option weak-toggle">
@@ -1158,105 +1010,55 @@
                                     <span class="weak-toggle-text">I'm weak</span>
                                     <span class="help-icon">?</span>
                                 </label>
-                            </div>
-                        `;
+                            </div>`;
 
-                         // Add event listeners
                         if (!ex.completed) {
-                            exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
-                            exerciseEl.querySelector(".swap-exercise-btn").addEventListener("click", (e) => {
-                                e.stopPropagation();
-                                swapExercise(ex.id);
-                            });
-                             exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
-
-                            // Prevent help icon/text click from toggling checkbox
-                            const helpIcon = exerciseEl.querySelector(".help-icon");
-                            if (helpIcon) {
-                                helpIcon.addEventListener('click', (event) => {
-                                    event.stopPropagation(); event.preventDefault();
-                                });
-                            }
-                            const weakText = exerciseEl.querySelector(".weak-toggle-text");
-                            if (weakText) {
-                                weakText.addEventListener('click', (event) => {
-                                    event.stopPropagation(); event.preventDefault();
-                                });
-                            }
+                            el.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
+                            el.querySelector(".swap-exercise-btn").addEventListener("click", (e) => { e.stopPropagation(); swapExercise(ex.id); });
+                            el.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
+                            const help = el.querySelector(".help-icon"); if(help) help.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
+                            const weak = el.querySelector(".weak-toggle-text"); if(weak) weak.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
                         } else {
-                             // Ensure controls are visually/functionally disabled if completed
-                             const completeBtn = exerciseEl.querySelector(".complete-btn");
-                             const swapBtn = exerciseEl.querySelector(".swap-exercise-btn");
-                             const weakCheckbox = exerciseEl.querySelector(".weak-toggle input");
-                             if (completeBtn) completeBtn.disabled = true;
-                             if (swapBtn) { swapBtn.classList.add('disabled'); swapBtn.disabled = true; }
-                             if (weakCheckbox) weakCheckbox.disabled = true;
+                             const cBtn = el.querySelector(".complete-btn"); if(cBtn) cBtn.disabled = true;
+                             const sBtn = el.querySelector(".swap-exercise-btn"); if(sBtn) { sBtn.classList.add('disabled'); sBtn.disabled = true; }
+                             const wChk = el.querySelector(".weak-toggle input"); if(wChk) wChk.disabled = true;
                         }
-                        exercisesContainer.appendChild(exerciseEl);
+                        cont.appendChild(el);
                     });
-                    groupEl.appendChild(exercisesContainer);
-                    exercisesListEl.appendChild(groupEl);
+                    groupEl.appendChild(cont); exercisesListEl.appendChild(groupEl);
                 }
             });
 
-            // Show/hide workout display
             workoutDisplay.style.display = hasExercises ? "block" : "none";
+            const workDoneComp = !workDoneBtn.disabled && workDoneBtn.classList.contains('completed');
+            if (successBox.style.display === 'block' && !workDoneComp) successBox.style.display = 'none';
 
-            // Hide success box when rendering exercises unless WORK DONE was just clicked
-            const workDoneCompleted = !workDoneBtn.disabled && workDoneBtn.classList.contains('completed');
-            if (successBox.style.display === 'block' && !workDoneCompleted) {
-                 successBox.style.display = 'none';
-            }
-
-            // Update toggle all button text
-            const allGroups = exercisesListEl.querySelectorAll(".exercise-group");
-            let allCollapsed = true;
+            const allGroups = exercisesListEl.querySelectorAll(".exercise-group"); let allCollapsed = true;
             if (allGroups.length > 0) {
-                allGroups.forEach(group => {
-                    const container = group.querySelector(".exercises-container");
-                    if (container && container.style.display !== "none") allCollapsed = false;
-                });
+                allGroups.forEach(g => { const c = g.querySelector(".exercises-container"); if (c && c.style.display !== "none") allCollapsed = false; });
                 toggleAllBtn.textContent = allCollapsed ? "Expand All" : "Collapse All";
-            } else {
-                 toggleAllBtn.textContent = "Collapse All";
-            }
-
-            checkAllCompleted(); // Update WORK DONE button status
+            } else toggleAllBtn.textContent = "Collapse All";
+            checkAllCompleted();
         }
 
 
-        // Generate workout based on input changes (using Strict Cycle)
+        // Generate workout based on input changes
         function generateWorkout() {
             const targetDeaths = parseInt(deathCountInput.value) || 0;
-             if (targetDeaths < 0) { // Validate input
-                 deathCountInput.value = "1";
-                 return;
-             }
-
-            const currentCount = userState.lastTotalAssignedCount; // Use the reliable total count
+             if (targetDeaths < 0) { deathCountInput.value = "1"; return; }
+            const currentCount = userState.lastTotalAssignedCount;
 
             if (targetDeaths === 0) {
-                 if (currentCount > 0) {
-                     clearAllWorkouts();
-                 } else {
-                     workoutDisplay.style.display = "none";
-                     successBox.style.display = "none";
-                     deathCountInput.value = "1"; // Ensure input is 1 if already cleared
-                 }
-            } else if (targetDeaths < currentCount) {
-                const diff = currentCount - targetDeaths;
-                removeExcessExercises(diff);
-            } else if (targetDeaths > currentCount) {
-                const additionalDeaths = targetDeaths - currentCount;
-                generateAdditionalExercises(additionalDeaths);
-            } else {
-                 // Count hasn't changed
+                 if (currentCount > 0) clearAllWorkouts();
+                 else { workoutDisplay.style.display = "none"; successBox.style.display = "none"; deathCountInput.value = "1"; }
+            } else if (targetDeaths < currentCount) removeExcessExercises(currentCount - targetDeaths);
+            else if (targetDeaths > currentCount) generateAdditionalExercises(targetDeaths - currentCount);
+            else { // Count hasn't changed
                  console.log("Generate called but count hasn't changed.");
-                 const warning = document.querySelector(".spam-warning");
-                  if (warning.style.display !== 'block') {
-                     warning.style.display = "block";
-                     setTimeout(() => warning.style.display = "none", 2000);
-                  }
+                 if (spamWarningEl.style.display !== 'block') {
+                     spamWarningEl.style.display = "block";
+                     setTimeout(() => spamWarningEl.style.display = "none", 2000);
+                 }
             }
         }
 
@@ -1264,77 +1066,50 @@
         // Spam prevention for generate button
         function handleGenerateClick() {
             const now = Date.now();
-            if (now - lastGenerateClick < 300) { // Short delay
+            if (now - lastGenerateClick < 300) {
                  console.log("Generate button clicked too quickly.");
-                 const warning = document.querySelector(".spam-warning");
-                 if (warning.style.display !== 'block') {
-                     warning.style.display = "block";
-                     setTimeout(() => warning.style.display = "none", 1500);
+                 if (spamWarningEl.style.display !== 'block') {
+                     spamWarningEl.style.display = "block";
+                     setTimeout(() => spamWarningEl.style.display = "none", 1500);
                  }
                 return;
             }
             lastGenerateClick = now;
 
-            // If success box is visible, clear workout first
             if (successBox.style.display === 'block') {
                 clearAllWorkouts();
-                 if (parseInt(deathCountInput.value) <= 0) {
-                     deathCountInput.value = "1";
-                 }
+                 if (parseInt(deathCountInput.value) <= 0) deathCountInput.value = "1";
             }
 
-             // Ensure input is reset to 1 if needed before generating
              if (userState.lastTotalAssignedCount === 0 && parseInt(deathCountInput.value) <= 0) {
                  deathCountInput.value = "1";
              }
-
-            generateWorkout(); // Proceed with generation logic
+            generateWorkout();
         }
 
         // --- Initialization ---
-
-        // Load saved battle type
         const savedBattleType = localStorage.getItem("battleType");
         if (savedBattleType) {
             userState.battleType = savedBattleType;
             airBattlesCheckbox.checked = (savedBattleType === "air");
             groundBattlesCheckbox.checked = (savedBattleType === "ground");
         } else {
-             airBattlesCheckbox.checked = true; // Default to Air
-             groundBattlesCheckbox.checked = false;
-             userState.battleType = "air";
-             localStorage.setItem("battleType", "air");
+             airBattlesCheckbox.checked = true; groundBattlesCheckbox.checked = false;
+             userState.battleType = "air"; localStorage.setItem("battleType", "air");
         }
         updateDeathText();
 
-         // Load existing workout, cycle index, and sync state
-         // Ensure exercises is an object with arrays after loading
-         if (userState.currentWorkout && typeof userState.currentWorkout.exercises === 'object' && userState.currentWorkout.exercises !== null) {
-            displayOrder.forEach(muscle => {
-                if (!Array.isArray(userState.currentWorkout.exercises[muscle])) {
-                    userState.currentWorkout.exercises[muscle] = []; // Ensure it's an array
-                }
-            });
-         } else { // If structure is invalid or workout doesn't exist, reset
-             clearAllWorkouts();
-         }
+         // Load workout, sanitize, sync state
+         if (userState.currentWorkout?.exercises && typeof userState.currentWorkout.exercises === 'object') {
+            displayOrder.forEach(m => { if (!Array.isArray(userState.currentWorkout.exercises[m])) userState.currentWorkout.exercises[m] = []; });
+         } else clearAllWorkouts(); // Reset if invalid
 
-         // Recalculate total assigned count from the loaded workout
          userState.lastTotalAssignedCount = getTotalAssignedExercises();
-         // Load the cycle index (ensure it's a number)
          userState.currentMuscleIndex = parseInt(localStorage.getItem("currentMuscleIndex")) || 0;
-
-         // Sync death count input with the loaded state
          deathCountInput.value = userState.lastTotalAssignedCount > 0 ? userState.lastTotalAssignedCount : "1";
 
-         // Render if there are exercises
-         if (userState.lastTotalAssignedCount > 0) {
-             renderExercises();
-         } else {
-              // Ensure display is hidden if no exercises loaded/exist
-              workoutDisplay.style.display = 'none';
-         }
-
+         if (userState.lastTotalAssignedCount > 0) renderExercises();
+         else workoutDisplay.style.display = 'none'; // Ensure hidden if no exercises
 
         // --- Event Listeners ---
         generateBtn.addEventListener("click", handleGenerateClick);
