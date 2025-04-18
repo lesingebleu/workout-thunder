@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Thunder</title>
+    <link href="https://fonts.cdnfonts.com/css/amarillo-usaf" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'Amarillo USAF';
-            src: url('https://fonts.cdnfonts.com/css/amarillo-usaf') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-
         :root {
             --primary: #e63946;
             --dark: #121212;
@@ -543,9 +537,9 @@
     <script>
         // Background Image Cycling
         const bgImages = [
-            "./images/img1.jpg",
-            "./images/img2.jpg",
-            "./images/img3.jpg"
+            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b",
+            "https://images.unsplash.com/photo-1534258936925-c58bed479fcb",
+            "https://images.unsplash.com/photo-1538805060514-97d9cc17730c"
         ];
         
         const bgImage = document.getElementById("bgImage");
@@ -968,11 +962,26 @@
         function generateWorkout() {
             const deaths = parseInt(deathCountInput.value) || 1;
             
+            // Initialize currentWorkout if it doesn't exist
+            if (!userState.currentWorkout) {
+                userState.currentWorkout = {
+                    timestamp: new Date().toISOString(),
+                    deaths: 0,
+                    exercises: {
+                        arms: [], chest: [], back: [], abs: [], legs: []
+                    }
+                };
+            }
+            
             if (deaths < userState.lastDeathCount) {
                 const diff = userState.lastDeathCount - deaths;
                 removeExcessExercises(diff);
             } else if (deaths > userState.lastDeathCount) {
                 generateAdditionalExercises(deaths - userState.lastDeathCount);
+            } else {
+                // If same number, just render the existing exercises
+                workoutDisplay.style.display = "block";
+                renderExercises();
             }
         }
 
@@ -991,7 +1000,10 @@
         }
 
         // Event Listeners
-        generateBtn.addEventListener("click", handleGenerateClick);
+        generateBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            handleGenerateClick();
+        });
         airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         workDoneBtn.addEventListener("click", showSuccessMessage);
