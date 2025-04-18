@@ -134,12 +134,20 @@
             color: white;
             cursor: pointer;
             border: 1px solid var(--button-border);
-            transition: none;
+            transition: none; /* Remove default transitions that might interfere */
         }
 
-        button:hover {
+        /* Standard hover for non-disabled, non-completed buttons */
+        button:not(:disabled):not(.completed):hover {
             filter: brightness(1.2);
         }
+        /* --- FIX: Prevent hover effect on completed 'Done' button --- */
+        .complete-btn.completed:hover {
+            filter: none; /* Explicitly remove filter */
+            cursor: default; /* Indicate non-interactive */
+        }
+        /* --- End FIX --- */
+
 
         .workout-display {
             background: rgba(0,0,0,0.5);
@@ -250,7 +258,8 @@
             border-color: var(--complete-green);
         }
 
-        .remove-exercise-btn {
+        /* --- Swap Button Styling --- */
+        .swap-exercise-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
             color: white;
@@ -258,16 +267,17 @@
             font-size: 1em; /* Match complete-btn size */
             cursor: pointer;
             border-radius: 5px; /* Match complete-btn size */
-            min-width: 30px; /* Ensure minimum width for 'X' */
+            min-width: 80px; /* Adjust width for text "↻ Swap" */
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             white-space: nowrap; /* Prevent wrapping */
+            gap: 5px; /* Space between icon and text */
         }
 
-        .remove-exercise-btn:hover::after {
-            content: "Remove this exercise";
+        .swap-exercise-btn:hover::after {
+            content: "Swap for another exercise"; /* Updated tooltip */
             position: absolute;
             bottom: 100%;
             left: 50%;
@@ -282,15 +292,17 @@
             z-index: 1; /* Ensure tooltip is on top */
         }
 
-        .remove-exercise-btn:hover {
+        /* Hover effect only for non-disabled swap button */
+        .swap-exercise-btn:not(.disabled):hover {
             filter: brightness(1.2);
         }
 
-        .remove-exercise-btn.disabled {
+        .swap-exercise-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            pointer-events: none;
+            pointer-events: none; /* Prevent clicks */
         }
+        /* --- End Swap Button Styling --- */
 
         .work-done-container {
             display: flex; /* Keep flex in case you add something else later */
@@ -302,7 +314,6 @@
         .work-done-btn {
             display: block;
             width: 100%; /* Take full width now */
-            /* Removed flex-grow and margin-left */
             padding: 12px;
             font-size: 1.1em;
             background: var(--button-color);
@@ -357,38 +368,40 @@
              user-select: none; /* Prevent text selection on click */
          }
 
-
+        /* --- Help Icon Style Adjustments --- */
         .help-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 16px;
-            height: 16px;
+            width: 14px;  /* Smaller */
+            height: 14px; /* Smaller */
             background-color: #ccc;
             color: #333;
             border-radius: 50%;
-            font-size: 0.8em;
+            font-size: 0.7em; /* Smaller question mark */
             font-weight: bold;
             cursor: help; /* Help cursor for the icon */
             position: relative; /* Needed for ::after */
             user-select: none; /* Prevent text selection */
+            line-height: 1; /* Adjust vertical alignment if needed */
         }
 
         .help-icon:hover::after {
             content: "This option reduces the reps by half";
             position: absolute;
-            top: -30px;
+            top: -35px; /* Adjust position if needed */
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.8);
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
-            font-size: 0.8em; /* Keep consistent */
+            font-size: 0.9em; /* Larger tooltip text */
             white-space: nowrap;
             width: max-content;
             z-index: 1; /* Ensure tooltip is on top */
         }
+        /* --- End Help Icon Style Adjustments --- */
 
         /* Original checkbox style (shared with Air/Ground) */
         .checkbox-option { /* Keep if needed for consistency */
@@ -547,27 +560,37 @@
             arms: [
                 { name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
                 { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 },
-                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 }
+                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 },
+                { name: "Diamond Pushups", equipment: ["bodyweight"], difficulty: 3, reps: 10 },
+                { name: "Hammer Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 }
             ],
             chest: [
                 { name: "Bench Press", equipment: ["barbell"], difficulty: 3, reps: 10 },
                 { name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },
-                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 } // e.g., wide, diamond
+                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 }, // e.g., wide
+                { name: "Incline Dumbbell Press", equipment: ["dumbbells"], difficulty: 3, reps: 10 },
+                { name: "Wide Pushups", equipment: ["bodyweight"], difficulty: 1, reps: 20 }
             ],
             back: [
                 { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3, reps: 8 }, // Reps lower as it's hard
                 { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2, reps: 12 },
-                { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 }
+                { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 },
+                { name: "Superman", equipment: ["bodyweight"], difficulty: 1, reps: 15 },
+                { name: "Renegade Rows", equipment: ["dumbbells"], difficulty: 3, reps: 10 } // Per side
             ],
             abs: [
                 { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2, reps: 20 }, // Higher reps for abs
                 { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
-                { name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 } // Reps here means seconds
+                { name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 }, // Reps here means seconds
+                { name: "Crunches", equipment: ["bodyweight"], difficulty: 1, reps: 25 },
+                { name: "Bicycle Crunches", equipment: ["bodyweight"], difficulty: 2, reps: 20 }
             ],
             legs: [
                 { name: "Squats", equipment: ["bodyweight"], difficulty: 2, reps: 20 },
                 { name: "Lunges", equipment: ["bodyweight"], difficulty: 2, reps: 12 }, // 12 per leg
-                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1, reps: 25 }
+                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1, reps: 25 },
+                { name: "Glute Bridges", equipment: ["bodyweight"], difficulty: 1, reps: 20 },
+                { name: "Jump Squats", equipment: ["bodyweight"], difficulty: 3, reps: 15 }
             ]
         };
 
@@ -576,7 +599,7 @@
         // User State
         const userState = {
             deaths: 0,
-            equipment: ["bodyweight"], // Default equipment
+            equipment: ["bodyweight", "dumbbells"], // Default equipment (added dumbbells for testing swap)
             battleType: "air",
             currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || {
                 timestamp: new Date().toISOString(),
@@ -613,6 +636,11 @@
 
         // Spam prevention timer variable
         let lastGenerateClick = 0;
+
+        // --- Utility Functions ---
+        function generateUniqueId() {
+            return `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+        }
 
         // Update death text based on battle type
         function updateDeathText() {
@@ -665,11 +693,9 @@
                     const currentReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
 
                     // Adjust text based on exercise type (e.g., plank)
-                    if (exerciseText.includes('plank')) {
-                         repsElement.textContent = `(${currentReps} sec)`;
-                    } else {
-                         repsElement.textContent = `(${currentReps} reps)`;
-                    }
+                    const repsLabel = exerciseText.includes('plank') ? 'sec' : 'reps';
+                    repsElement.textContent = `(${currentReps} ${repsLabel})`;
+
                     // Checkbox checked state is already handled by the 'change' listener triggering toggleWeakMode
                 }
             }
@@ -682,7 +708,7 @@
             if (exerciseEl) {
                 exerciseEl.classList.add("completed");
                 const completeBtn = exerciseEl.querySelector(".complete-btn");
-                const removeBtn = exerciseEl.querySelector(".remove-exercise-btn");
+                const swapBtn = exerciseEl.querySelector(".swap-exercise-btn"); // Changed from removeBtn
                 const weakToggleCheckbox = exerciseEl.querySelector(".weak-toggle input"); // Target checkbox directly
 
                 if (completeBtn) {
@@ -691,8 +717,10 @@
                     completeBtn.disabled = true;
                 }
 
-                if (removeBtn) {
-                    removeBtn.classList.add("disabled");
+                // Disable swap button on completion
+                if (swapBtn) {
+                    swapBtn.classList.add("disabled");
+                    swapBtn.disabled = true; // Also set disabled attribute
                 }
 
                 if (weakToggleCheckbox) {
@@ -717,42 +745,86 @@
             }
         }
 
-        // Remove an exercise
-        function removeExercise(exerciseId) {
-            let removed = false;
-            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return; // Safety check
+        // --- Swap Exercise Functionality ---
+        function swapExercise(exerciseIdToSwap) {
+            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return;
 
+            let oldExercise = null;
+            let muscleGroup = null;
+            let exerciseIndex = -1;
+
+            // Find the exercise and its details
             for (const muscle of displayOrder) {
-                // Ensure the muscle group array exists before trying to find an index
                 if (!userState.currentWorkout.exercises[muscle]) continue;
-
-                const exercises = userState.currentWorkout.exercises[muscle];
-                const index = exercises.findIndex(ex => ex.id === exerciseId);
-                // Make sure exercise exists and is not completed before removing
-                if (index !== -1 && !exercises[index].completed) {
-                    exercises.splice(index, 1); // Remove from the array
-                     removed = true;
-                    break; // Exit muscle loop once found and removed
+                const index = userState.currentWorkout.exercises[muscle].findIndex(ex => ex.id === exerciseIdToSwap);
+                if (index !== -1) {
+                    oldExercise = userState.currentWorkout.exercises[muscle][index];
+                    muscleGroup = muscle;
+                    exerciseIndex = index;
+                    break;
                 }
             }
 
-             if (removed) {
-                 // Update counts only if an exercise was actually removed
-                 userState.currentWorkout.deaths = Math.max(0, userState.currentWorkout.deaths - 1); // Ensure count doesn't go below 0
-                 userState.lastDeathCount = userState.currentWorkout.deaths; // Sync last count
-                 deathCountInput.value = userState.lastDeathCount > 0 ? userState.lastDeathCount : "1"; // Update input, default to 1 if 0
+            if (!oldExercise || oldExercise.completed) {
+                console.log("Cannot swap: Exercise not found or already completed.");
+                return; // Don't swap if not found or completed
+            }
 
-                 // Clean up weak mode state for the removed exercise
-                 if (userState.weakMode && userState.weakMode[exerciseId]) {
-                     delete userState.weakMode[exerciseId];
-                     localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
-                 }
+            // Find potential replacements
+            const potentialReplacements = (exerciseDB[muscleGroup] || [])
+                .filter(ex => ex.name !== oldExercise.name) // Don't swap for the same exercise type
+                .filter(ex => ex.equipment.some(e => userState.equipment.includes(e))); // Check equipment compatibility
 
-                 localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-                 renderExercises(); // Re-render the list to reflect removal
-             } else {
-                 console.log("Exercise not found or already completed, cannot remove:", exerciseId);
-             }
+            // Further filter: exclude exercises already in the current workout for this group (optional but nice)
+            const currentExerciseNamesInGroup = userState.currentWorkout.exercises[muscleGroup].map(ex => ex.name);
+            const availableReplacements = potentialReplacements.filter(ex => !currentExerciseNamesInGroup.includes(ex.name));
+
+            let finalReplacements = availableReplacements.length > 0 ? availableReplacements : potentialReplacements; // Fallback if filtering excludes all
+
+            if (finalReplacements.length === 0) {
+                console.warn(`No suitable alternative exercises found for ${oldExercise.name} in ${muscleGroup}`);
+                // Optionally: Briefly disable the button or show a message
+                const swapBtn = document.getElementById(exerciseIdToSwap)?.querySelector('.swap-exercise-btn');
+                if (swapBtn) {
+                    swapBtn.disabled = true;
+                    swapBtn.textContent = 'No Swaps';
+                    setTimeout(() => {
+                         // Re-enable only if exercise is not completed
+                         if (!oldExercise.completed) {
+                            swapBtn.disabled = false;
+                            swapBtn.innerHTML = '↻ Swap'; // Use innerHTML to render the icon
+                         }
+                    }, 1500);
+                }
+                return;
+            }
+
+            // Select a random replacement
+            const newExerciseData = finalReplacements[Math.floor(Math.random() * finalReplacements.length)];
+            const newExerciseId = generateUniqueId();
+            const baseReps = newExerciseData.reps || 12; // Default reps
+
+            const newExercise = {
+                ...newExerciseData,
+                id: newExerciseId,
+                reps: baseReps,
+                completed: false
+            };
+
+            // Replace the old exercise in the state
+            userState.currentWorkout.exercises[muscleGroup].splice(exerciseIndex, 1, newExercise);
+
+            // Clean up weak mode state for the *old* exercise ID
+            if (userState.weakMode && userState.weakMode[exerciseIdToSwap]) {
+                delete userState.weakMode[exerciseIdToSwap];
+                // Do not automatically enable weak mode for the new exercise
+            }
+
+            // Save state and re-render
+            localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
+            localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
+            renderExercises(); // Re-render the whole list to reflect the swap
+            console.log(`Swapped ${oldExercise.name} for ${newExercise.name}`);
         }
 
 
@@ -848,10 +920,6 @@
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
             lastGenerateClick = 0; // Reset the spam prevention timer HERE
-
-            // NOTE: We no longer reset the workout state here.
-            // The reset happens if the user clicks "GIVE ME MY PUNISHMENT!" *while* the success box is visible.
-            // Or if they click "Clear All".
         }
 
 
@@ -935,7 +1003,7 @@
         }
 
 
-        // Remove excess exercises when decreasing count
+        // Remove excess exercises when decreasing count (Not used by swap, but kept for input changes)
         function removeExcessExercises(countToRemove) {
             if (countToRemove <= 0) return;
              // Ensure exercises object exists
@@ -1007,14 +1075,26 @@
                 const muscleIndex = currentTotalExercises % priorityMuscles.length;
                 const muscle = priorityMuscles[muscleIndex];
 
-                const availableExercises = exerciseDB[muscle]?.filter(ex =>
-                    ex.equipment.some(e => userState.equipment.includes(e))
-                ) || [];
+                 // Find available exercises for this muscle group matching equipment
+                 const availableExercises = (exerciseDB[muscle] || [])
+                    .filter(ex => ex.equipment.some(e => userState.equipment.includes(e)));
 
-                if (availableExercises.length > 0) {
-                    // Simple random selection for now
-                    const exerciseData = availableExercises[Math.floor(Math.random() * availableExercises.length)];
-                    const exerciseId = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`; // Unique ID
+                 // Get names of exercises *already* in the workout for this muscle group
+                 const currentExerciseNamesInGroup = userState.currentWorkout.exercises[muscle]?.map(ex => ex.name) || [];
+
+                 // Prefer exercises not already in the current list for this group
+                 let suitableExercises = availableExercises.filter(ex => !currentExerciseNamesInGroup.includes(ex.name));
+
+                 // If filtering removed all options (e.g., only 1-2 exercises exist for the group), fall back to the original available list
+                 if (suitableExercises.length === 0) {
+                     suitableExercises = availableExercises;
+                 }
+
+
+                if (suitableExercises.length > 0) {
+                    // Select randomly from the suitable (preferably new) exercises
+                    const exerciseData = suitableExercises[Math.floor(Math.random() * suitableExercises.length)];
+                    const exerciseId = generateUniqueId();
                     const baseReps = exerciseData.reps || 12; // Use DB reps or default
 
                     // Ensure the muscle group array exists before pushing
@@ -1103,7 +1183,7 @@
 
                         const exerciseEl = document.createElement("div");
                         exerciseEl.className = `exercise ${ex.completed ? 'completed' : ''}`;
-                        exerciseEl.id = ex.id;
+                        exerciseEl.id = ex.id; // Use the exercise's unique ID
 
                         const baseReps = ex.reps || 12; // Default reps if not set
                         const isWeak = userState.weakMode[ex.id] || false;
@@ -1124,7 +1204,9 @@
                                         <button class="complete-btn ${ex.completed ? 'completed' : ''}" ${ex.completed ? 'disabled' : ''}>
                                             ${ex.completed ? '✓ Done' : 'Complete'}
                                         </button>
-                                        <button class="remove-exercise-btn ${ex.completed ? 'disabled' : ''}" title="Remove this exercise">X</button>
+                                        <button class="swap-exercise-btn ${ex.completed ? 'disabled' : ''}" title="Swap for another exercise" ${ex.completed ? 'disabled' : ''}>
+                                            ↻ Swap
+                                        </button>
                                     </div>
                                 </div>
                                 <label class="checkbox-option weak-toggle">
@@ -1138,10 +1220,12 @@
                          // Add event listeners only if not completed
                         if (!ex.completed) {
                             exerciseEl.querySelector(".complete-btn").addEventListener("click", () => completeExercise(ex.id));
-                            exerciseEl.querySelector(".remove-exercise-btn").addEventListener("click", (e) => {
-                                e.stopPropagation(); // Prevent group toggle if clicking button inside header area
-                                removeExercise(ex.id);
+                            // --- Update listener to call swapExercise ---
+                            exerciseEl.querySelector(".swap-exercise-btn").addEventListener("click", (e) => {
+                                e.stopPropagation(); // Prevent group toggle
+                                swapExercise(ex.id); // Call swap function
                             });
+                            // --- End update ---
                              // Listener for the checkbox changing state
                              exerciseEl.querySelector(".weak-toggle input").addEventListener("change", () => toggleWeakMode(ex.id));
 
@@ -1168,10 +1252,15 @@
                         } else {
                              // Ensure controls are visually disabled if already completed
                              const completeBtn = exerciseEl.querySelector(".complete-btn");
-                             const removeBtn = exerciseEl.querySelector(".remove-exercise-btn");
+                             const swapBtn = exerciseEl.querySelector(".swap-exercise-btn");
                              const weakCheckbox = exerciseEl.querySelector(".weak-toggle input");
                              if (completeBtn) completeBtn.disabled = true;
-                             if (removeBtn) removeBtn.classList.add('disabled');
+                             // --- Ensure swap button is disabled visually/functionally ---
+                             if (swapBtn) {
+                                 swapBtn.classList.add('disabled');
+                                 swapBtn.disabled = true;
+                             }
+                             // --- End swap button ---
                              if (weakCheckbox) weakCheckbox.disabled = true;
                         }
 
@@ -1187,7 +1276,6 @@
             workoutDisplay.style.display = hasExercises ? "block" : "none";
 
             // Hide success box when rendering exercises *unless* WORK DONE was just clicked
-            // (i.e., workDoneBtn is enabled and completed class is present)
             const workDoneCompleted = !workDoneBtn.disabled && workDoneBtn.classList.contains('completed');
             if (successBox.style.display === 'block' && !workDoneCompleted) {
                  successBox.style.display = 'none';
@@ -1239,15 +1327,13 @@
             } else if (targetDeaths < currentCount) {
                 // Decreasing the count
                 const diff = currentCount - targetDeaths;
-                removeExcessExercises(diff);
+                removeExcessExercises(diff); // Still use remove for decreasing count
             } else if (targetDeaths > currentCount) {
                 // Increasing the count
                 const additionalDeaths = targetDeaths - currentCount;
                 generateAdditionalExercises(additionalDeaths);
             } else {
-                 // Count hasn't changed. If triggered from handleGenerateClick after success box reset,
-                 // currentCount (lastDeathCount) would be 0, so this branch wouldn't be hit.
-                 // If triggered some other way with same count, show warning.
+                 // Count hasn't changed.
                  console.log("Generate called but count hasn't changed.");
                  const warning = document.querySelector(".spam-warning");
                   if (warning.style.display !== 'block') {
@@ -1264,7 +1350,6 @@
             // Add a small delay (e.g., 300ms) to prevent accidental double clicks triggering complex logic multiple times
             if (now - lastGenerateClick < 300) { // Reduced threshold slightly
                  console.log("Generate button clicked too quickly.");
-                 // Optionally show spam warning here if clicks are super fast
                  const warning = document.querySelector(".spam-warning");
                  if (warning.style.display !== 'block') {
                      warning.style.display = "block";
@@ -1275,26 +1360,20 @@
             lastGenerateClick = now; // Update timestamp *after* check passes
 
             // *** FIX: Check if success box is visible ***
-            // If it is, clear the previous workout state before generating a new one.
-            // This allows the button to work even if the death count is unchanged after finishing.
             if (successBox.style.display === 'block') {
-                clearAllWorkouts(); // Reset state (hides success box, clears workout, resets lastDeathCount)
-                // Ensure death count input is at least 1 after clearing
+                clearAllWorkouts(); // Reset state
                  if (parseInt(deathCountInput.value) <= 0) {
                      deathCountInput.value = "1";
                  }
             }
             // *** END FIX ***
 
-
-             // If workout is potentially cleared (lastDeathCount is 0),
-             // ensure input is reset to 1 if it's 0 or less before generating
+             // Ensure input is reset to 1 if needed before generating
              if (userState.lastDeathCount === 0 && parseInt(deathCountInput.value) <= 0) {
                  deathCountInput.value = "1";
              }
 
-
-            generateWorkout(); // Proceed with generation logic as before
+            generateWorkout(); // Proceed with generation logic
         }
 
         // --- Initialization ---
@@ -1306,17 +1385,14 @@
             airBattlesCheckbox.checked = (savedBattleType === "air");
             groundBattlesCheckbox.checked = (savedBattleType === "ground");
         } else {
-             // Default to Air if nothing saved
              airBattlesCheckbox.checked = true;
              groundBattlesCheckbox.checked = false;
              userState.battleType = "air";
              localStorage.setItem("battleType", "air"); // Save the default
         }
-        updateDeathText(); // Update text based on loaded/default type
+        updateDeathText();
 
-
-         // Load existing workout and render if present
-         // Sanitize loaded data: ensure exercises is an object with arrays
+         // Load existing workout and render if present (with sanitization)
          if (userState.currentWorkout && typeof userState.currentWorkout.exercises === 'object' && userState.currentWorkout.exercises !== null) {
             displayOrder.forEach(muscle => {
                 if (!Array.isArray(userState.currentWorkout.exercises[muscle])) {
@@ -1324,25 +1400,19 @@
                 }
             });
          } else if (userState.currentWorkout) {
-             // If exercises property exists but isn't an object, reset it
              userState.currentWorkout.exercises = { arms: [], chest: [], back: [], abs: [], legs: [] };
          }
-          // Now check if there are any exercises after sanitizing
+         // Check if workout exists after sanitizing
          const currentWorkoutExercises = userState.currentWorkout?.exercises;
          const workoutExists = currentWorkoutExercises && Object.values(currentWorkoutExercises).some(group => group && group.length > 0);
 
-
          if (workoutExists) {
-             userState.lastDeathCount = userState.currentWorkout.deaths || 0; // Use 0 if deaths is missing/falsy
-             // Ensure lastDeathCount is not negative
-             userState.lastDeathCount = Math.max(0, userState.lastDeathCount);
-             deathCountInput.value = userState.lastDeathCount > 0 ? userState.lastDeathCount : "1"; // Sync input, default to 1 if 0
-             renderExercises(); // Render existing exercises
+             userState.lastDeathCount = Math.max(0, userState.currentWorkout.deaths || 0); // Ensure non-negative
+             deathCountInput.value = userState.lastDeathCount > 0 ? userState.lastDeathCount : "1";
+             renderExercises();
          } else {
-             // No workout loaded or deaths is 0 or exercises missing/invalid
-             clearAllWorkouts(); // Ensure clean state if loaded data is invalid
-             // Ensure history is initialized even if no workout loaded
-             displayOrder.forEach(muscle => {
+             clearAllWorkouts(); // Start clean
+             displayOrder.forEach(muscle => { // Initialize history even if cleared
                  if (!userState.workoutHistory[muscle]) {
                      userState.workoutHistory[muscle] = { count: 0, lastDone: null };
                  }
@@ -1359,13 +1429,13 @@
         clearWorkoutBtn.addEventListener("click", clearAllWorkouts); // Listener still works
         completeAllBtn.addEventListener("click", completeAllExercises);
 
-        // Optional: Add listener to death count input to auto-generate on change (debounced?)
+        // Optional: Debounced input listener
         // let debounceTimer;
         // deathCountInput.addEventListener('input', () => {
         //     clearTimeout(debounceTimer);
         //     debounceTimer = setTimeout(() => {
-        //         handleGenerateClick(); // Use the main handler to include checks
-        //     }, 750); // Adjust delay as needed (longer delay recommended for input)
+        //         handleGenerateClick();
+        //     }, 750);
         // });
 
     </script>
