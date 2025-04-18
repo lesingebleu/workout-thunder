@@ -528,6 +528,7 @@
             "./images/img1.jpg",
             "./images/img2.jpg",
             "./images/img3.jpg"
+            // Add more image paths here if needed
         ];
 
         const bgImage = document.getElementById("bgImage");
@@ -544,29 +545,29 @@
         // Exercise Database
         const exerciseDB = {
             arms: [
-                { name: "Pushups", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1 },
-                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
+                { name: "Bicep Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 },
+                { name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 }
             ],
             chest: [
-                { name: "Bench Press", equipment: ["barbell"], difficulty: 3 },
-                { name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2 },
-                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2 }
+                { name: "Bench Press", equipment: ["barbell"], difficulty: 3, reps: 10 },
+                { name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },
+                { name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 } // e.g., wide, diamond
             ],
             back: [
-                { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3 },
-                { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2 },
-                { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2 }
+                { name: "Pull-ups", equipment: ["bodyweight"], difficulty: 3, reps: 8 }, // Reps lower as it's hard
+                { name: "Bent Over Rows", equipment: ["dumbbells"], difficulty: 2, reps: 12 },
+                { name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 }
             ],
             abs: [
-                { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Plank (1 min)", equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Russian Twists", equipment: ["bodyweight"], difficulty: 2, reps: 20 }, // Higher reps for abs
+                { name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },
+                { name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 } // Reps here means seconds
             ],
             legs: [
-                { name: "Squats", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Lunges", equipment: ["bodyweight"], difficulty: 2 },
-                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1 }
+                { name: "Squats", equipment: ["bodyweight"], difficulty: 2, reps: 20 },
+                { name: "Lunges", equipment: ["bodyweight"], difficulty: 2, reps: 12 }, // 12 per leg
+                { name: "Calf Raises", equipment: ["bodyweight"], difficulty: 1, reps: 25 }
             ]
         };
 
@@ -654,16 +655,26 @@
             const exerciseEl = document.getElementById(exerciseId);
             if (exerciseEl) {
                 const repsElement = exerciseEl.querySelector(".exercise-reps");
-                // No need to query weakToggle here as its state is handled by the checkbox state itself
+                const exerciseNameElement = exerciseEl.querySelector(".exercise-name-text"); // Find parent for plank check
+                const exerciseText = exerciseNameElement ? exerciseNameElement.textContent.toLowerCase() : '';
+
                 if (repsElement) {
                     const baseReps = parseInt(repsElement.dataset.baseReps);
-                     // Ensure at least 1 rep
-                    const currentReps = userState.weakMode[exerciseId] ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
-                    repsElement.textContent = `(${currentReps} reps)`;
+                    const isWeak = userState.weakMode[exerciseId] || false;
+                     // Ensure at least 1 rep/sec
+                    const currentReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
+
+                    // Adjust text based on exercise type (e.g., plank)
+                    if (exerciseText.includes('plank')) {
+                         repsElement.textContent = `(${currentReps} sec)`;
+                    } else {
+                         repsElement.textContent = `(${currentReps} reps)`;
+                    }
                     // Checkbox checked state is already handled by the 'change' listener triggering toggleWeakMode
                 }
             }
         }
+
 
         // Complete an exercise
         function completeExercise(exerciseId) {
@@ -689,7 +700,7 @@
                 }
 
                 // Update state
-                if (userState.currentWorkout) {
+                if (userState.currentWorkout && userState.currentWorkout.exercises) {
                     for (const group in userState.currentWorkout.exercises) {
                          // Ensure group array exists
                          if (!userState.currentWorkout.exercises[group]) continue;
@@ -709,6 +720,8 @@
         // Remove an exercise
         function removeExercise(exerciseId) {
             let removed = false;
+            if (!userState.currentWorkout || !userState.currentWorkout.exercises) return; // Safety check
+
             for (const muscle of displayOrder) {
                 // Ensure the muscle group array exists before trying to find an index
                 if (!userState.currentWorkout.exercises[muscle]) continue;
@@ -834,16 +847,15 @@
         function showSuccessMessage() {
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
-            lastGenerateClick = 0; // <<--- FIX: Reset the spam prevention timer HERE
+            lastGenerateClick = 0; // Reset the spam prevention timer HERE
 
-            // Optional: Automatically clear the workout state as well?
-            // If you want the workout to clear automatically after success, uncomment the next line
-            // resetWorkout();
-            // If you want the user to *manually* clear/generate new, leave resetWorkout() commented.
+            // NOTE: We no longer reset the workout state here.
+            // The reset happens if the user clicks "GIVE ME MY PUNISHMENT!" *while* the success box is visible.
+            // Or if they click "Clear All".
         }
 
 
-        // Reset workout state (called manually via Clear All)
+        // Reset workout state (called manually via Clear All or within handleGenerateClick)
         function resetWorkout() {
             // This is effectively clearAllWorkouts
             clearAllWorkouts();
@@ -963,11 +975,13 @@
 
             // Save updated state
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
-             if (Object.keys(userState.weakMode || {}).length > 0) { // Check weakMode exists before checking length
+             // Save weak mode state only if it's not empty
+             if (userState.weakMode && Object.keys(userState.weakMode).length > 0) {
                  localStorage.setItem("weakMode", JSON.stringify(userState.weakMode));
              } else {
                  localStorage.removeItem("weakMode"); // Clear from storage if empty
              }
+
 
             renderExercises(); // Re-render the list
         }
@@ -976,10 +990,13 @@
         // Generate additional exercises
         function generateAdditionalExercises(additionalDeaths) {
             if (additionalDeaths <= 0) return; // No exercises to add
-             // Ensure exercises object exists
-             if (!userState.currentWorkout || !userState.currentWorkout.exercises) {
-                 userState.currentWorkout = { ...userState.currentWorkout, exercises: {}}; // Initialize if missing
-             };
+             // Ensure exercises object exists and initialize if necessary
+             if (!userState.currentWorkout) {
+                 userState.currentWorkout = { timestamp: new Date().toISOString(), deaths: 0, exercises: {} };
+             }
+             if (!userState.currentWorkout.exercises) {
+                 userState.currentWorkout.exercises = {};
+             }
 
             const priorityMuscles = getPriorityMuscles();
             const initialDeathCount = userState.lastDeathCount; // Deaths *before* adding new ones
@@ -996,8 +1013,9 @@
 
                 if (availableExercises.length > 0) {
                     // Simple random selection for now
-                    const exercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
+                    const exerciseData = availableExercises[Math.floor(Math.random() * availableExercises.length)];
                     const exerciseId = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`; // Unique ID
+                    const baseReps = exerciseData.reps || 12; // Use DB reps or default
 
                     // Ensure the muscle group array exists before pushing
                     if (!userState.currentWorkout.exercises[muscle]) {
@@ -1005,9 +1023,9 @@
                     }
 
                     userState.currentWorkout.exercises[muscle].push({
-                        ...exercise,
+                        ...exerciseData, // Spread the data from DB
                         id: exerciseId,
-                        reps: exercise.reps || 12, // Use DB reps or default
+                        reps: baseReps, // Ensure reps are explicitly set
                         completed: false
                     });
 
@@ -1048,7 +1066,7 @@
             let isAnyExerciseIncomplete = false;
 
              displayOrder.forEach(muscle => {
-                 // Ensure the muscle group array exists
+                 // Ensure the muscle group array exists and default to empty array if not
                  if (!userState.currentWorkout.exercises[muscle]) {
                      userState.currentWorkout.exercises[muscle] = [];
                  }
@@ -1089,15 +1107,17 @@
 
                         const baseReps = ex.reps || 12; // Default reps if not set
                         const isWeak = userState.weakMode[ex.id] || false;
-                         // Ensure min 1 rep
+                         // Ensure min 1 rep/sec
                         const reps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps;
                         const difficultyStars = "★".repeat(ex.difficulty || 1);
+                        const repsText = ex.name.toLowerCase().includes('plank') ? `${reps} sec` : `${reps} reps`;
+
 
                         exerciseEl.innerHTML = `
                             <div class="exercise-info">
                                 <div class="exercise-name">
                                     <div class="exercise-name-text">
-                                        ${ex.name} <span class="exercise-reps" data-base-reps="${baseReps}">(${reps} reps)</span>
+                                        ${ex.name} <span class="exercise-reps" data-base-reps="${baseReps}">(${repsText})</span>
                                         <span class="exercise-difficulty">${difficultyStars}</span>
                                     </div>
                                     <div class="exercise-controls">
@@ -1165,10 +1185,11 @@
 
             // Show or hide workout display based on whether there are exercises
             workoutDisplay.style.display = hasExercises ? "block" : "none";
-            // Hide success box whenever rendering exercises (unless it was just shown)
-            if (successBox.style.display === 'block' && !workDoneBtn.disabled) {
-                 // Don't hide success box if WORK DONE was just clicked
-            } else if (successBox.style.display === 'block') {
+
+            // Hide success box when rendering exercises *unless* WORK DONE was just clicked
+            // (i.e., workDoneBtn is enabled and completed class is present)
+            const workDoneCompleted = !workDoneBtn.disabled && workDoneBtn.classList.contains('completed');
+            if (successBox.style.display === 'block' && !workDoneCompleted) {
                  successBox.style.display = 'none';
             }
 
@@ -1206,9 +1227,14 @@
             const currentCount = userState.lastDeathCount;
 
             if (targetDeaths === 0) {
-                // User explicitly set count to 0, clear everything
+                // User explicitly set count to 0 (or invalid input became 0)
                  if (currentCount > 0) { // Only clear if there was something before
                      clearAllWorkouts();
+                 } else {
+                     // If currentCount was already 0, ensure display is hidden and input is 1
+                     workoutDisplay.style.display = "none";
+                     successBox.style.display = "none";
+                     deathCountInput.value = "1";
                  }
             } else if (targetDeaths < currentCount) {
                 // Decreasing the count
@@ -1219,11 +1245,11 @@
                 const additionalDeaths = targetDeaths - currentCount;
                 generateAdditionalExercises(additionalDeaths);
             } else {
-                 // Count hasn't changed, show spam warning only if clicked again rapidly
-                 // This case is handled by handleGenerateClick's timer check
+                 // Count hasn't changed. If triggered from handleGenerateClick after success box reset,
+                 // currentCount (lastDeathCount) would be 0, so this branch wouldn't be hit.
+                 // If triggered some other way with same count, show warning.
                  console.log("Generate called but count hasn't changed.");
-                 // Optionally show spam warning here too if timer allows click but count is same
-                  const warning = document.querySelector(".spam-warning");
+                 const warning = document.querySelector(".spam-warning");
                   if (warning.style.display !== 'block') {
                      warning.style.display = "block";
                      setTimeout(() => warning.style.display = "none", 2000);
@@ -1232,7 +1258,7 @@
         }
 
 
-        // Spam prevention for generate button
+        // Spam prevention for generate button (WITH FIX)
         function handleGenerateClick() {
             const now = Date.now();
             // Add a small delay (e.g., 300ms) to prevent accidental double clicks triggering complex logic multiple times
@@ -1248,17 +1274,27 @@
             }
             lastGenerateClick = now; // Update timestamp *after* check passes
 
-             // If success box is visible, hide it before generating new workout
-             if (successBox.style.display === 'block') {
-                 successBox.style.display = 'none';
-             }
-             // If workout is cleared (lastDeathCount is 0), ensure input is reset before generating
-             if (userState.lastDeathCount === 0 && parseInt(deathCountInput.value) === 0) {
+            // *** FIX: Check if success box is visible ***
+            // If it is, clear the previous workout state before generating a new one.
+            // This allows the button to work even if the death count is unchanged after finishing.
+            if (successBox.style.display === 'block') {
+                clearAllWorkouts(); // Reset state (hides success box, clears workout, resets lastDeathCount)
+                // Ensure death count input is at least 1 after clearing
+                 if (parseInt(deathCountInput.value) <= 0) {
+                     deathCountInput.value = "1";
+                 }
+            }
+            // *** END FIX ***
+
+
+             // If workout is potentially cleared (lastDeathCount is 0),
+             // ensure input is reset to 1 if it's 0 or less before generating
+             if (userState.lastDeathCount === 0 && parseInt(deathCountInput.value) <= 0) {
                  deathCountInput.value = "1";
              }
 
 
-            generateWorkout();
+            generateWorkout(); // Proceed with generation logic as before
         }
 
         // --- Initialization ---
@@ -1280,16 +1316,30 @@
 
 
          // Load existing workout and render if present
-          // Ensure exercises object exists before checking length
+         // Sanitize loaded data: ensure exercises is an object with arrays
+         if (userState.currentWorkout && typeof userState.currentWorkout.exercises === 'object' && userState.currentWorkout.exercises !== null) {
+            displayOrder.forEach(muscle => {
+                if (!Array.isArray(userState.currentWorkout.exercises[muscle])) {
+                    userState.currentWorkout.exercises[muscle] = []; // Ensure it's an array
+                }
+            });
+         } else if (userState.currentWorkout) {
+             // If exercises property exists but isn't an object, reset it
+             userState.currentWorkout.exercises = { arms: [], chest: [], back: [], abs: [], legs: [] };
+         }
+          // Now check if there are any exercises after sanitizing
          const currentWorkoutExercises = userState.currentWorkout?.exercises;
          const workoutExists = currentWorkoutExercises && Object.values(currentWorkoutExercises).some(group => group && group.length > 0);
 
+
          if (workoutExists) {
-             userState.lastDeathCount = userState.currentWorkout.deaths || 0; // Use 0 if deaths is missing
+             userState.lastDeathCount = userState.currentWorkout.deaths || 0; // Use 0 if deaths is missing/falsy
+             // Ensure lastDeathCount is not negative
+             userState.lastDeathCount = Math.max(0, userState.lastDeathCount);
              deathCountInput.value = userState.lastDeathCount > 0 ? userState.lastDeathCount : "1"; // Sync input, default to 1 if 0
              renderExercises(); // Render existing exercises
          } else {
-             // No workout loaded or deaths is 0 or exercises missing
+             // No workout loaded or deaths is 0 or exercises missing/invalid
              clearAllWorkouts(); // Ensure clean state if loaded data is invalid
              // Ensure history is initialized even if no workout loaded
              displayOrder.forEach(muscle => {
@@ -1314,8 +1364,8 @@
         // deathCountInput.addEventListener('input', () => {
         //     clearTimeout(debounceTimer);
         //     debounceTimer = setTimeout(() => {
-        //         handleGenerateClick(); // Or directly call generateWorkout if spam check isn't needed here
-        //     }, 500); // Adjust delay as needed
+        //         handleGenerateClick(); // Use the main handler to include checks
+        //     }, 750); // Adjust delay as needed (longer delay recommended for input)
         // });
 
     </script>
