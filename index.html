@@ -628,7 +628,8 @@
             },
             weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
             lastTotalAssignedCount: 0,
-            currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0
+            currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0,
+            completedWorkout: JSON.parse(localStorage.getItem("completedWorkout")) || false
         };
 
         // DOM Elements
@@ -810,10 +811,12 @@
             userState.lastTotalAssignedCount = 0;
             userState.currentMuscleIndex = 0;
             userState.weakMode = {};
+            userState.completedWorkout = false;
             deathCountInput.value = "1";
             localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout));
             localStorage.setItem("currentMuscleIndex", userState.currentMuscleIndex.toString());
             localStorage.removeItem("weakMode");
+            localStorage.removeItem("completedWorkout");
             workoutDisplay.style.display = "none";
             exercisesListEl.innerHTML = "";
             successBox.style.display = "none";
@@ -864,6 +867,8 @@
 
         // Show success message
         function showSuccessMessage() {
+            userState.completedWorkout = true;
+            localStorage.setItem("completedWorkout", "true");
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
             lastGenerateClick = 0;
@@ -1104,17 +1109,20 @@
         }
         updateDeathText();
 
-         // Load workout, sanitize, sync state
-         if (userState.currentWorkout?.exercises && typeof userState.currentWorkout.exercises === 'object') {
+        // Initialize based on completion state
+        if (userState.completedWorkout) {
+            successBox.style.display = "block";
+            workoutDisplay.style.display = "none";
+            deathCountInput.value = "1";
+        } else if (userState.currentWorkout?.exercises && typeof userState.currentWorkout.exercises === 'object') {
             displayOrder.forEach(m => { if (!Array.isArray(userState.currentWorkout.exercises[m])) userState.currentWorkout.exercises[m] = []; });
-         } else clearAllWorkouts(); // Reset if invalid
-
-         userState.lastTotalAssignedCount = getTotalAssignedExercises();
-         userState.currentMuscleIndex = parseInt(localStorage.getItem("currentMuscleIndex")) || 0;
-         deathCountInput.value = userState.lastTotalAssignedCount > 0 ? userState.lastTotalAssignedCount : "1";
-
-         if (userState.lastTotalAssignedCount > 0) renderExercises();
-         else workoutDisplay.style.display = 'none'; // Ensure hidden if no exercises
+            userState.lastTotalAssignedCount = getTotalAssignedExercises();
+            userState.currentMuscleIndex = parseInt(localStorage.getItem("currentMuscleIndex")) || 0;
+            deathCountInput.value = userState.lastTotalAssignedCount > 0 ? userState.lastTotalAssignedCount : "1";
+            if (userState.lastTotalAssignedCount > 0) renderExercises();
+        } else {
+            clearAllWorkouts();
+        }
 
         // --- Event Listeners ---
         generateBtn.addEventListener("click", handleGenerateClick);
