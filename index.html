@@ -581,7 +581,8 @@
                 legs: { count: 0, lastDone: null }
             },
             weakMode: JSON.parse(localStorage.getItem("weakMode")) || {},
-            lastDeathCount: 0
+            lastDeathCount: 0,
+            fromSuccessScreen: false // NEW: Track if we're coming from success screen
         };
 
         const deathCountInput = document.getElementById("deathCount");
@@ -727,6 +728,7 @@
             successBox.style.display = "none";
             workDoneBtn.disabled = true;
             workDoneBtn.classList.remove('completed');
+            userState.fromSuccessScreen = false; // Reset the flag
         }
 
         function completeAllExercises() {
@@ -788,6 +790,7 @@
             workoutDisplay.style.display = "none";
             successBox.style.display = "block";
             lastGenerateClick = 0;
+            userState.fromSuccessScreen = true; // Set flag when showing success message
         }
 
         function getPriorityMuscles() {
@@ -1099,17 +1102,22 @@
                 const additionalDeaths = targetDeaths - currentCount;
                 generateAdditionalExercises(additionalDeaths);
             } else {
-                const warning = document.querySelector(".spam-warning");
-                if (warning.style.display !== 'block') {
-                    warning.style.display = "block";
-                    setTimeout(() => warning.style.display = "none", 2000);
+                // Only show warning if not coming from success screen
+                if (!userState.fromSuccessScreen) {
+                    const warning = document.querySelector(".spam-warning");
+                    if (warning.style.display !== 'block') {
+                        warning.style.display = "block";
+                        setTimeout(() => warning.style.display = "none", 2000);
+                    }
                 }
             }
         }
 
         function handleGenerateClick() {
             const now = Date.now();
-            if (now - lastGenerateClick < 300 && successBox.style.display !== 'block') {
+            
+            // Only apply spam prevention if not coming from success screen
+            if (now - lastGenerateClick < 300 && !userState.fromSuccessScreen) {
                 const warning = document.querySelector(".spam-warning");
                 if (warning.style.display !== 'block') {
                     warning.style.display = "block";
@@ -1118,6 +1126,11 @@
                 return;
             }
             lastGenerateClick = now;
+
+            // Reset the fromSuccessScreen flag after using it
+            if (userState.fromSuccessScreen) {
+                userState.fromSuccessScreen = false;
+            }
 
             if (successBox.style.display === 'block') {
                 successBox.style.display = 'none';
