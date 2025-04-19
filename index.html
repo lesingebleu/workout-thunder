@@ -19,7 +19,8 @@
             --tooltip-padding: 5px 10px;
             --tooltip-radius: 5px;
             --tooltip-fontsize: 0.9em;
-            --tooltip-fontweight: normal;  
+            --tooltip-fontweight: normal;
+            --swap-blue: #4dabf7;
         }
 
         body {
@@ -74,15 +75,10 @@
             backdrop-filter: blur(5px);
         }
 
-        .explanation-text {
-            text-align: center;
+        header p {
+            margin-top: 10px;
             font-size: 0.9em;
             color: #ccc;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 5px;
-            backdrop-filter: blur(2px);
         }
 
         .battle-toggle {
@@ -272,8 +268,8 @@
         }
 
         .swap-exercise-btn {
-            background: var(--button-color);
-            border: 1px solid var(--button-border);
+            background: var(--swap-blue);
+            border: 1px solid var(--swap-blue);
             color: white;
             padding: 6px 12px;
             font-size: 1em;
@@ -434,12 +430,24 @@
             gap: 10px;
         }
 
-        .toggle-all-btn, .complete-all-btn, .clear-workout-btn {
+        .toggle-all-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
             padding: 5px 10px;
             font-size: 0.9em;
             min-width: 100px;
+        }
+
+        .complete-all-btn, .clear-workout-btn {
+            background: var(--button-color);
+            border: 1px solid var(--button-border);
+            padding: 5px 10px;
+            font-size: 0.9em;
+            width: 40px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .complete-all-btn {
@@ -551,11 +559,8 @@
     <div class="container">
         <header>
             <h1>Workout Thunder</h1>
+            <p>Get buffed and improve in War Thunder. Each loss or death — you decide — in War Thunder equals a rep of an exercise. Each death adds one exercise in a fixed rotation — Arms, Chest, Back, Abs, Legs, then repeat. It remembers where you left off, so progress carries over between sessions, and you can clear the current queue without resetting the rotation. It keeps things balanced so every part of your body gets trained evenly.</p>
         </header>
-
-        <div class="explanation-text">
-            This is a personal project born from a simple idea: turning my War Thunder deaths into gains. After I saw a random post on r/WarThunder about War Thunder failures as workout motivation, I started tracking every time I died in air combat without scoring a single point or lost a match—each failure became a rep, each defeat a chance to grow stronger. Every death meant an exercise, scribbled in my notepad as a reminder to do push-ups, squats, or other exercises later.<br>Eventually, I built this website to automate the process I used to track manually in a notepad. It follows the same simple system: each death adds one exercise in a fixed rotation—Arms, Chest, Back, Abs, Legs, then repeat. The site remembers where you left off, so progress carries over between sessions, and you can clear the current queue without resetting the rotation. It keeps things balanced.
-        </div>
 
         <div class="death-input-container">
             <div class="death-input">
