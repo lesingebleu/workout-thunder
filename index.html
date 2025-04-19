@@ -311,7 +311,7 @@
 
         .swap-exercise-btn.disabled {
             opacity: 0.5;
-            cursor: not-owed;
+            cursor: not-allowed;
             pointer-events: none;
         }
 
@@ -442,6 +442,50 @@
             min-width: 100px;
         }
 
+        .complete-all-btn {
+            background: var(--complete-green);
+            border-color: var(--complete-green);
+            position: relative;
+        }
+
+        .complete-all-btn:hover::after {
+            content: "Clicking this button will complete all exercises";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: 15px;
+            font-weight: var(--tooltip-fontweight);
+            white-space: nowrap;
+            margin-bottom: 5px;
+            z-index: 1;
+        }
+
+        .clear-workout-btn {
+            position: relative;
+        }
+
+        .clear-workout-btn:hover::after {
+            content: "Clicking this button will delete all exercises";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: 15px;
+            font-weight: var(--tooltip-fontweight);
+            white-space: nowrap;
+            margin-bottom: 5px;
+            z-index: 1;
+        }
+
         .generate-btn-container {
             display: flex;
             justify-content: center;
@@ -532,7 +576,7 @@
                 <h2>Your Penalty Workout</h2>
                 <div class="toggle-all-container">
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
-                    <button id="completeAllBtn" class="complete-all-btn">√√</button>
+                    <button id="completeAllBtn" class="complete-all-btn">✓✓</button>
                     <button id="clearWorkoutBtn" class="clear-workout-btn">X</button>
                 </div>
             </div>
@@ -543,7 +587,7 @@
         </div>
 
         <div id="successBox" class="success-box">
-            Nice job. Now get back to the battlefield and git gud.
+            Great. Now try not to be bad at the game.
         </div>
     </div>
 
