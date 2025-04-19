@@ -437,15 +437,22 @@
         .toggle-all-btn, .complete-all-btn, .clear-workout-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
-            padding: 5px 10px;
-            font-size: 0.9em;
-            min-width: 100px;
+            padding: 8px;
+            font-size: 1em;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
         }
 
         .complete-all-btn {
             background: var(--complete-green);
             border-color: var(--complete-green);
             position: relative;
+            font-size: 1.2em;
+            padding: 0;
         }
 
         .complete-all-btn:hover::after {
@@ -467,6 +474,8 @@
 
         .clear-workout-btn {
             position: relative;
+            font-size: 1.2em;
+            padding: 0;
         }
 
         .clear-workout-btn:hover::after {
