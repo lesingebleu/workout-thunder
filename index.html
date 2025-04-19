@@ -437,9 +437,62 @@
         .toggle-all-btn, .complete-all-btn, .clear-workout-btn {
             background: var(--button-color);
             border: 1px solid var(--button-border);
-            padding: 5px 10px;
-            font-size: 0.9em;
-            min-width: 100px;
+            padding: 8px;
+            font-size: 1em;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+
+        .complete-all-btn {
+            background: var(--complete-green);
+            border-color: var(--complete-green);
+            position: relative;
+            font-size: 1.2em;
+            padding: 0;
+        }
+
+        .complete-all-btn:hover::after {
+            content: "Clicking this button will complete all exercises";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: 15px;
+            font-weight: var(--tooltip-fontweight);
+            white-space: nowrap;
+            margin-bottom: 5px;
+            z-index: 1;
+        }
+
+        .clear-workout-btn {
+            position: relative;
+            font-size: 1.2em;
+            padding: 0;
+        }
+
+        .clear-workout-btn:hover::after {
+            content: "Clicking this button will delete all exercises";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: 15px;
+            font-weight: var(--tooltip-fontweight);
+            white-space: nowrap;
+            margin-bottom: 5px;
+            z-index: 1;
         }
 
         .generate-btn-container {
@@ -532,8 +585,8 @@
                 <h2>Your Penalty Workout</h2>
                 <div class="toggle-all-container">
                     <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
-                    <button id="completeAllBtn" class="complete-all-btn">Complete All</button>
-                    <button id="clearWorkoutBtn" class="clear-workout-btn">Clear All</button>
+                    <button id="completeAllBtn" class="complete-all-btn">✓✓</button>
+                    <button id="clearWorkoutBtn" class="clear-workout-btn">X</button>
                 </div>
             </div>
             <div id="exercisesList"></div>
@@ -543,7 +596,7 @@
         </div>
 
         <div id="successBox" class="success-box">
-            Nice job. Now get back to the battlefield and git gud.
+            Great. Now try not to be bad at the game.
         </div>
     </div>
 
