@@ -122,7 +122,7 @@
             padding: 10px 15px;
             border-radius: 5px;
             border: none;
-            vertical-align: middle; /* Align buttons better with input */
+            vertical-align: middle;
         }
 
         input[type="number"] {
@@ -131,8 +131,8 @@
             background: rgba(255,255,255,0.1);
             color: white;
             -moz-appearance: textfield;
-            height: 38px; /* Match button approx height */
-            box-sizing: border-box; /* Include padding in height */
+            height: 38px;
+            box-sizing: border-box;
         }
 
         input[type="number"]::-webkit-outer-spin-button,
@@ -147,7 +147,7 @@
             cursor: pointer;
             border: 1px solid var(--button-border);
             transition: none;
-            font-family: inherit; /* Ensure consistent font */
+            font-family: inherit;
         }
 
         button:not(:disabled):not(.completed):hover {
@@ -257,37 +257,33 @@
             flex-shrink: 0;
         }
 
-        /* --- MODIFIED: Complete button default is green --- */
         .complete-btn {
-            background: var(--complete-green); /* Default green */
-            border: 1px solid var(--complete-green-border); /* Default green border */
+            background: var(--complete-green);
+            border: 1px solid var(--complete-green-border);
             padding: 6px 12px;
-            min-width: 80px; /* Keep minimum width */
+            min-width: 80px;
             text-align: center;
             white-space: nowrap;
             color: white;
-            font-size: 0.9em; /* Keep consistent */
+            font-size: 0.9em;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .complete-btn.completed {
-            /* Styles for when actually completed (if needed beyond disabled state) */
-            background: var(--complete-green); /* Stays green */
-            border-color: var(--complete-green-border); /* Stays green */
-            /* Might add opacity or different cursor handled by :disabled */
+            background: var(--complete-green);
+            border-color: var(--complete-green-border);
         }
 
-        /* --- MODIFIED: Swap button styling (matches complete button size) --- */
         .swap-exercise-btn {
             background: var(--swap-blue);
             border: 1px solid var(--swap-blue-border);
             color: white;
-            padding: 6px 12px; /* Match complete-btn */
-            font-size: 0.9em; /* Match complete-btn */
+            padding: 6px 12px;
+            font-size: 0.9em;
             cursor: pointer;
             border-radius: 5px;
-            min-width: 80px; /* Match complete-btn */
+            min-width: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -443,31 +439,30 @@
             gap: 10px;
         }
 
-        /* Base style for top-right buttons */
+        /* --- MODIFIED: Shared rule for top-right buttons (removed line-height) --- */
         .toggle-all-btn, .complete-all-btn, .clear-workout-btn {
-            background: var(--button-color); /* Default red */
+            background: var(--button-color);
             border: 1px solid var(--button-border);
-            padding: 5px 10px; /* Consistent padding */
-            font-size: 0.9em; /* Consistent font size */
-            border-radius: 5px; /* Consistent radius */
+            padding: 5px 10px;
+            font-size: 0.9em;
+            border-radius: 5px;
             color: white;
             cursor: pointer;
-            min-width: auto; /* Allow natural sizing */
+            min-width: auto;
             text-align: center;
-            position: relative; /* Needed for tooltips */
-            box-sizing: border-box; /* Consistent box model */
-            height: 30px; /* Explicit height to match toggle button better */
-            line-height: 18px; /* Adjust line-height to vertically center text/icons */
-            display: inline-flex; /* Use flex for alignment */
-            align-items: center; /* Center content vertically */
-            justify-content: center; /* Center content horizontally */
+            position: relative;
+            box-sizing: border-box;
+            height: 30px; /* Keep height for consistency */
+            /* line-height: 18px; REMOVED - let align-items handle centering */
+            display: inline-flex;
+            align-items: center; /* Vertically center flex items */
+            justify-content: center; /* Horizontally center flex items */
         }
 
-        /* Specific override for toggle button if it needs more width */
+        /* Specific override for toggle button */
          .toggle-all-btn {
-             min-width: 100px; /* Keep minimum width for text */
+             min-width: 100px;
          }
-
 
         /* Specific colors */
         .complete-all-btn {
@@ -475,12 +470,11 @@
             border-color: var(--complete-green-border);
         }
          .clear-workout-btn {
-             /* Already uses default red from the shared rule */
               background: var(--button-color);
               border-color: var(--button-border);
          }
 
-        /* Tooltips (no change) */
+        /* Tooltips */
         .complete-all-btn:hover::after,
         .clear-workout-btn:hover::after {
             content: attr(data-tooltip);
@@ -663,47 +657,31 @@
         function generateWorkout() {
             numberWarningEl.style.display = "none";
             spamWarningEl.style.display = "none";
-            const deathCountValue = deathCountInput.value; // Get the raw string value
+            const deathCountValue = deathCountInput.value;
 
-            // Check for Empty string or "0" string - treat both as invalid for generation
+            // Check for Empty string OR "0" string
             if (deathCountValue === "" || deathCountValue === "0") {
-                 numberWarningEl.style.display = "block"; // Show the specific warning
+                 numberWarningEl.style.display = "block";
                  setTimeout(() => numberWarningEl.style.display = "none", 2000);
-                 deathCountInput.value = ""; // Make the input box blank
-                 return; // Stop execution - do not generate/clear/add '1'
+                 // deathCountInput.value = ""; // REMOVED - Keep the '0' or blank state
+                 return; // Stop execution
             }
 
             // Check for other invalid input (negative, non-numeric)
             const targetDeaths = parseInt(deathCountValue);
             if (isNaN(targetDeaths) || targetDeaths < 0) {
-                 numberWarningEl.style.display = "block"; // Show the same warning
+                 numberWarningEl.style.display = "block";
                  setTimeout(() => numberWarningEl.style.display = "none", 2000);
-                 deathCountInput.value = ""; // Make the input box blank
+                 // deathCountInput.value = ""; // REMOVED - Keep the invalid state
                  return; // Stop execution
             }
 
-            // --- Proceed with positive numbers logic ---
+            // Proceed with positive numbers logic
             const currentCount = userState.lastTotalAssignedCount;
-
-            if (targetDeaths < currentCount) {
-                removeExcessExercises(currentCount - targetDeaths);
-            } else if (targetDeaths > currentCount) {
-                generateAdditionalExercises(targetDeaths - currentCount);
-            } else { // targetDeaths > 0 && targetDeaths === currentCount
-                 console.log("Generate called but count hasn't changed.");
-                 // Show spam warning only if count > 0 and hasn't changed.
-                 if (spamWarningEl.style.display !== 'block') {
-                     spamWarningEl.style.display = "block";
-                     setTimeout(() => spamWarningEl.style.display = "none", 2000);
-                 }
-            }
-
-            // Hide success box only if action was taken (count changed)
-             if (targetDeaths !== currentCount) {
-                 successBox.style.display = "none";
-                 userState.completedWorkout = false;
-                 localStorage.setItem("completedWorkout", "false");
-             }
+            if (targetDeaths < currentCount) { removeExcessExercises(currentCount - targetDeaths); }
+            else if (targetDeaths > currentCount) { generateAdditionalExercises(targetDeaths - currentCount); }
+            else { console.log("Generate called but count hasn't changed."); if (spamWarningEl.style.display !== 'block') { spamWarningEl.style.display = "block"; setTimeout(() => spamWarningEl.style.display = "none", 2000); } }
+            if (targetDeaths !== currentCount) { successBox.style.display = "none"; userState.completedWorkout = false; localStorage.setItem("completedWorkout", "false"); }
         }
 
         // --- MODIFIED handleGenerateClick Function ---
@@ -743,6 +721,7 @@
             }
 
             // Call generateWorkout which now handles empty/zero/invalid checks robustly
+            // but leaves the input value as is during the warning display.
             generateWorkout();
         }
 
