@@ -14,6 +14,7 @@
             --button-color: #a22a29;
             --button-border: #e53834;
             --complete-green: #4CAF50;
+            --complete-green-border: #6bc76f;
             --tooltip-bg: rgba(0,0,0,0.8);
             --tooltip-color: white;
             --tooltip-padding: 5px 10px;
@@ -21,6 +22,7 @@
             --tooltip-fontsize: 0.9em;
             --tooltip-fontweight: normal;
             --swap-blue: #4dabf7;
+            --swap-blue-border: #6fc1ff;
         }
 
         body {
@@ -250,8 +252,8 @@
         }
 
         .complete-btn {
-            background: var(--button-color);
-            border: 1px solid var(--button-border);
+            background: var(--complete-green);
+            border: 1px solid var(--complete-green-border);
             padding: 6px 12px;
             min-width: 80px;
             text-align: center;
@@ -264,12 +266,12 @@
 
         .complete-btn.completed {
             background: var(--complete-green);
-            border-color: var(--complete-green);
+            border-color: var(--complete-green-border);
         }
 
         .swap-exercise-btn {
             background: var(--swap-blue);
-            border: 1px solid var(--swap-blue);
+            border: 1px solid var(--swap-blue-border);
             color: white;
             padding: 6px 12px;
             font-size: 1em;
@@ -330,7 +332,7 @@
 
         .work-done-btn.completed {
             background: var(--complete-green);
-            border-color: var(--complete-green);
+            border-color: var(--complete-green-border);
         }
 
         .work-done-btn:disabled {
@@ -452,7 +454,7 @@
 
         .complete-all-btn {
             background: var(--complete-green);
-            border-color: var(--complete-green);
+            border-color: var(--complete-green-border);
             position: relative;
         }
 
@@ -534,6 +536,26 @@
             display: none;
             z-index: 1;
         }
+        
+        .number-warning {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: var(--tooltip-padding);
+            border-radius: var(--tooltip-radius);
+            font-size: 15px;
+            font-weight: var(--tooltip-fontweight);
+            white-space: nowrap;
+            display: none;
+            z-index: 1;
+        }
+        
+        .generate-main-btn {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -569,8 +591,9 @@
             </div>
             <div class="generate-btn-container">
                 <div class="generate-main-btn">
-                    <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
+                    <button id="generateBtn" style="font-weight: bold;">GIVE ME MY PUNISHMENT!</button>
                     <span class="spam-warning">If you want to add more or less exercises, change the number above</span>
+                    <span class="number-warning">You have to put a number first</span>
              </div>
             </div>
         </div>
@@ -591,7 +614,7 @@
         </div>
 
         <div id="successBox" class="success-box">
-            Great. Now try not to be bad at the game.
+            Done.
         </div>
     </div>
 
@@ -683,6 +706,7 @@
         const completeAllBtn = document.getElementById("completeAllBtn");
         const successBox = document.getElementById("successBox");
         const spamWarningEl = document.querySelector(".spam-warning");
+        const numberWarningEl = document.querySelector(".number-warning");
 
         let lastGenerateClick = 0;
 
@@ -704,7 +728,7 @@
         function updateDeathText() {
             if (userState.battleType === "air") {
                 deathTextEl.textContent = "I died";
-                deathTextEndEl.textContent = "times without getting any kills";
+                deathTextEndEl.textContent = "times without getting any kills.";
             } else {
                 deathTextEl.textContent = "I lost";
                 deathTextEndEl.textContent = "matches";
@@ -891,7 +915,7 @@
             
             userState.completedWorkout = true;
             localStorage.setItem("completedWorkout", "true");
-            workoutDisplay.style.display = "none";
+            workoutDisplay.style.display = "block";
             successBox.style.display = "block";
             lastGenerateClick = 0;
         }
@@ -1067,7 +1091,11 @@
 
         function generateWorkout() {
             const targetDeaths = parseInt(deathCountInput.value) || 0;
-             if (targetDeaths < 0) { deathCountInput.value = "1"; return; }
+             if (targetDeaths <= 0) { 
+                 numberWarningEl.style.display = "block";
+                 setTimeout(() => numberWarningEl.style.display = "none", 2000);
+                 return; 
+             }
             const currentCount = userState.lastTotalAssignedCount;
 
             if (targetDeaths === 0) {
@@ -1121,7 +1149,7 @@
 
         if (userState.completedWorkout) {
             successBox.style.display = "block";
-            workoutDisplay.style.display = "none";
+            workoutDisplay.style.display = "block";
             deathCountInput.value = "1";
         } else if (userState.currentWorkout?.exercises && typeof userState.currentWorkout.exercises === 'object') {
             displayOrder.forEach(m => { if (!Array.isArray(userState.currentWorkout.exercises[m])) userState.currentWorkout.exercises[m] = []; });
