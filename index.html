@@ -776,7 +776,7 @@
         function checkAllCompleted() { if (!userState.currentWorkout?.exercises) { workDoneBtn.disabled = true; workDoneBtn.classList.remove("completed"); return; } let allCompleted = true; const totalExercises = getTotalAssignedExercises(); if (totalExercises === 0) { allCompleted = false; } else { for (const muscle of displayOrder) { if (!userState.currentWorkout.exercises[muscle]) continue; for (const ex of userState.currentWorkout.exercises[muscle]) { if (!ex.completed) { allCompleted = false; break; } } if (!allCompleted) break; } } const enableButton = totalExercises > 0 && allCompleted; workDoneBtn.disabled = !enableButton; workDoneBtn.classList.toggle("completed", enableButton); }
         function formatWorkoutForSummary(workoutData) { const formatted = { total: 0, exercises: {} }; if (!workoutData || !workoutData.exercises) return formatted; displayOrder.forEach(muscle => { if (workoutData.exercises[muscle] && workoutData.exercises[muscle].length > 0) { const completedInGroup = []; workoutData.exercises[muscle].forEach(ex => { if (ex.completed) { const baseReps = ex.reps || 12; const isWeak = userState.weakMode[ex.id] || false; const actualReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps; const repsLabel = ex.name.toLowerCase().includes('plank') ? 'sec' : 'reps'; completedInGroup.push({ name: ex.name, reps: actualReps, label: repsLabel }); formatted.total++; } }); if (completedInGroup.length > 0) { formatted.exercises[muscle] = completedInGroup; } } }); return formatted; }
 
-        // --- MODIFIED: showSuccessMessage to build summary ---
+        // --- MODIFIED:  to build summary ---
         function showSuccessMessage() {
             const summaryData = formatWorkoutForSummary(userState.currentWorkout);
 
@@ -804,9 +804,9 @@
                                 <div class="exercise-group">
                                     <div class="group-header">
                                         <div class="group-title"><span>${muscle}</span></div>
-                                        <div class="group-toggle">🔺</div>
+                                        <div class="group-toggle">🔻</div>
                                     </div>
-                                    <div class="exercises-container" style="display: block;">
+                                    <div class="exercises-container" style="display: none;">
                                         ${summaryData.exercises[muscle].map(ex => `
                                             <div class="summary-exercise-item"> ${ex.name} (${ex.reps} ${ex.label}) </div>
                                         `).join('')}
