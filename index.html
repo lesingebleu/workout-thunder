@@ -438,12 +438,13 @@
          #sessionSummaryContent img { max-width: 80%; max-height: 250px; height: auto; border-radius: 5px; margin-top: 15px; margin-bottom: 15px; }
          #sessionSummaryContent h2 { font-size: 1.5em; margin-bottom: 10px; }
 
-         /* --- NEW: Container for Summary Toggle Buttons --- */
+        /* Container for Summary Toggle Buttons */
          .summary-toggle-container {
              display: flex;
-             justify-content: flex-end;
+             justify-content: flex-end; /* Align button to the right */
              align-items: center;
-             margin-bottom: 10px;
+             margin-top: 15px; /* Add space above the button */
+             margin-bottom: 10px; /* Space below the button */
              gap: 10px;
          }
          /* Use same style as main toggle button */
@@ -632,19 +633,20 @@
         function formatWorkoutForSummary(workoutData) { const formatted = { total: 0, exercises: {} }; if (!workoutData || !workoutData.exercises) return formatted; displayOrder.forEach(muscle => { if (workoutData.exercises[muscle] && workoutData.exercises[muscle].length > 0) { const completedInGroup = []; workoutData.exercises[muscle].forEach(ex => { if (ex.completed) { const baseReps = ex.reps || 12; const isWeak = userState.weakMode[ex.id] || false; const actualReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps; const repsLabel = ex.name.toLowerCase().includes('plank') ? 'sec' : 'reps'; completedInGroup.push({ name: ex.name, reps: actualReps, label: repsLabel }); formatted.total++; } }); if (completedInGroup.length > 0) { formatted.exercises[muscle] = completedInGroup; } } }); return formatted; }
 
         // --- MODIFIED: showSuccessMessage ---
-        function showSuccessMessage() {
+                function showSuccessMessage() {
             const summaryData = formatWorkoutForSummary(userState.currentWorkout);
             if (summaryData.total === 0) { console.log("No completed exercises."); return; }
 
+            // Save state FIRST
             userState.lastCompletedCycleIndex = userState.currentMuscleIndex;
             localStorage.setItem("lastCompletedCycleIndex", userState.lastCompletedCycleIndex.toString());
             userState.completedWorkout = true;
             localStorage.setItem("completedWorkout", "true");
 
+            // Prepare Summary HTML - Removed internal JS comments
             const summaryHtml = `
                 <h2>Session Complete! (${summaryData.total} Exercises Done)</h2>
                 <img src="./images/Dale-Cooper_Thumbs_Up.gif" alt="Thumbs Up">
-                {/* NEW: Summary Toggle Button */}
                 <div class="summary-toggle-container">
                      <button id="summaryToggleAllBtn" class="toggle-all-btn">Collapse All</button>
                  </div>
@@ -655,10 +657,8 @@
                                 <div class="exercise-group">
                                     <div class="group-header">
                                         <div class="group-title"><span>${muscle}</span></div>
-                                        {/* Default to Expanded */}
                                         <div class="group-toggle">🔺</div>
                                     </div>
-                                    {/* Default to Expanded */}
                                     <div class="exercises-container" style="display: block;">
                                         ${summaryData.exercises[muscle].map(ex => `
                                             <div class="summary-exercise-item"> ${ex.name} (${ex.reps} ${ex.label}) </div>
@@ -674,19 +674,20 @@
                 </div>
             `;
 
+            // Update the DOM
             sessionSummaryContentEl.innerHTML = summaryHtml;
             sessionSummaryContentEl.style.display = 'block';
             workoutDisplay.style.display = 'block';
             workoutDisplay.classList.add('showing-summary');
 
-            // Add listeners for summary elements
+            // Add listeners for dynamically added elements
             const summaryGroupHeaders = sessionSummaryContentEl.querySelectorAll(".group-header");
             summaryGroupHeaders.forEach(header => { header.addEventListener("click", () => { const group = header.closest('.exercise-group'); if (group) { toggleExerciseGroup(group); } }); });
             const summaryDoneBtn = sessionSummaryContentEl.querySelector("#summaryDoneBtn");
             if (summaryDoneBtn) { summaryDoneBtn.addEventListener('click', () => { clearAllWorkouts(); }); }
-            // Add listener for summary toggle button
-             const summaryToggleBtn = sessionSummaryContentEl.querySelector("#summaryToggleAllBtn");
+            const summaryToggleBtn = sessionSummaryContentEl.querySelector("#summaryToggleAllBtn");
              if (summaryToggleBtn) {
+                // Ensure toggleAllGroups is called correctly for the summary context
                 summaryToggleBtn.addEventListener('click', () => toggleAllGroups(sessionSummaryContentEl, summaryToggleBtn));
              }
 
