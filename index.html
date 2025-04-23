@@ -492,6 +492,16 @@
          #clearCacheLink { position: fixed; bottom: 10px; right: 15px; font-size: 0.8em; color: #aaa; cursor: pointer; text-decoration: none; z-index: 5; }
          #clearCacheLink:hover { color: var(--light); text-decoration: underline; }
 
+        .site-description {
+            font-size: 0.9em; /* Make it slightly smaller than body text */
+            color: #ccc;      /* A slightly dimmer color */
+            margin-top: 5px;  /* Add a little space below the title */
+            margin-bottom: 0; /* Remove default bottom margin if needed */
+            font-weight: normal; /* Ensure it's not bold */
+            line-height: 1.4; /* Adjust line spacing if needed */
+        /* It will inherit text-align: center from the header */
+}
+
     </style>
 </head>
 <body>
@@ -517,6 +527,7 @@
     <div class="container">
         <header>
             <h1>Workout Thunder</h1>
+            <p class="site-description">Each death adds one exercise in a fixed rotation—Arms, Chest, Back, Abs, Legs, then repeat. The site remembers where you left off, so progress carries over between sessions, and you can clear the current queue without resetting the rotation. It keeps things balanced.</p>
         </header>
 
         <div class="death-input-container">
