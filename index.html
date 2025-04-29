@@ -324,8 +324,6 @@
             cursor: pointer;
         }
 
-        .complete-btn.completed { }
-
         .swap-exercise-btn {
             background: var(--swap-blue);
             border: 1px solid var(--swap-blue-border);
@@ -572,8 +570,8 @@
              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2>Your Penalty Workout</h2>
                 <div class="toggle-all-container">
-                    <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>
-                    <button id="clearWorkoutBtn" class="clear-workout-btn" data-tooltip="Delete All Exercises">X</button>
+                    <button id="toggleAllBtn" class="toggle-all-btn">Collapse All</button>  
+					<button id="clearWorkoutBtn" class="clear-workout-btn" data-tooltip="Delete All Exercises">X</button>
                 </div>
              </div>
              <!-- Workout Exercise List Area (hidden when summary shows) -->
@@ -599,10 +597,10 @@
         const bgImages = ["./images/img1.jpg", "./images/img2.jpg", "./images/img3.jpg"];
         const bgImage = document.getElementById("bgImage");
         let bgIndex = parseInt(localStorage.getItem("bgIndex")) || 0;
-        if (bgImages.length > 0 && bgImages[bgIndex]) { const img = new Image(); img.onload = () => { bgImage.src = bgImages[bgIndex]; }; img.onerror = () => { console.warn(`Background image not found: ${bgImages[bgIndex]}`); }; img.src = bgImages[bgIndex]; bgIndex = (bgIndex + 1) % bgImages.length; localStorage.setItem("bgIndex", bgIndex); } else { console.warn("Background images array empty or paths incorrect."); }
+		if (bgImages.length > 0 && bgImages[bgIndex]) { const img = new Image(); img.onload = () => { bgImage.src = bgImages[bgIndex]; }; img.onerror = () => { console.warn(`Background image not found: ${bgImages[bgIndex]}`); }; img.src = bgImages[bgIndex]; bgIndex = (bgIndex + 1) % bgImages.length; localStorage.setItem("bgIndex", bgIndex); } else { console.warn("Background images array empty or paths incorrect."); }
 
         // Exercise Database
-        const exerciseDB = { arms: [{ name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Bicep Curls", equipment: ["dumbbells", "kettlebells"], difficulty: 1, reps: 12 },{ name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 },{ name: "Diamond Pushups", equipment: ["bodyweight"], difficulty: 3, reps: 10 },{ name: "Hammer Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 },{ name: "Overhead Press", equipment: ["dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 10} ], chest: [{ name: "Bench Press", equipment: ["barbell", "dumbbells"], difficulty: 3, reps: 10 },{ name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },{ name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Incline Dumbbell Press", equipment: ["dumbbells"], difficulty: 3, reps: 10 },{ name: "Wide Pushups", equipment: ["bodyweight"], difficulty: 1, reps: 20 },{ name: "Plate Pinch Press", equipment: ["plate"], difficulty: 2, reps: 15} ], back: [{ name: "Pull-ups", equipment: ["bodyweight", "pullup_bar"], difficulty: 3, reps: 8 },{ name: "Bent Over Rows", equipment: ["dumbbells", "barbell", "kettlebells"], difficulty: 2, reps: 12 },{ name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 },{ name: "Superman", equipment: ["bodyweight"], difficulty: 1, reps: 15 },{ name: "Renegade Rows", equipment: ["dumbbells", "kettlebells"], difficulty: 3, reps: 10 } ], abs: [{ name: "Russian Twists", equipment: ["bodyweight", "plate", "kettlebell", "dumbbell"], difficulty: 2, reps: 20 },{ name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 },{ name: "Crunches", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 25 },{ name: "Bicycle Crunches", equipment: ["bodyweight"], difficulty: 2, reps: 20 } ], legs: [{ name: "Squats", equipment: ["bodyweight", "kettlebells", "dumbbells"], difficulty: 2, reps: 20 },{ name: "Lunges", equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 12 },{ name: "Calf Raises", equipment: ["bodyweight", "dumbbells", "plate"], difficulty: 1, reps: 25 },{ name: "Glute Bridges", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 20 },{ name: "Jump Squats", equipment: ["bodyweight"], difficulty: 3, reps: 15 },{ name: "Kettlebell Swings", equipment: ["kettlebells"], difficulty: 3, reps: 15} ] };
+        const exerciseDB = { arms: [{ name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Bicep Curls", equipment: ["dumbbells", "kettlebells"], difficulty: 1, reps: 12 },{ name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 },{ name: "Diamond Pushups", equipment: ["bodyweight"], difficulty: 3, reps: 10 },{ name: "Hammer Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 },{ name: "Overhead Press", equipment: ["dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 10} ], chest: [{ name: "Bench Press", equipment: ["barbell", "dumbbells"], difficulty: 3, reps: 10 },{ name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },{ name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Wide Pushups", equipment: ["bodyweight"], difficulty: 1, reps: 20 },{ name: "Plate Pinch Press", equipment: ["plate"], difficulty: 2, reps: 15} ], back: [{ name: "Pull-ups", equipment: ["bodyweight", "pullup_bar"], difficulty: 3, reps: 8 },{ name: "Bent Over Rows", equipment: ["dumbbells", "barbell", "kettlebells"], difficulty: 2, reps: 12 },{ name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 },{ name: "Superman", equipment: ["bodyweight"], difficulty: 1, reps: 15 },{ name: "Renegade Rows", equipment: ["dumbbells", "kettlebells"], difficulty: 3, reps: 10 } ], abs: [{ name: "Russian Twists", equipment: ["bodyweight", "plate", "kettlebell", "dumbbell"], difficulty: 2, reps: 20 },{ name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 },{ name: "Crunches", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 25 },{ name: "Bicycle Crunches", equipment: ["bodyweight"], difficulty: 2, reps: 20 } ], legs: [{ name: "Squats", equipment: ["bodyweight", "kettlebells", "dumbbells"], difficulty: 2, reps: 20 },{ name: "Lunges", equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 12 },{ name: "Calf Raises", equipment: ["bodyweight", "dumbbells", "plate"], difficulty: 1, reps: 25 },{ name: "Glute Bridges", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 20 },{ name: "Jump Squats", equipment: ["bodyweight"], difficulty: 3, reps: 15 },{ name: "Kettlebell Swings", equipment: ["kettlebells"], difficulty: 3, reps: 15} ] };
         const displayOrder = ["arms", "chest", "back", "abs", "legs"];
 
         // User State
@@ -670,7 +668,7 @@
                                         <div class="group-title"><span>${muscle}</span></div>
                                         <div class="group-toggle">🔺</div>
                                     </div>
-                                    <div class="exercises-container" style="display: block;">
+                                    <div class="exercises-container" style="display: none;">
                                         ${summaryData.exercises[muscle].map(ex => `
                                             <div class="summary-exercise-item"> ${ex.name} (${ex.reps} ${ex.label}) </div>
                                         `).join('')}
@@ -796,18 +794,19 @@
 
         // --- NEW: Function for +1 Button ---
         function handleAddOneClick() {
-             numberWarningEl.style.display = "none";
-             spamWarningEl.style.display = "none";
-             let currentVal = parseInt(deathCountInput.value);
-             // If input is invalid or empty, treat current count as 0 before adding
-             if (isNaN(currentVal) || currentVal < 0) {
-                 currentVal = 0;
-             }
-             const newVal = currentVal + 1;
-             deathCountInput.value = newVal; // Update the input field
-             handleGenerateClick(); // Trigger the generation logic
-        }
+			numberWarningEl.style.display = "none";
+			spamWarningEl.style.display = "none";
+			let currentVal = parseInt(deathCountInput.value);
+		// If input is invalid or empty, treat current count as 0 before adding
+		if (isNaN(currentVal) || currentVal < 0) {
+			currentVal = 0;
+    }
+    const newVal = currentVal + 1;
+    deathCountInput.value = newVal; // Update the input field
 
+    // Update the workout directly without calling handleGenerateClick()
+    generateAdditionalExercises(1); // Add exactly one exercise
+}
 
         // Initialization
         const savedBattleType = localStorage.getItem("battleType");
@@ -821,8 +820,13 @@
         airBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         groundBattlesCheckbox.addEventListener("change", handleBattleTypeToggle);
         workDoneBtn.addEventListener("click", showSuccessMessage);
+		clearWorkoutBtn.addEventListener("click", () => {
+        const userConfirmed = confirm("This will delete all exercises. Do you want to proceed?");
+        if (userConfirmed) {
+            clearAllWorkouts(); // Call the function to clear exercises if confirmed
+        }
+    });
         toggleAllBtn.addEventListener("click", () => toggleAllGroups(exercisesListEl, toggleAllBtn)); // Pass default context
-        clearWorkoutBtn.addEventListener("click", clearAllWorkouts);
         completeAllBtn.addEventListener("click", completeAllExercises);
         clearCacheLink.addEventListener("click", () => { if (confirm("Are you sure you want to clear all saved data (workout, equipment, etc)?")) { localStorage.clear(); location.reload(); } });
 
