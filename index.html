@@ -654,34 +654,34 @@
 
             // Prepare Summary HTML - Removed internal JS comments
             const summaryHtml = `
-                <h2>Session Complete! (${summaryData.total} Exercises Done)</h2>
-                <img src="./images/Dale-Cooper_Thumbs_Up.gif" alt="Thumbs Up">
-                <div class="summary-toggle-container">
-                     <button id="summaryToggleAllBtn" class="toggle-all-btn">Collapse All</button>
-                 </div>
-                <div class="summary-exercises-list">
-                    ${displayOrder.map(muscle => {
-                        if (summaryData.exercises[muscle] && summaryData.exercises[muscle].length > 0) {
-                            return `
-                                <div class="exercise-group">
-                                    <div class="group-header">
-                                        <div class="group-title"><span>${muscle}</span></div>
-                                        <div class="group-toggle">🔺</div>
-                                    </div>
-                                    <div class="exercises-container" style="display: none;">
-                                        ${summaryData.exercises[muscle].map(ex => `
-                                            <div class="summary-exercise-item"> ${ex.name} (${ex.reps} ${ex.label}) </div>
-                                        `).join('')}
-                                    </div>
-                                </div>`;
-                        }
-                        return '';
-                    }).join('')}
-                </div>
-                <div class="summary-done-container">
-                    <button id="summaryDoneBtn" class="summary-done-btn">DONE</button>
-                </div>
-            `;
+        <h2>Session Complete! (${summaryData.total} Exercises Done)</h2>
+        <img src="./images/Dale-Cooper_Thumbs_Up.gif" alt="Thumbs Up">
+        <div class="summary-toggle-container">
+             <button id="summaryToggleAllBtn" class="toggle-all-btn">Expand All</button> <!-- Changed initial text -->
+         </div>
+        <div class="summary-exercises-list">
+            ${displayOrder.map(muscle => {
+                if (summaryData.exercises[muscle] && summaryData.exercises[muscle].length > 0) {
+                    return `
+                        <div class="exercise-group">
+                            <div class="group-header">
+                                <div class="group-title"><span>${muscle}</span></div>
+                                <div class="group-toggle">🔻</div> <!-- Changed initial icon -->
+                            </div>
+                            <div class="exercises-container" style="display: none;"> <!-- Initially collapsed -->
+                                ${summaryData.exercises[muscle].map(ex => `
+                                    <div class="summary-exercise-item"> ${ex.name} (${ex.reps} ${ex.label}) </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                }
+                return '';
+            }).join('')}
+        </div>
+        <div class="summary-done-container">
+            <button id="summaryDoneBtn" class="summary-done-btn">DONE</button>
+        </div>
+    `;
 
             // Update the DOM
             sessionSummaryContentEl.innerHTML = summaryHtml;
