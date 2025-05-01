@@ -17,10 +17,11 @@
             --complete-green-border: #6bc76f;
             --tooltip-bg: rgba(0,0,0,0.8);
             --tooltip-color: white;
-            --tooltip-padding: 5px 10px;
+            --tooltip-padding: 8px 15px;
             --tooltip-radius: 5px;
-            --tooltip-fontsize: 0.9em;
+            --tooltip-fontsize: 15px;
             --tooltip-fontweight: normal;
+			--tooltip-fontfamily: 'Segoe UI', sans-serif;
             --swap-blue: #4dabf7;
             --swap-blue-border: #6fc1ff;
         }
@@ -79,8 +80,8 @@
         }
 
         .battle-toggle {
-            position: fixed;
-            top: 20px;
+            position: fixed;	
+            top: 20px;	
             right: 20px;
             display: flex;
             gap: 10px;
@@ -91,6 +92,34 @@
             backdrop-filter: blur(5px);
             z-index: 10;
         }
+		
+		.battle-toggle:hover::after {
+			content: "This option is purely aesthetic."; /* ← Plain text only */
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(0,0,0,0.7);
+			color: var(--tooltip-color);
+			padding: var(--tooltip-padding);
+			border-radius: var(--tooltip-radius);
+			font-family: var(--tooltip-fontfamily); 
+			font-weight: 400;                      
+			font-size: var(--tooltip-fontsize);
+			white-space: normal;
+			margin-top: 5px;
+			z-index: 100;
+			width: max-content;
+			max-width: 288px;
+			backdrop-filter: blur(5px);
+			box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+			word-wrap: break-word;
+		}
+
+		.battle-toggle:hover::after {
+			white-space: normal;
+			word-wrap: break-word;
+		}
 
         .toggle-container {
             display: flex;
@@ -329,7 +358,9 @@
             border: 1px solid var(--swap-blue-border);
             color: white;
             padding: 6px 12px;
-            font-size: 0.9em;
+            font-size: var(--tooltip-fontsize);
+			font-family: var(--tooltip-fontfamily)
+			font-weight: 400
             cursor: pointer;
             border-radius: 5px;
             min-width: 80px;
@@ -356,7 +387,9 @@
         .work-done-btn {
             flex-grow: 1;
             padding: 12px;
-            font-size: 1.1em;
+            font-size: var(--tooltip-fontsize);
+			font-family: var(--tooltip-fontfamily)
+			font-weight: 400
             background: var(--button-color);
             border: 1px solid var(--button-border);
             position: relative;
@@ -364,12 +397,12 @@
 
         .work-done-btn.completed { background: var(--complete-green); border-color: var(--complete-green-border); }
         .work-done-btn:disabled { background: #555; border-color: #777; cursor: not-allowed; }
-        .work-done-btn:disabled:hover::after { content: "You have work to do still"; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: 15px; font-weight: var(--tooltip-fontweight); white-space: nowrap; margin-bottom: 5px; z-index: 1; }
+        .work-done-btn:disabled:hover::after { content: "You have work to do still"; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: var(--tooltip-fontsize);; font-weight: var(--tooltip-fontweight); white-space: nowrap; margin-bottom: 5px; z-index: 1; }
 
         .weak-toggle input[type="checkbox"] { cursor: pointer; }
         .weak-toggle-text { cursor: default; user-select: none; }
         .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background-color: #ccc; color: #333; border-radius: 50%; font-size: 0.7em; font-weight: bold; cursor: help; position: relative; user-select: none; line-height: 1; }
-        .help-icon:hover::after { content: "This option reduces the reps by half"; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: 15px; font-weight: var(--tooltip-fontweight); white-space: nowrap; width: max-content; z-index: 1; }
+        .help-icon:hover::after { content: "This option reduces the reps by half"; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: var(--tooltip-fontsize);; font-weight: var(--tooltip-fontweight); white-space: nowrap; width: max-content; z-index: 1; }
         .checkbox-option { display: flex; align-items: center; gap: 5px; }
         .checkbox-option input[type="checkbox"] { width: 16px; height: 16px; margin: 0; }
 
@@ -403,7 +436,7 @@
          .clear-workout-btn { background: var(--button-color); border-color: var(--button-border); }
 
         .complete-all-btn { background: var(--complete-green); border: 1px solid var(--complete-green-border); padding: 5px 10px; font-size: 0.9em; border-radius: 5px; color: white; cursor: pointer; min-width: auto; text-align: center; position: relative; box-sizing: border-box; height: 30px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .complete-all-btn:hover::after, .clear-workout-btn:hover::after { content: attr(data-tooltip); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: 15px; font-weight: var(--tooltip-fontweight); white-space: nowrap; margin-bottom: 5px; z-index: 1; }
+        .complete-all-btn:hover::after, .clear-workout-btn:hover::after { content: attr(data-tooltip); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: var(--tooltip-fontsize); font-weight: var(--tooltip-fontweight); white-space: nowrap; margin-bottom: 5px; z-index: 1; }
 
         .generate-btn-container {
             display: flex;
@@ -482,13 +515,20 @@
          .summary-done-btn:hover { filter: brightness(1.1); }
 
 
-        .spam-warning, .number-warning { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: 15px; font-weight: var(--tooltip-fontweight); white-space: nowrap; display: none; z-index: 10; margin-bottom: 5px; }
+        .spam-warning, .number-warning { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-color); padding: var(--tooltip-padding); border-radius: var(--tooltip-radius); font-size: var(--tooltip-fontsize); font-weight: var(--tooltip-fontweight); white-space: nowrap; display: none; z-index: 10; margin-bottom: 5px; }
 
         /* Hide regular workout content when summary is shown */
          .workout-display.showing-summary > :not(#sessionSummaryContent) { display: none !important; }
 
-         #clearCacheLink { position: fixed; bottom: 10px; right: 15px; font-size: 0.8em; color: #aaa; cursor: pointer; text-decoration: none; z-index: 5; }
-         #clearCacheLink:hover { color: var(--light); text-decoration: underline; }
+         #clearCacheLink {
+			cursor: pointer;
+			text-decoration: none;
+			color: inherit;
+		}
+         #clearCacheLink:hover {
+			color: var(--light);
+			text-decoration: underline;
+		}
 
         .site-description {
             font-size: 0.9em; /* Make it slightly smaller than body text */
@@ -498,7 +538,66 @@
             font-weight: normal; /* Ensure it's not bold */
             line-height: 1.4; /* Adjust line spacing if needed */
         /* It will inherit text-align: center from the header */
-}
+		}
+		
+		.checkbox-option {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 0.8em;
+			color: #aaa;
+			cursor: pointer;
+		}
+
+		.checkbox-option:hover {
+			color: var(--light);
+		}
+
+		.checkbox-option input[type="checkbox"] {
+			width: 16px;
+			height: 16px;
+			cursor: pointer;
+		}
+		
+		.footer-options {
+			position: fixed;
+			bottom: 10px;
+			right: 15px;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 0.8em;
+			color: #aaa;
+			z-index: 5;
+			text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		}
+
+		.wt-bg-toggle {
+			display: flex;
+			align-items: center;
+			gap: 5px;s */
+			cursor: default;
+			accent-color: #aaa;
+		}
+
+		.wt-bg-toggle input {
+			cursor: pointer; /* Hand cursor only for checkbox */
+		}
+
+		.wt-bg-text {
+			color: #aaa;
+			user-select: none;
+			pointer-events: none;
+			cursor: default;
+		}
+
+		.wt-bg-toggle:hover {
+			color: var(--light);
+		}
+
+		.divider {
+			padding: 0 3px;
+		}
 
     </style>
 </head>
@@ -508,19 +607,19 @@
         <div class="bg-overlay"></div>
     </div>
 
-    <div class="battle-toggle">
-        <span>Battle Type:</span>
-        <div class="toggle-container">
-            <label class="toggle-option">
-                <input type="checkbox" id="airBattles" checked>
-                <span class="toggle-label">Air</span>
-            </label>
-            <label class="toggle-option">
-                <input type="checkbox" id="groundBattles">
-                <span class="toggle-label">Ground</span>
-            </label>
-        </div>
+<div class="battle-toggle">
+    <span>Battle Type:</span>
+    <div class="toggle-container">
+        <label class="toggle-option">
+            <input type="radio" name="battleType" id="airBattles" checked>
+            <span>Air</span>
+        </label>
+        <label class="toggle-option">
+            <input type="radio" name="battleType" id="groundBattles">
+            <span>Ground</span>
+        </label>
     </div>
+</div>
 
     <div class="container">
         <header>
@@ -590,21 +689,151 @@
 
     </div>
 
-    <span id="clearCacheLink">Clear cache</span>
+<div class="footer-options">
+    <span class="wt-bg-toggle">
+        <input type="checkbox" id="wtBackgroundToggle">
+        <span class="wt-bg-text">War Thunder backgrounds</span>
+    </span>
+    <span class="divider">•</span>
+    <a id="clearCacheLink">Clear cache</a>
+</div>
 
     <script>
-        // Background Image Cycling
-        const bgImages = ["./images/img1.jpg", "./images/img2.jpg", "./images/img3.jpg"];
-        const bgImage = document.getElementById("bgImage");
-        let bgIndex = parseInt(localStorage.getItem("bgIndex")) || 0;
-		if (bgImages.length > 0 && bgImages[bgIndex]) { const img = new Image(); img.onload = () => { bgImage.src = bgImages[bgIndex]; }; img.onerror = () => { console.warn(`Background image not found: ${bgImages[bgIndex]}`); }; img.src = bgImages[bgIndex]; bgIndex = (bgIndex + 1) % bgImages.length; localStorage.setItem("bgIndex", bgIndex); } else { console.warn("Background images array empty or paths incorrect."); }
+		// Background Image System - Replace your existing code with this
+const bgImages = {
+    air: {
+        a: [],  // Airplanes (high priority)
+        ag: [], // General aviation (medium priority)
+        ah: []  // Helicopters (low priority)
+    },
+    ground: {
+        g: [],  // Ground vehicles
+        gg: []  // General ground
+    },
+    displayedImages: {
+        air: new Set(),  // Tracks shown air images
+        ground: new Set() // Tracks shown ground images
+    },
+    currentType: 'air' // Default to air
+};
+
+// Initialize image arrays (adjust numbers based on your actual files)
+function initBackgrounds() {
+// Initialize air images (keep this unchanged)
+for (let i = 1; i <= 15; i++) bgImages.air.a.push(`./images/air/a${i}.png`);    // 15 airplane images
+for (let i = 1; i <= 4; i++) bgImages.air.ag.push(`./images/air/ag${i}.png`);  // 4 general aviation
+for (let i = 1; i <= 6; i++) bgImages.air.ah.push(`./images/air/ah${i}.png`);   // 6 helicopter images
+	}
+	
+	// Ground images
+for (let i = 1; i <= 19	; i++) { // 19 ground images
+    bgImages.ground.g.push(`./images/ground/g${i}.png`);
+}
+for (let i = 1; i <= 2; i++) { // 2 general gorund images
+    bgImages.ground.gg.push(`./images/ground/gg${i}.png`);
+}
+	
+
+// Weighted random selection for air images
+function getRandomAirImage() {
+    // Get all air images not yet displayed
+    const availableA = bgImages.air.a.filter(img => !bgImages.displayedImages.air.has(img));
+    const availableAG = bgImages.air.ag.filter(img => !bgImages.displayedImages.air.has(img));
+    const availableAH = bgImages.air.ah.filter(img => !bgImages.displayedImages.air.has(img));
+
+    // If all images shown, reset tracking for air
+    if (availableA.length + availableAG.length + availableAH.length === 0) {
+        bgImages.displayedImages.air.clear();
+        return getRandomAirImage(); // Retry with reset
+    }
+
+    // Weighted selection from available images
+    const rand = Math.random();
+    if (rand < 0.6 && availableA.length) {
+        return selectRandomImage(availableA, 'air');
+    } else if (rand < 0.9 && availableAG.length) {
+        return selectRandomImage(availableAG, 'air');
+    } else if (availableAH.length) {
+        return selectRandomImage(availableAH, 'air');
+    }
+    return './images/default.jpg'; // Fallback
+}
+
+// Helper function to select and track images
+function selectRandomImage(images, type) {
+    const selected = images[Math.floor(Math.random() * images.length)];
+    bgImages.displayedImages[type].add(selected);
+    return selected;
+}
+
+// Get random ground image
+function getRandomGroundImage() {
+    const allGround = [...bgImages.ground.g, ...bgImages.ground.gg]
+        .filter(img => !bgImages.displayedImages.ground.has(img));
+
+    if (allGround.length === 0) {
+        bgImages.displayedImages.ground.clear();
+        return getRandomGroundImage();
+    }
+
+    return selectRandomImage(allGround, 'ground');
+}
+
+// Update background based on battle type
+function updateBackground(forceWTChange = false) {
+    const bgImage = document.getElementById("bgImage");
+    
+    if (!userState.useWTBackgrounds) {
+        // Keep current non-WT image unless forced
+        if (!bgImage.src.includes('img') || forceWTChange) {
+            const defaultImages = ["./images/img1.jpg", "./images/img2.jpg", "./images/img3.jpg"];
+            bgImage.src = defaultImages[Math.floor(Math.random() * defaultImages.length)];
+        }
+    } else {
+        // WT-themed backgrounds (air/ground)
+        let imagePath;
+        if (userState.battleType === "air") {
+            imagePath = getRandomAirImage();
+        } else {
+            imagePath = getRandomGroundImage();
+        }
+        
+        const img = new Image();
+        img.onload = () => bgImage.src = imagePath;
+        img.onerror = () => bgImage.src = './images/default.jpg';
+        img.src = imagePath;
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initBackgrounds();
+    updateBackground();
+    
+    // Update background when battle type changes
+    airBattlesCheckbox.addEventListener("change", () => {
+        if (airBattlesCheckbox.checked) {
+            userState.battleType = "air";
+            localStorage.setItem("battleType", "air");
+            updateBackground();
+        }
+    });
+
+    groundBattlesCheckbox.addEventListener("change", () => {
+        if (groundBattlesCheckbox.checked) {
+            userState.battleType = "ground";
+            localStorage.setItem("battleType", "ground");
+            updateBackground();
+        }
+    });
+});
 
         // Exercise Database
         const exerciseDB = { arms: [{ name: "Pushups", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Bicep Curls", equipment: ["dumbbells", "kettlebells"], difficulty: 1, reps: 12 },{ name: "Tricep Dips", equipment: ["bodyweight"], difficulty: 2, reps: 12 },{ name: "Diamond Pushups", equipment: ["bodyweight"], difficulty: 3, reps: 10 },{ name: "Hammer Curls", equipment: ["dumbbells"], difficulty: 1, reps: 12 },{ name: "Overhead Press", equipment: ["dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 10} ], chest: [{ name: "Bench Press", equipment: ["barbell", "dumbbells"], difficulty: 3, reps: 10 },{ name: "Dumbbell Press", equipment: ["dumbbells"], difficulty: 2, reps: 12 },{ name: "Pushup Variations", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Wide Pushups", equipment: ["bodyweight"], difficulty: 1, reps: 20 },{ name: "Plate Pinch Press", equipment: ["plate"], difficulty: 2, reps: 15} ], back: [{ name: "Pull-ups", equipment: ["bodyweight", "pullup_bar"], difficulty: 3, reps: 8 },{ name: "Bent Over Rows", equipment: ["dumbbells", "barbell", "kettlebells"], difficulty: 2, reps: 12 },{ name: "Reverse Flyes", equipment: ["dumbbells"], difficulty: 2, reps: 15 },{ name: "Superman", equipment: ["bodyweight"], difficulty: 1, reps: 15 },{ name: "Renegade Rows", equipment: ["dumbbells", "kettlebells"], difficulty: 3, reps: 10 } ], abs: [{ name: "Russian Twists", equipment: ["bodyweight", "plate", "kettlebell", "dumbbell"], difficulty: 2, reps: 20 },{ name: "Leg Raises", equipment: ["bodyweight"], difficulty: 2, reps: 15 },{ name: "Plank", equipment: ["bodyweight"], difficulty: 1, reps: 60 },{ name: "Crunches", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 25 },{ name: "Bicycle Crunches", equipment: ["bodyweight"], difficulty: 2, reps: 20 } ], legs: [{ name: "Squats", equipment: ["bodyweight", "kettlebells", "dumbbells"], difficulty: 2, reps: 20 },{ name: "Lunges", equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"], difficulty: 2, reps: 12 },{ name: "Calf Raises", equipment: ["bodyweight", "dumbbells", "plate"], difficulty: 1, reps: 25 },{ name: "Glute Bridges", equipment: ["bodyweight", "plate"], difficulty: 1, reps: 20 },{ name: "Jump Squats", equipment: ["bodyweight"], difficulty: 3, reps: 15 },{ name: "Kettlebell Swings", equipment: ["kettlebells"], difficulty: 3, reps: 15} ] };
         const displayOrder = ["arms", "chest", "back", "abs", "legs"];
 
         // User State
-        const userState = { equipment: JSON.parse(localStorage.getItem("userEquipment")) || ['bodyweight'], battleType: "air", currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || { exercises: { arms: [], chest: [], back: [], abs: [], legs: [] } }, weakMode: JSON.parse(localStorage.getItem("weakMode")) || {}, lastTotalAssignedCount: 0, currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0, completedWorkout: JSON.parse(localStorage.getItem("completedWorkout")) || false, lastCompletedCycleIndex: parseInt(localStorage.getItem("lastCompletedCycleIndex")) || 0 };
+        const userState = { equipment: JSON.parse(localStorage.getItem("userEquipment")) || ['bodyweight'], battleType: "air", currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || { exercises: { arms: [], chest: [], back: [], abs: [], legs: [] } }, weakMode: JSON.parse(localStorage.getItem("weakMode")) || {}, lastTotalAssignedCount: 0, currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0, completedWorkout: JSON.parse(localStorage.getItem("completedWorkout")) || false, lastCompletedCycleIndex: parseInt(localStorage.getItem("lastCompletedCycleIndex")) || 0, useWTBackgrounds: JSON.parse(localStorage.getItem("useWTBackgrounds")) || false };
 
         // DOM Elements
         const deathCountInput = document.getElementById("deathCount");
@@ -626,7 +855,19 @@
         const equipmentCheckboxes = document.querySelectorAll('.equipment-options input[type="checkbox"]');
         const clearCacheLink = document.getElementById("clearCacheLink");
         let lastGenerateClick = 0;
+		const wtToggle = document.getElementById("wtBackgroundToggle");
+wtToggle.checked = JSON.parse(localStorage.getItem("useWTBackgrounds")) || false;
 
+wtToggle.addEventListener("change", function() {
+    const wasChecked = userState.useWTBackgrounds;
+    userState.useWTBackgrounds = this.checked;
+    localStorage.setItem("useWTBackgrounds", this.checked);
+    
+    // Only update if actually switching modes
+    if (wasChecked !== this.checked) {
+        updateBackground(true);
+    }
+});
         // Utility Functions
         function generateUniqueId() { return `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`; }
         function getTotalAssignedExercises() { let count = 0; if (userState.currentWorkout && userState.currentWorkout.exercises) { for (const muscle of displayOrder) { count += userState.currentWorkout.exercises[muscle]?.length || 0; } } return count; }
@@ -832,4 +1073,4 @@
 
     </script>
 </body>
-</html>
+</html>	
