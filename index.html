@@ -24,6 +24,9 @@
 			--tooltip-fontfamily: 'Segoe UI', sans-serif;
             --swap-blue: #4dabf7;
             --swap-blue-border: #6fc1ff;
+			--phrase-toggle-color: rgba(255, 255, 255, 0.6); /* Subtle white for icon */
+			--phrase-toggle-hover: rgba(255, 255, 255, 0.9); /* Brighter on hover */
+			--phrase-toggle-border: rgba(255, 255, 255, 0.3); /* Subtle border */
         }
 
         body {
@@ -640,10 +643,11 @@
 
         <div class="death-input-container">
             <div class="death-input">
-                <span id="deathText">I died</span>
-                <input type="number" id="deathCount" min="0" value="1">
-                <span id="deathTextEnd">times without getting any kills.</span>
-            </div>
+    <span id="deathText">I died</span>
+    <input type="number" id="deathCount" min="0" value="1">
+    <span id="deathTextEnd">times without getting any kills.</span>
+    <button class="phrase-toggle-btn" id="phraseToggleBtn">↻</button>
+</div>
             <div class="generate-btn-container">
                 <div class="generate-main-btn">
                     <button id="generateBtn">GIVE ME MY PUNISHMENT!</button>
@@ -739,8 +743,8 @@ let selectedImages = {
 function initBackgrounds() {
     try {
         // Initialize air images
-        for (let i = 1; i <= 15; i++) bgImages.air.a.push(`./images/air/a${i}.png`);    // 15 airplane images
-        for (let i = 1; i <= 4; i++) bgImages.air.ag.push(`./images/air/ag${i}.png`);  // 4 general aviation
+        for (let i = 1; i <= 18; i++) bgImages.air.a.push(`./images/air/a${i}.png`);    // 18 airplane images
+        for (let i = 1; i <= 5; i++) bgImages.air.ag.push(`./images/air/ag${i}.png`);  // 4 general aviation
         // Ground images
         for (let i = 1; i <= 19; i++) { // 19 ground images
             bgImages.ground.g.push(`./images/ground/g${i}.png`);
@@ -849,20 +853,13 @@ function updateBackground(specificImage = null) {
             console.error('Background image or footer options element not found');
             return;
         }
-
-        // Ensure userState is defined
-        if (!userState || typeof userState.useWTBackgrounds === 'undefined' || !userState.battleType) {
-            console.warn('userState not fully initialized, using defaults');
-            userState = userState || {};
-            userState.useWTBackgrounds = userState.useWTBackgrounds !== undefined ? userState.useWTBackgrounds : JSON.parse(localStorage.getItem("useWTBackgrounds")) || false;
-            userState.battleType = userState.battleType || localStorage.getItem("battleType") || 'air';
-        }
-
+        // Initialize userState defaults if undefined
+        userState.useWTBackgrounds = userState.useWTBackgrounds ?? JSON.parse(localStorage.getItem("useWTBackgrounds")) ?? false;
+        userState.battleType = userState.battleType ?? localStorage.getItem("battleType") ?? 'air';
         const { airImage, groundImage, defaultImage } = selectInitialBackgrounds();
-
         let imagePath;
         if (specificImage) {
-            imagePath = specificImage; // Use the provided image path if specified
+            imagePath = specificImage;
         } else if (!userState.useWTBackgrounds) {
             imagePath = defaultImage;
             footerOptions.classList.remove("light-footer");
@@ -870,18 +867,28 @@ function updateBackground(specificImage = null) {
             imagePath = userState.battleType === "air" ? airImage : groundImage;
             footerOptions.classList.add("light-footer");
         }
-
+        // Ensure background is not unset or white
+        if (!imagePath) {
+            imagePath = defaultImage || './images/default.jpg';
+        }
         const img = new Image();
-        img.onload = () => bgImage.src = imagePath;
+        img.onload = () => {
+            bgImage.src = imagePath;
+            bgImage.style.backgroundColor = ''; // Clear any fallback background
+        };
         img.onerror = () => {
             console.error(`Failed to load image: ${imagePath}`);
             bgImage.src = './images/default.jpg';
+            bgImage.style.backgroundColor = ''; // Clear any fallback background
         };
         img.src = imagePath;
     } catch (error) {
         console.error('Error updating background:', error);
         const bgImage = document.getElementById("bgImage");
-        if (bgImage) bgImage.src = './images/default.jpg';
+        if (bgImage) {
+            bgImage.src = './images/default.jpg';
+            bgImage.style.backgroundColor = ''; // Clear any fallback background
+        }
     }
 }
 
@@ -932,9 +939,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const displayOrder = ["arms", "chest", "back", "abs", "legs"];
 
         // User State
-        const userState = { equipment: JSON.parse(localStorage.getItem("userEquipment")) || ['bodyweight'], battleType: "air", currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || { exercises: { arms: [], chest: [], back: [], abs: [], legs: [] } }, weakMode: JSON.parse(localStorage.getItem("weakMode")) || {}, lastTotalAssignedCount: 0, currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0, completedWorkout: JSON.parse(localStorage.getItem("completedWorkout")) || false, lastCompletedCycleIndex: parseInt(localStorage.getItem("lastCompletedCycleIndex")) || 0, useWTBackgrounds: JSON.parse(localStorage.getItem("useWTBackgrounds")) || false };
+        const userState = { equipment: JSON.parse(localStorage.getItem("userEquipment")) || ['bodyweight'], battleType: "air", currentWorkout: JSON.parse(localStorage.getItem("currentWorkout")) || { exercises: { arms: [], chest: [], back: [], abs: [], legs: [] } }, weakMode: JSON.parse(localStorage.getItem("weakMode")) || {}, lastTotalAssignedCount: 0, currentMuscleIndex: parseInt(localStorage.getItem("currentMuscleIndex")) || 0, completedWorkout: JSON.parse(localStorage.getItem("completedWorkout")) || false, lastCompletedCycleIndex: parseInt(localStorage.getItem("lastCompletedCycleIndex")) || 0, phraseMode: JSON.parse(localStorage.getItem("phraseMode")) || { air: 'default', ground: 'default' } };
 
         // DOM Elements
+		const phraseToggleBtn = document.getElementById("phraseToggleBtn");
+		phraseToggleBtn.addEventListener("click", handlePhraseToggle);
         const deathCountInput = document.getElementById("deathCount");
         const generateBtn = document.getElementById("generateBtn");
         const addOneBtn = document.getElementById("addOneBtn"); // New Button
@@ -969,8 +978,36 @@ wtToggle.addEventListener("change", function() {
         // Utility Functions
         function generateUniqueId() { return `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`; }
         function getTotalAssignedExercises() { let count = 0; if (userState.currentWorkout && userState.currentWorkout.exercises) { for (const muscle of displayOrder) { count += userState.currentWorkout.exercises[muscle]?.length || 0; } } return count; }
-        function updateDeathText() { if (userState.battleType === "air") { deathTextEl.textContent = "I died"; deathTextEndEl.textContent = "times without getting any kills."; } else { deathTextEl.textContent = "I lost"; deathTextEndEl.textContent = "matches"; } }
-        function handleBattleTypeToggle() { if (this.id === "airBattles" && this.checked) { groundBattlesCheckbox.checked = false; userState.battleType = "air"; } else if (this.id === "groundBattles" && this.checked) { airBattlesCheckbox.checked = false; userState.battleType = "ground"; } else { this.checked = true; return; } updateDeathText(); localStorage.setItem("battleType", userState.battleType); }
+function updateDeathText() {
+    const battleType = userState.battleType;
+    const phraseMode = userState.phraseMode[battleType] || 'default';
+    
+    if (battleType === "air") {
+        if (phraseMode === 'default') {
+            deathTextEl.textContent = "I died";
+            deathTextEndEl.textContent = "times without getting any kills.";
+        } else {
+            deathTextEl.textContent = "I lost";
+            deathTextEndEl.textContent = "matches.";
+        }
+    } else {
+        if (phraseMode === 'default') {
+            deathTextEl.textContent = "I lost";
+            deathTextEndEl.textContent = "matches.";
+        } else {
+            deathTextEl.textContent = "I died";
+            deathTextEndEl.textContent = "times.";
+        }
+    }
+}
+
+function handlePhraseToggle() {
+    const battleType = userState.battleType;
+    userState.phraseMode[battleType] = userState.phraseMode[battleType] === 'default' ? 'alternate' : 'default';
+    localStorage.setItem("phraseMode", JSON.stringify(userState.phraseMode));
+    updateDeathText();
+}
+		function handleBattleTypeToggle() { if (this.id === "airBattles" && this.checked) { groundBattlesCheckbox.checked = false; userState.battleType = "air"; } else if (this.id === "groundBattles" && this.checked) { airBattlesCheckbox.checked = false; userState.battleType = "ground"; } else { this.checked = true; return; } updateDeathText(); localStorage.setItem("battleType", userState.battleType); }
         function toggleWeakMode(exerciseId) { userState.weakMode[exerciseId] = !userState.weakMode[exerciseId]; localStorage.setItem("weakMode", JSON.stringify(userState.weakMode)); updateExerciseDisplay(exerciseId); }
         function updateExerciseDisplay(exerciseId) { const exerciseEl = document.getElementById(exerciseId); if (exerciseEl) { const repsElement = exerciseEl.querySelector(".exercise-reps"); const exerciseNameElement = exerciseEl.querySelector(".exercise-name-text"); const exerciseText = exerciseNameElement ? exerciseNameElement.firstChild.textContent.trim().toLowerCase() : ''; if (repsElement) { const baseReps = parseInt(repsElement.dataset.baseReps); const isWeak = userState.weakMode[exerciseId] || false; const currentReps = isWeak ? Math.max(1, Math.floor(baseReps / 2)) : baseReps; const repsLabel = exerciseText.includes('plank') ? 'sec' : 'reps'; repsElement.textContent = `(${currentReps} ${repsLabel})`; } } }
         function completeExercise(exerciseId) { const exerciseEl = document.getElementById(exerciseId); if (exerciseEl) { exerciseEl.classList.add("completed"); const completeBtn = exerciseEl.querySelector(".complete-btn"); const swapBtn = exerciseEl.querySelector(".swap-exercise-btn"); const weakToggleCheckbox = exerciseEl.querySelector(".weak-toggle input"); if (completeBtn) { completeBtn.textContent = "✓ Done"; completeBtn.classList.add("completed"); completeBtn.disabled = true; } if (swapBtn) { swapBtn.classList.add("disabled"); swapBtn.disabled = true; } if (weakToggleCheckbox) { weakToggleCheckbox.disabled = true; } if (userState.currentWorkout && userState.currentWorkout.exercises) { for (const muscle of displayOrder) { if (!userState.currentWorkout.exercises[muscle]) continue; const exercise = userState.currentWorkout.exercises[muscle].find(ex => ex.id === exerciseId); if (exercise) { exercise.completed = true; localStorage.setItem("currentWorkout", JSON.stringify(userState.currentWorkout)); break; } } } checkAllCompleted(); } }
