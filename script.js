@@ -3,74 +3,175 @@
 // =================================================================================
 
 // Exercise Database
+// Exercise Database
 const exerciseDB = {
   arms: [{
-    name: "Pushups",
-    equipment: ["bodyweight"],
-    difficulty: 2,
-    reps: 15
-  }, {
     name: "Bicep Curls",
     equipment: ["dumbbells", "kettlebells"],
     difficulty: 1,
     reps: 12
   }, {
-    name: "Tricep Dips",
-    equipment: ["bodyweight"],
+    name: "Dumbbell Press (Close Grip)",
+    equipment: ["dumbbells", "mat"],
     difficulty: 2,
     reps: 12
   }, {
-    name: "Diamond Pushups",
-    equipment: ["bodyweight"],
+    name: "Dumbbell Rotational Bench Press",
+    equipment: ["dumbbells", "mat"],
     difficulty: 3,
     reps: 10
+  }, {
+    name: "Dumbbell Tricep Extension",
+    equipment: ["dumbbells", "plate"],
+    difficulty: 2,
+    reps: 12
   }, {
     name: "Hammer Curls",
     equipment: ["dumbbells"],
     difficulty: 1,
     reps: 12
   }, {
+    name: "Kettlebell Sumo High Pull",
+    equipment: ["kettlebells"],
+    difficulty: 2,
+    reps: 12
+  }, {
     name: "Overhead Press",
     equipment: ["dumbbells", "kettlebells", "plate"],
     difficulty: 2,
     reps: 10
-  }, ],
-  chest: [{
-    name: "Bench Press",
-    equipment: ["barbell", "dumbbells"],
-    difficulty: 3,
-    reps: 10
   }, {
-    name: "Dumbbell Press",
-    equipment: ["dumbbells"],
-    difficulty: 2,
-    reps: 12
-  }, {
-    name: "Pushup Variations",
+    name: "Push-ups",
     equipment: ["bodyweight"],
     difficulty: 2,
     reps: 15
   }, {
-    name: "Wide Pushups",
+    name: "Tricep Dips",
     equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Tricep Push-up",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Weight Plate Front Raise",
+    equipment: ["plate"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Weight Plate Hand Squeeze",
+    equipment: ["plate"],
     difficulty: 1,
-    reps: 20
+    reps: 15
+  }, {
+    name: "Weight Plate Reverse Curl",
+    equipment: ["plate"],
+    difficulty: 1,
+    reps: 15
+  }, ],
+  chest: [{
+    name: "Close Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 3,
+    reps: 12
+  }, {
+    name: "Decline Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 3,
+    reps: 15
+  }, {
+    name: "Deficit Push-ups",
+    equipment: ["plate"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Dumbbell Bench Press",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Bench Press (Palms in)",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Fly",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Lying on Floor Chest Press",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Squeeze Bench Press",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 3,
+    reps: 10
+  }, {
+    name: "Incline Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Kettlebell Lying on Floor Chest Press",
+    equipment: ["kettlebells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Lying Hammer Press",
+    equipment: ["dumbbells", "mat"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Plate Lying on Floor Chest Press",
+    equipment: ["plate", "mat"],
+    difficulty: 2,
+    reps: 15
   }, {
     name: "Plate Pinch Press",
     equipment: ["plate"],
     difficulty: 2,
     reps: 15
-  }, ],
-  back: [{
-    name: "Pull-ups",
-    equipment: ["bodyweight", "pullup_bar"],
-    difficulty: 3,
-    reps: 8
   }, {
-    name: "Bent Over Rows",
-    equipment: ["dumbbells", "barbell", "kettlebells"],
+    name: "Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Single-leg Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 3,
+    reps: 10
+  }, {
+    name: "Spider Push-ups",
+    equipment: ["bodyweight"],
     difficulty: 2,
     reps: 12
+  }, {
+    name: "Wide Push-ups",
+    equipment: ["bodyweight"],
+    difficulty: 1,
+    reps: 20
+  }, ],
+  back: [{
+    name: "Bent Over Rows",
+    equipment: ["dumbbells", "kettlebells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Bent-Over Row (Palms in)",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Deadlift",
+    equipment: ["dumbbells"],
+    difficulty: 3,
+    reps: 10
   }, {
     name: "Reverse Flyes",
     equipment: ["dumbbells"],
@@ -82,16 +183,71 @@ const exerciseDB = {
     difficulty: 1,
     reps: 15
   }, {
-    name: "Renegade Rows",
-    equipment: ["dumbbells", "kettlebells"],
-    difficulty: 3,
-    reps: 10
+    name: "Weighted Plate Shrug",
+    equipment: ["plate"],
+    difficulty: 1,
+    reps: 15
   }, ],
   abs: [{
-    name: "Russian Twists",
-    equipment: ["bodyweight", "plate", "kettlebell", "dumbbell"],
+    name: "Alternating Heel Touch",
+    equipment: ["bodyweight"],
+    difficulty: 1,
+    reps: 20
+  }, {
+    name: "Bicycle Crunches",
+    equipment: ["bodyweight"],
     difficulty: 2,
     reps: 20
+  }, {
+    name: "Cross Body Crunch",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 20
+  }, {
+    name: "Crunch Reach Through the Leg",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Crunches",
+    equipment: ["bodyweight", "plate"],
+    difficulty: 1,
+    reps: 25
+  }, {
+    name: "Crucifix",
+    equipment: ["bodyweight"],
+    difficulty: 3,
+    reps: 15
+  }, {
+    name: "Flutter Kicks",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 30
+  }, {
+    name: "Frog Sit-Up",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "High to Low Plank",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Knee to Elbow Plank",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 20
+  }, {
+    name: "Laying Hip Raises",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Leg Flutters",
+    equipment: ["bodyweight"],
+    difficulty: 1,
+    reps: 30
   }, {
     name: "Leg Raises",
     equipment: ["bodyweight"],
@@ -103,46 +259,171 @@ const exerciseDB = {
     difficulty: 1,
     reps: 60
   }, {
-    name: "Crunches",
-    equipment: ["bodyweight", "plate"],
+    name: "Reach Up",
+    equipment: ["bodyweight"],
     difficulty: 1,
-    reps: 25
+    reps: 20
   }, {
-    name: "Bicycle Crunches",
+    name: "Reverse Crunch",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Russian Twists",
+    equipment: ["bodyweight", "plate", "kettlebell", "dumbbell"],
+    difficulty: 2,
+    reps: 20
+  }, {
+    name: "Seated In & Outs",
     equipment: ["bodyweight"],
     difficulty: 2,
     reps: 20
-  }, ],
-  legs: [{
-    name: "Squats",
-    equipment: ["bodyweight", "kettlebells", "dumbbells"],
-    difficulty: 2,
-    reps: 20
   }, {
-    name: "Lunges",
-    equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"],
+    name: "Side Bend",
+    equipment: ["plate", "dumbbell", "kettlebell"],
+    difficulty: 1,
+    reps: 15
+  }, {
+    name: "Side Bridge (L)",
+    equipment: ["bodyweight"],
     difficulty: 2,
+    reps: 15
+  }, {
+    name: "Side Bridge (R)",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Side Plank (L)",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 45
+  }, {
+    name: "Side Plank (R)",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 45
+  }, {
+    name: "Side Plank Reach Through (L)",
+    equipment: ["bodyweight"],
+    difficulty: 3,
     reps: 12
   }, {
+    name: "Side Plank Reach Through (R)",
+    equipment: ["bodyweight"],
+    difficulty: 3,
+    reps: 12
+  }, {
+    name: "Sit-up",
+    equipment: ["bodyweight"],
+    difficulty: 1,
+    reps: 20
+  }, {
+    name: "Weighted Crunches",
+    equipment: ["kettlebells", "plate", "dumbbell"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Weighted Russian Twists",
+    equipment: ["plate", "kettlebell", "dumbbell"],
+    difficulty: 3,
+    reps: 20
+  }, ],
+  legs: [{
     name: "Calf Raises",
     equipment: ["bodyweight", "dumbbells", "plate"],
     difficulty: 1,
     reps: 25
+  }, {
+    name: "Dumbbell Calf Raise (L)",
+    equipment: ["dumbbells"],
+    difficulty: 1,
+    reps: 15
+  }, {
+    name: "Dumbbell Calf Raise (R)",
+    equipment: ["dumbbells"],
+    difficulty: 1,
+    reps: 15
+  }, {
+    name: "Dumbbell Lunge (L)",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Lunge (R)",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Plie Squat",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Dumbbell Reverse Lunge (L)",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Reverse Lunge (R)",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Dumbbell Squat",
+    equipment: ["dumbbells"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Dumbbell Squat to Shoulder Press",
+    equipment: ["dumbbells"],
+    difficulty: 3,
+    reps: 12
+  }, {
+    name: "Glute Bridge March",
+    equipment: ["bodyweight"],
+    difficulty: 1,
+    reps: 20
   }, {
     name: "Glute Bridges",
     equipment: ["bodyweight", "plate"],
     difficulty: 1,
     reps: 20
   }, {
-    name: "Jump Squats",
-    equipment: ["bodyweight"],
-    difficulty: 3,
+    name: "Kettlebell Goblet Squat",
+    equipment: ["kettlebells"],
+    difficulty: 2,
     reps: 15
   }, {
     name: "Kettlebell Swings",
     equipment: ["kettlebells"],
     difficulty: 3,
     reps: 15
+  }, {
+    name: "Lunges (L)",
+    equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Lunges (R)",
+    equipment: ["bodyweight", "dumbbells", "kettlebells", "plate"],
+    difficulty: 2,
+    reps: 12
+  }, {
+    name: "Single-leg Calf Raises (L)",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Single-leg Calf Raises (R)",
+    equipment: ["bodyweight"],
+    difficulty: 2,
+    reps: 15
+  }, {
+    name: "Squats",
+    equipment: ["bodyweight", "kettlebells", "dumbbells"],
+    difficulty: 2,
+    reps: 20
   }, ],
 };
 
@@ -466,6 +747,7 @@ function clearAllWorkouts() {
   if (toggleAllBtn) {
     toggleAllBtn.textContent = "Collapse All";
   }
+  updateProgressBar();
 }
 
 function generateAdditionalExercises(countToAdd) {
@@ -729,8 +1011,21 @@ function completeExercise(exerciseId) {
       }
     }
   }
+  
+  const progressBarEl = document.getElementById('progressBar');
+  if (progressBarEl) {
+    // Adiciona a nova classe que ativa a animação de reflexo
+    progressBarEl.classList.add('is-reflecting');
+    
+    // Remove a classe após a animação terminar (700ms)
+    setTimeout(() => {
+      progressBarEl.classList.remove('is-reflecting');
+    }, 700);
+  }
+  
   collapseCompletedGroup(exerciseId);
   checkAllCompleted();
+  updateProgressBar();
 }
 
 function completeAllExercises() {
@@ -817,6 +1112,12 @@ function collapseCompletedGroup(exerciseId) {
 
   const exercises = userState.currentWorkout.exercises[muscle];
   if (exercises.every((ex) => ex.completed)) {
+	  
+	  const groupCompleteBtn = groupEl.querySelector('.complete-group-btn');
+    if (groupCompleteBtn) {
+      groupCompleteBtn.disabled = true;
+    }
+	
     toggleExerciseGroup(groupEl, false);
   }
 }
@@ -846,6 +1147,9 @@ function checkAllCompleted() {
   const enableButton = totalExercises > 0 && allCompleted;
   workDoneBtn.disabled = !enableButton;
   workDoneBtn.classList.toggle("completed", enableButton);
+	if (completeAllBtn) {
+    completeAllBtn.disabled = enableButton;
+  }
 }
 
 function toggleExerciseGroup(groupEl, forceExpand = null) {
@@ -957,10 +1261,10 @@ function formatWorkoutForSummary(workoutData) {
 
 function renderSummaryView(summaryData) {
   const summaryHtml = `
-    <h2>Session Complete! (${summaryData.total} exercise(s); ${summaryData.totalReps} reps)</h2>
+    <h2>Session Complete! (${summaryData.total} Exercises Done; ${summaryData.totalReps} reps)</h2>
     <img src="./images/others/Dale-Cooper_Thumbs_Up.gif" alt="Thumbs Up">
     <div class="summary-toggle-container">
-         <button id="summaryToggleAllBtn" class="toggle-all-btn">Collapse All</button>
+         <button id="summaryToggleAllBtn" class="toggle-all-btn">Expand All</button>
      </div>
     <div class="summary-exercises-list">
         ${displayOrder
@@ -976,14 +1280,14 @@ function renderSummaryView(summaryData) {
                                     <span class="summary-group-reps">(${muscleData.groupReps} reps)</span>
                                 </span>
                             </div>
-                            <div class="group-toggle">🔺</div>
+                            <div class="group-toggle">🔻</div>
                         </div>
-                        <div class="exercises-container">
+                        <div class="exercises-container" style="display: none;">
                             ${muscleData.exerciseList
                               .map((ex) => `
                                 <div class="summary-exercise-item">
                                     <span class="exercise-name-text">
-                                        ♦️ ${ex.name}
+                                        ♦ ${ex.name}
                                         <span class="exercise-reps">(${ex.reps} ${ex.label})</span>
                                     </span>
                                 </div>`)
@@ -1037,6 +1341,45 @@ function showSuccessMessage() {
   localStorage.setItem("completedWorkout", "true");
 
   renderSummaryView(summaryData);
+}
+
+function updateProgressBar() {
+  const progressBarEl = document.getElementById('progressBar');
+  if (!progressBarEl) return;
+
+  const totalExercises = getTotalAssignedExercises();
+  
+  if (totalExercises === 0) {
+    progressBarEl.style.width = '0%';
+    return;
+  }
+
+  let completedCount = 0;
+  for (const muscle in userState.currentWorkout.exercises) {
+    userState.currentWorkout.exercises[muscle].forEach(ex => {
+      if (ex.completed) {
+        completedCount++;
+      }
+    });
+  }
+
+  const progressPercentage = (completedCount / totalExercises) * 100;
+  progressBarEl.style.width = `${progressPercentage}%`;
+}
+
+function toggleBattleTypeVisibility() {
+  // Encontra os elementos da interface
+  const battleToggleEl = document.querySelector('.battle-toggle');
+  const wtToggleCheckbox = document.getElementById('wtBackgroundToggle');
+
+  if (battleToggleEl && wtToggleCheckbox) {
+    // Se a checkbox estiver marcada, mostra o seletor. Se não, esconde.
+    if (wtToggleCheckbox.checked) {
+      battleToggleEl.style.display = 'flex';
+    } else {
+      battleToggleEl.style.display = 'none';
+    }
+  }
 }
 
 // =================================================================================
@@ -1171,6 +1514,7 @@ function renderExercises() {
   workoutDisplay.style.display = hasAnyVisibleExercises || sessionSummaryContentEl.style.display === "block" ? "block" : "none";
   updateToggleAllButtonState();
   checkAllCompleted();
+  updateProgressBar();
 }
 
 
@@ -1317,6 +1661,7 @@ wtToggle.addEventListener("change", function() {
     userState.useWTBackgrounds = this.checked;
     localStorage.setItem("useWTBackgrounds", this.checked);
     updateBackground();
+	toggleBattleTypeVisibility();
   } catch (error) {
     console.error("Error handling WT background toggle:", error);
   }
@@ -1339,7 +1684,7 @@ exercisesListEl.addEventListener('change', (event) => {
 exercisesListEl.addEventListener('click', (event) => {
   const target = event.target; // O elemento exato que foi clicado
 
-  // --- Caso 1: Botão "Complete Group" (✓✓) clicado ---
+  // --- Caso 1: Botão "Complete Group" ('	) clicado ---
   if (target.matches('.complete-group-btn')) {
     event.stopPropagation(); // Impede que o clique também feche/abra a aba
     const groupEl = target.closest('.exercise-group');
@@ -1402,6 +1747,7 @@ document.addEventListener("DOMContentLoaded", () => {
   wtToggle.checked = JSON.parse(localStorage.getItem("useWTBackgrounds")) || false;
   updateBackground();
   updateDeathText();
+  toggleBattleTypeVisibility();
 
   equipmentCheckboxes.forEach((checkbox) => {
     const equipmentType = checkbox.dataset.equipment;

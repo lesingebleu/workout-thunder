@@ -621,6 +621,7 @@ button:not(:disabled):not(.completed):hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-weight: bold;
 }
 
 .complete-all-btn:hover::after,
@@ -639,6 +640,13 @@ button:not(:disabled):not(.completed):hover {
   white-space: nowrap;
   margin-bottom: 5px;
   z-index: 1;
+}
+
+.complete-all-btn:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .generate-btn-container {
@@ -1015,3 +1023,55 @@ button:not(:disabled):not(.completed):hover {
     right: 20px;
   }
 }
+
+#progressBarContainer {
+  position: fixed; /* Mantém a barra fixa no topo da janela */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px; /* Altura da barra */
+  background-color: #333; /* Cor de fundo da barra (cinzento escuro) */
+  z-index: 1001; /* Garante que fica por cima de todos os outros elementos */
+  pointer-events: none;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%; /* Começa com 0% de largura */
+  background-color: var(--complete-green); /* Usa a nossa variável de cor verde */
+  transition: width 0.5s ease-in-out; /* Animação suave quando a largura muda */
+  position: relative; /* Necessário para posicionar o reflexo dentro dela */
+  overflow: hidden;   /* Esconde o reflexo quando ele está fora da barra */
+}
+
+#progressBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%); /* Começa totalmente à esquerda, fora da barra */
+}
+
+/* PASSO 3: Definir a animação que move o reflexo */
+@keyframes reflection-sweep {
+  from {
+    transform: translateX(-100%); /* Da posição inicial (fora, à esquerda) */
+  }
+  to {
+    transform: translateX(100%);  /* Para a posição final (fora, à direita) */
+  }
+}
+
+/* PASSO 4: Criar a classe que ativa a animação no reflexo */
+#progressBar.is-reflecting::after {
+  animation: reflection-sweep 0.8s ease-in-out;
+}
+
